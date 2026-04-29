@@ -23,3 +23,27 @@ Reverie aims to harmonize the scattered tech landscape in order to inspire a nov
 That same care for what the visitor actually sees—not only what is specified on paper—shows up in how the full Reverie distribution is shaped. There is no bundler: a single `index.html` holds the bootloader, the framed “desktop,” draggable panels, taskbar, theme and backdrop preferences (persisted under the `reverie_*` keys in storage), and the keyboard shortcuts that jump, tile, and clear those panels. The documentation library is embedded from `cerebrum/pages/documentation/`; the evaluation lab from `cerebrum/nerve/lab.html`. **SOLARUM**—the WebGL stack alongside `solarum-wallpapers/`—fills the viewport when you pick a shader backdrop; in embed it clears to transparency so layers stack without spurious black tiles. Relative paths assume the complete folder next to those HTML routes. **`file://`** starves iframes and parent/child messaging; use HTTPS (the live domain or Cloudflare preview) or a local static server when testing the full app. This GitHub copy omits adjacent assets except HTML; browse the URLs above or use Cloudflare’s deployment package for parity.
 
 **reveriesystematics@proton.me**
+
+### Refreshing the GitHub mirror
+
+From the full Reverie workspace on disk, copy only `README.md` and every `*.html` into this folder (same paths), then commit and push from `Reverie [github files]`:
+
+```powershell
+$src = "C:\Users\rhrsh\Desktop\REVERIE"
+$dst = 'C:\Users\rhrsh\Desktop\Reverie [github files]'
+Get-ChildItem -Path $src -Filter *.html -Recurse -File | ForEach-Object {
+  $relative = $_.FullName.Substring($src.Length).TrimStart('\')
+  $targetPath = Join-Path $dst $relative
+  $dir = [System.IO.Path]::GetDirectoryName($targetPath)
+  if (-not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+  Copy-Item -LiteralPath $_.FullName -Destination $targetPath -Force
+}
+Copy-Item -LiteralPath (Join-Path $src "README.md") -Destination (Join-Path $dst "README.md") -Force
+
+Set-Location -LiteralPath $dst
+git add -A
+git commit -m "Sync HTML and README from REVERIE"
+git push origin main
+```
+
+If the GitHub repo was replaced with this minimal tree using a fresh history (see below), a normal push works. If histories diverged intentionally, coordinate with `--force-with-lease` once you are sure overwriting `main` on GitHub is correct.
