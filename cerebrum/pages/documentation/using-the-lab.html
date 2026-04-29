@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Using the lab | Documentation</title>
+<link rel="stylesheet" href="docs.css"/>
+<link rel="stylesheet" href="docs-lattice-embed.css"/>
+</head>
+<body>
+<nav class="doc-nav" aria-label="Site">
+  <a href="../../../">Home</a><span class="sep">|</span>
+  <a href="../../">Cerebrum</a><span class="sep">|</span>
+  <a href="../../nerve/lab.html">NERVE lab</a><span class="sep">|</span>
+  <a href="index.html">Documentation</a>
+</nav>
+<main class="doc-wrap">
+  <h1>Using the lab</h1>
+  <p class="lede">The <strong>NERVE lab</strong> is one in-browser workspace for evaluation, optional live completions, calibration, and exports. <a href="../../nerve/lab.html">Open the NERVE lab</a>.</p>
+  <h2>Evaluate (no network)</h2>
+  <p>Fill <strong>Prompt</strong> and <strong>Response</strong> (and optional <strong>Context</strong>), choose a <strong>label</strong> for your records, and click <strong>Evaluate</strong>. No API key required. Use <strong>Run all presets</strong> to batch-score built-in test cases (still no API).</p>
+  <h2>Live (calls an LLM API)</h2>
+  <p>Paste a provider <strong>API key</strong>, pick <strong>model</strong> and <strong>provider</strong>, enter <strong>Prompt</strong> and optional <strong>Context</strong>, then <strong>Live</strong>. The app merges prompt + context for the model (see <a href="live-api-and-keys.html">Live API and keys</a>), then runs NERVE on the raw fields and the model reply.</p>
+  <h2>Epsilon (ε)</h2>
+  <p>The slider sets the admissibility threshold for Φ_e adjusted. Keys stay in the browser; nothing is sent to Reverie’s servers for scoring.</p>
+  <h2>Calibration (additive)</h2>
+  <p>Read-only post-hoc analysis on the table or a JSON file: EFCG by label, AUC, ε-sweep, optional lab profile and “apply ε to slider.” It does not re-call the NERVE path or change stored row scores in place—see the in-app copy and <a href="exports-and-data.html">Exports and data</a>.</p>
+  <p><a href="live-api-and-keys.html">Next: Live API and keys →</a></p>
+</main>
+</body>
+</html>

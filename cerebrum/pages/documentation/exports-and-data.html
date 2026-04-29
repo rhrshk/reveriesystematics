@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Exports and data | Documentation</title>
+<link rel="stylesheet" href="docs.css"/>
+<link rel="stylesheet" href="docs-lattice-embed.css"/>
+</head>
+<body>
+<nav class="doc-nav" aria-label="Site">
+  <a href="../../../">Home</a><span class="sep">|</span>
+  <a href="../../">Cerebrum</a><span class="sep">|</span>
+  <a href="../../nerve/lab.html">NERVE lab</a><span class="sep">|</span>
+  <a href="index.html">Documentation</a>
+</nav>
+<main class="doc-wrap">
+  <h1>Exports and data</h1>
+  <p class="lede">Exports are generated in the browser. Large bundles use <strong>JSZip</strong> from a public CDN; if the CDN is blocked, the app falls back to separate downloads where implemented.</p>
+  <h2>JSON + report (zip when available)</h2>
+  <p>Includes <code>results</code> with per-row signals, session kappa, AUC, and a plain-text <strong>session report</strong>. Re-import the JSON via <strong>Import</strong> or the calibration <strong>Load JSON into table</strong> path to restore rows.</p>
+  <h2>CSV (zip when available)</h2>
+  <p>Tabular dump of the results grid for spreadsheets.</p>
+  <h2>Session memory</h2>
+  <p>Recent rows may be stored in <code>localStorage</code> for convenience; clear the session from the app if you need a clean table.</p>
+</main>
+</body>
+</html>

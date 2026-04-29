@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PDF | Documentation</title>
+<link rel="stylesheet" href="docs-lattice-embed.css"/>
+<style>
+  body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+  .pdf-chrome {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--doc-rule);
+    background: color-mix(in srgb, var(--doc-surface) 96%, #000);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pdf-chrome a {
+    color: var(--doc-accent);
+    text-decoration: none;
+  }
+  .pdf-chrome a:hover { text-decoration: underline; }
+  .pdf-name {
+    color: var(--doc-mute);
+    font-weight: 500;
+  }
+  .pdf-frame {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    border: 0;
+    background: #111;
+  }
+  .pdf-fallback { padding: 1.5rem; color: var(--doc-mute); max-width: 40rem; }
+  .pdf-fallback a { color: var(--doc-accent); }
+</style>
+</head>
+<body>
+<nav class="doc-nav" aria-label="Site"></nav>
+<div class="pdf-chrome">
+  <a id="pdf-back" href="index.html">← Back to list</a>
+  <span class="pdf-name" id="pdf-title">PDF</span>
+</div>
+<iframe class="pdf-frame" id="pdf" title="PDF document"></iframe>
+<p class="pdf-fallback">
+  If the frame stays blank, <a id="pdf-open" href="#" target="_blank" rel="noopener">open the PDF in a new tab</a> (first-party file).
+</p>
+<script>
+(function () {
+  var inEmb = false;
+  try {
+    inEmb = window.top !== window.self;
+  } catch (e) {
+    inEmb = true;
+  }
+  var docList = "index.html" + (inEmb ? "?embed=1" : "");
+  var nav = document.querySelector(".doc-nav");
+  if (nav) {
+    nav.innerHTML =
+      '<a href="../../../index.html"' +
+      (inEmb ? " target=\"_top\"" : "") +
+      '>Home</a><span class="sep">|</span>' +
+      '<a href="../../"' +
+      (inEmb ? " target=\"_top\"" : "") +
+      '>Cerebrum</a><span class="sep">|</span>' +
+      '<a href="../../nerve/lab.html"' +
+      (inEmb ? " target=\"_top\"" : "") +
+      '>NERVE lab</a><span class="sep">|</span>' +
+      '<a href="' +
+      docList +
+      '">Documentation</a>';
+  }
+  var back = document.getElementById("pdf-back");
+  if (back) back.href = docList;
+
+  var q = new URLSearchParams(window.location.search);
+  var p = q.get("p");
+  if (!p) {
+    document.getElementById("pdf-title").textContent = "No file";
+    return;
+  }
+  try { p = decodeURIComponent(p); } catch (e) { return; }
+  if (p.indexOf("..") >= 0 || p.indexOf("/") === 0 || p.indexOf("\\") >= 0) {
+    document.getElementById("pdf-title").textContent = "Invalid path";
+    return;
+  }
+  if (!/^[a-zA-Z0-9._/\- ]+\.pdf$/i.test(p)) {
+    document.getElementById("pdf-title").textContent = "Invalid file type";
+    return;
+  }
+  var base = "../../documents/";
+  var url = base + p.replace(/^\//, "");
+  var title = p.split("/").pop();
+  document.getElementById("pdf-title").textContent = title;
+  document.getElementById("pdf").src = url;
+  var a = document.getElementById("pdf-open");
+  if (a) a.href = url;
+})();
+</script>
+</body>
+</html>

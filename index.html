@@ -1,0 +1,5037 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir" data-backdrop="ambs-1" data-reverie-lattice="1">
+<head>
+<script>
+window.__REVERIE_LATTICE_NOIR = true;
+try {
+  localStorage.removeItem("reverie_data_theme");
+  localStorage.removeItem("reverie_data_backdrop");
+  localStorage.removeItem("bootloaderMin");
+  localStorage.removeItem("bootloaderCorner");
+} catch (e) {}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REVERIE</title>
+<meta name="application-name" content="Reverie">
+<meta name="description" content="Reverie Systemics — Cerebrum trust layer (Φe, CG, CI, gates), NERVE external eval, Cortex in-stack.">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark light">
+<meta property="og:title" content="Reverie">
+<meta property="og:description" content="The trust-layer architecture in one static interface—wire a local NERVE when you are ready to measure what you read.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=Roboto+Mono:ital,wght@0,400;0,500&family=Share+Tech+Mono&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Rajdhani:wght@400;500;600;700&family=Syne:wght@400;500;600;700&family=Space+Grotesk:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="solarum-wallpapers/wallpapers-catalog.js"></script>
+<style>
+/*
+  int10h.org Ultimate Oldschool PC Font Pack (CC-BY-SA-4.0).
+  v2.2 layout (verified):  “ttf - Mx (mixed outline+bitmap)\Mx437_*.ttf” — best default for TTF/browsers.
+  Optional: “ttf - Ac (aspect-corrected)\Ac437_*.ttf” — same idea with Ac437_ prefix for CRT-correct shape.
+  Copy only the needed files into ./fonts/ next to this HTML, keeping filenames identical (e.g. Mx437_ApricotXenC.ttf).
+  Catalogue: https://int10h.org/oldschool-pc-fonts/fontlist/font?apricotxenc
+*/
+@font-face {
+  font-family: "ApricotXenC";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 ApricotXenC Regular"),
+    local("Mx437 ApricotXenC"),
+    local("ApricotXenC"),
+    url("fonts/Mx437_ApricotXenC.ttf") format("truetype"),
+    url("fonts/Mx437 ApricotXenC.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Mx437IBMVGA9x16";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 IBM VGA 9x16"),
+    local("IBM VGA 9x16"),
+    url("fonts/Mx437_IBM_VGA_9x16.ttf") format("truetype"),
+    url("fonts/Mx437 IBM VGA 9x16.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Mx437IBMBIOS8x8";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 IBM BIOS"),
+    local("IBM BIOS"),
+    url("fonts/Mx437_IBM_BIOS.ttf") format("truetype"),
+    url("fonts/Mx437 IBM BIOS.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Mx437IBMCGA8x8";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 IBM CGA"),
+    local("IBM CGA"),
+    url("fonts/Mx437_IBM_CGA.ttf") format("truetype"),
+    url("fonts/Mx437 IBM CGA.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Mx437IBMMDA9x14";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 IBM MDA"),
+    local("Mx437 IBM MDA 9x14"),
+    local("IBM MDA"),
+    url("fonts/Mx437_IBM_MDA.ttf") format("truetype"),
+    url("fonts/Mx437 IBM MDA.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Mx437ApricotPortable";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 Apricot Portable"),
+    local("Apricot Portable"),
+    url("fonts/Mx437_ApricotPortable.ttf") format("truetype"),
+    url("fonts/Mx437 Apricot Portable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Mx437ZenithZ100";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Mx437 Zenith Z-100"),
+    local("Zenith Z-100"),
+    url("fonts/Mx437_Zenith_Z-100.ttf") format("truetype"),
+    url("fonts/Mx437 Zenith Z-100.ttf") format("truetype");
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  scroll-behavior: smooth;
+}
+
+[data-theme="matrix"] {
+  --bg: #020602;
+  --bg2: #000000;
+  --fg: #39ff14;
+  --txt: #ffffff;
+  --rule: rgba(57, 255, 20, 0.35);
+}
+[data-theme="lite"] {
+  --bg: #f7f6f2;
+  --bg2: #ebe9e1;
+  --fg: #111111;
+  --txt: #111111;
+  --rule: rgba(0, 0, 0, 0.35);
+}
+[data-theme="noir"] {
+  --bg: #050505;
+  --bg2: #0e0e0e;
+  --fg: #c8c6be;
+  --txt: #e2e0d8;
+  --rule: rgba(200, 198, 190, 0.32);
+}
+[data-theme="dharma"] {
+  --bg: #111111;
+  --bg2: #1b1b1b;
+  --fg: #ece7d8;
+  --txt: #ece7d8;
+  --rule: rgba(236, 231, 216, 0.35);
+}
+/* Themed scrollbars (panels, menus, page) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--fg) 68%, var(--bg2)) var(--bg2);
+}
+html * {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--fg) 68%, var(--bg2)) var(--bg2);
+}
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg2);
+  border-left: 1px solid var(--rule);
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--fg) 72%, var(--bg2));
+  border: 2px solid var(--bg2);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--fg) 88%, var(--bg2));
+}
+::-webkit-scrollbar-corner {
+  background: var(--bg2);
+}
+
+html, body { height: 100%; font-family: var(--font-ui); }
+body {
+  position: relative;
+  isolation: isolate;
+  background: var(--rev-body-grad, linear-gradient(180deg, var(--bg), var(--bg2)));
+  color: var(--txt);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--rev-atmosphere, none);
+  opacity: var(--rev-atmosphere-opacity, 0);
+  transition: opacity 0.65s ease;
+}
+
+#ascii-wall {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1;
+  isolation: isolate;
+  pointer-events: none;
+  overflow: hidden;
+  white-space: pre;
+  font-size: clamp(10px, 0.95vw, 14px);
+  line-height: 1.12;
+  letter-spacing: 0.03em;
+  color: var(--fg);
+  opacity: 0.24;
+  transform: none !important;
+  will-change: contents;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#ascii-wall canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+/* SOLARUM ambient stack (solarum-wallpapers) — between matrix rain and UI */
+#reverie-solarum-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  border: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease, visibility 0.28s ease;
+}
+#reverie-solarum-bg.is-on {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+#reverie-solarum-bg.is-on.is-static {
+  pointer-events: none;
+}
+
+/* Shader wallpapers: data-backdrop amb-N (pointer) or ambs-N (static); picking one may nudge UI theme. Theme, wallpaper, and color overrides live in Settings (panel 11). */
+html[data-backdrop^="amb-"] #ascii-wall,
+html[data-backdrop^="ambs-"] #ascii-wall {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot-link.boot-backdrop-btn {
+  display: block;
+  padding-left: 10px;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: left;
+}
+.boot-backdrop-btn.active {
+  border-color: color-mix(in srgb, var(--rev-accent, var(--fg)) 55%, var(--fg)) !important;
+  background: color-mix(in srgb, var(--rev-accent, var(--fg)) 14%, transparent) !important;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--rev-accent, var(--fg)) 22%, transparent);
+}
+
+/* Workspace insets — brackets + app drag bounds share these; fonts set by Settings */
+:root {
+  --rev-accent: var(--fg);
+  --rev-accent-2: var(--fg);
+  --rev-accent-soft: color-mix(in srgb, var(--fg) 35%, transparent);
+  --rev-glow: color-mix(in srgb, var(--fg) 50%, transparent);
+  --rev-atmosphere: none;
+  --rev-atmosphere-opacity: 0;
+  --rev-body-grad: linear-gradient(180deg, var(--bg), var(--bg2));
+  --rev-boot-glass: rgba(0, 0, 0, 0.72);
+  --rev-chrome-glass: color-mix(in srgb, var(--bg2) 60%, transparent);
+  --rev-panel-glass: color-mix(in srgb, var(--bg) 88%, transparent);
+  --rev-elev-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --rev-title-glow: 0 0 24px color-mix(in srgb, var(--fg) 18%, transparent);
+  --rev-font-hero: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  --font-body: "ApricotXenC", "Mx437 ApricotXenC", "IBM Plex Mono", ui-monospace, monospace;
+  --font-ui: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  --font-menu: "JetBrains Mono", Consolas, "Courier New", monospace;
+  --workspace-pad: 1.5rem;
+  /* Same 12px inset from the frame as layoutCascade() uses for the first app window (left/top) */
+  --app-edge-inset: 12px;
+  --boot-min-right: calc(var(--workspace-pad) + var(--app-edge-inset));
+  --boot-min-top: calc(var(--workspace-pad) + var(--app-edge-inset));
+  /* L-bracket corners are 28px; keep fixed text clear of them (~5px past bracket leg) */
+  --frame-bracket: 28px;
+  --frame-bracket-text-gap: calc(var(--workspace-pad) + var(--frame-bracket) + 5px);
+  /* Inside windows / panels: inset past bracket leg (aligned with ~5px outer text gap) */
+  --frame-bracket-inner-gap: calc(var(--frame-bracket) + 5px);
+}
+
+/* Corner brackets (same bounds as #desktop) */
+#workspace-frame {
+  position: fixed;
+  z-index: 3;
+  top: var(--workspace-pad);
+  left: var(--workspace-pad);
+  right: var(--workspace-pad);
+  bottom: var(--workspace-pad);
+  pointer-events: none;
+}
+#workspace-frame .corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: color-mix(in srgb, var(--rev-accent, var(--fg)) 40%, var(--fg));
+  border-style: solid;
+  opacity: 1;
+  /* Glow: drop-shadow follows the L-shaped border paint; box-shadow would fill the whole 28×28 box. */
+  box-shadow: none;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--rev-accent, var(--fg)) 32%, transparent));
+}
+#workspace-frame .corner.tl {
+  top: 0;
+  left: 0;
+  border-width: 1px 0 0 1px;
+}
+#workspace-frame .corner.tr {
+  top: 0;
+  right: 0;
+  border-width: 1px 1px 0 0;
+}
+#workspace-frame .corner.bl {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 1px 1px;
+}
+#workspace-frame .corner.br {
+  bottom: 0;
+  right: 0;
+  border-width: 0 1px 1px 0;
+}
+
+/* ---- Wallpaper: title + menu — centered column ---- */
+#wallpaper-ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  pointer-events: none;
+  padding: var(--workspace-pad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html[data-rev-wall="shader"] #wallpaper-ui {
+  background: radial-gradient(ellipse 85% 55% at 50% 18%, color-mix(in srgb, var(--rev-accent, var(--fg)) 8%, transparent), transparent 72%);
+}
+/* Home: logo + menu are one tight column; stack is centered in the viewport */
+#wallpaper-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  width: min(720px, 92vw);
+  min-height: min(90vh, 900px);
+  justify-content: center;
+  pointer-events: none;
+}
+#wallpaper-stack #hero-wall,
+#wallpaper-stack #bootloader {
+  pointer-events: auto;
+}
+#hero-wall {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  width: 100%;
+  min-height: 0;
+}
+
+/* Retro 3D spin: two faces so text never reads mirrored when the back turns toward you */
+.title-3d-stage {
+  perspective: clamp(420px, 55vw, 960px);
+  perspective-origin: 50% 45%;
+  transform-style: preserve-3d;
+}
+.title-3d-spin {
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 28px color-mix(in srgb, var(--rev-accent, var(--fg)) 22%, transparent));
+  animation: title-retro-3d 16s linear infinite;
+  animation-delay: 3.5s;
+}
+@keyframes title-retro-3d {
+  from {
+    transform: rotateX(8deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(8deg) rotateY(360deg);
+  }
+}
+.title-3d-card {
+  position: relative;
+  display: inline-block;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  text-align: center;
+}
+.title-3d-face {
+  white-space: pre;
+  font-family: var(--rev-font-hero, "Consolas", "Courier New", monospace);
+  font-size: clamp(11px, 1.55vw, 22px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 18%, var(--fg));
+  margin: 0;
+  padding: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  font-variant-ligatures: none;
+  text-rendering: geometricPrecision;
+  text-shadow: var(--rev-title-glow, 0 0 10px rgba(57, 255, 20, 0.24));
+}
+.title-3d-face-front {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(0.5px);
+}
+.title-3d-face-back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 100%;
+  transform: rotateY(180deg) scaleX(-1) translateZ(-0.5px);
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .title-3d-spin {
+    animation: none;
+    filter: none;
+  }
+  #hero-wall .title-3d-spin {
+    filter: none;
+  }
+}
+
+/* ---- Menu panel: starts under title; can pin to corner ---- */
+#bootloader {
+  position: relative;
+  right: auto;
+  top: auto;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  z-index: 11;
+  align-self: center;
+  width: min(220px, 35vw);
+  max-width: 92vw;
+  max-height: min(52vh, 420px);
+  margin-top: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  transition:
+    box-shadow 0.38s cubic-bezier(0.22, 1, 0.32, 1),
+    opacity 0.28s ease,
+    max-height 0.38s cubic-bezier(0.22, 1, 0.32, 1),
+    width 0.38s cubic-bezier(0.22, 1, 0.32, 1),
+    min-width 0.38s cubic-bezier(0.22, 1, 0.32, 1);
+}
+#bootloader.boot-dock-flash {
+  animation: boot-dock-blink 0.38s ease;
+}
+@keyframes boot-dock-blink {
+  0% { filter: brightness(1.35); }
+  50% { filter: brightness(1); }
+  100% { filter: none; }
+}
+#bootloader-inner {
+  border: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 38%, var(--rule));
+  background: var(--rev-boot-glass, rgba(0, 0, 0, 0.72));
+  backdrop-filter: blur(14px) saturate(165%);
+  -webkit-backdrop-filter: blur(14px) saturate(165%);
+  padding: 0;
+  box-shadow: var(--rev-elev-shadow, 0 0 0 1px rgba(57, 255, 20, 0.08), 0 12px 40px rgba(0, 0, 0, 0.45));
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+}
+[data-theme="lite"] #bootloader-inner {
+  box-shadow: var(--rev-elev-shadow, 0 0 0 1px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.12));
+}
+.boot-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 9px;
+  border-bottom: 1px solid var(--rule);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+}
+.boot-chrome-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.boot-chrome:active {
+  cursor: grabbing;
+}
+.boot-chrome-title {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+  text-transform: uppercase;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+  white-space: nowrap;
+  font-family: var(--font-menu);
+}
+.boot-chrome-title.boot-title-typing {
+  opacity: 0.92;
+}
+.boot-chrome-title.boot-title-settle {
+  animation: boot-title-flicker 0.48s ease-out;
+}
+@keyframes boot-title-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+  12% {
+    opacity: 0.72;
+    filter: brightness(1.15);
+  }
+  28% {
+    opacity: 0.9;
+    filter: brightness(0.95);
+  }
+  44% {
+    opacity: 0.78;
+  }
+  62% {
+    opacity: 0.97;
+  }
+}
+.boot-min {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1;
+  width: 26px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.boot-min:hover {
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+}
+#bootloader-body {
+  padding: 9px 10px 11px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+#bootloader.minimized {
+  max-height: none !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: min(92vw, 100%);
+}
+#bootloader.minimized #bootloader-body {
+  display: none !important;
+}
+#bootloader.minimized #bootloader-inner {
+  max-height: none;
+}
+/* Minimized strip: compact width; title stays left-aligned so expand does not jump horizontally */
+#bootloader.bootloader-corner.minimized .boot-chrome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+#bootloader.bootloader-corner.minimized .boot-chrome-title {
+  flex: 1 1 auto;
+  margin: 0;
+  min-width: 0;
+  text-align: left;
+  white-space: nowrap;
+}
+#bootloader.bootloader-corner.minimized .boot-chrome-actions {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+/* Pinned to corner (minimized strip or full panel after restore) */
+#bootloader.bootloader-corner {
+  position: fixed !important;
+  align-self: auto !important;
+  right: var(--boot-min-right) !important;
+  left: auto !important;
+  top: var(--boot-min-top) !important;
+  bottom: auto !important;
+  transform: none !important;
+  z-index: 25 !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+#bootloader.bootloader-corner:not(.minimized) {
+  width: min(220px, 35vw);
+  max-width: 92vw;
+  max-height: min(52vh, 420px);
+}
+#bootloader-center {
+  display: none;
+}
+#bootloader.bootloader-corner #bootloader-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+#bootloader-menu {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+#bootloader-menu.boot-ready {
+  display: flex;
+}
+.boot-link {
+  display: grid;
+  grid-template-columns: 2.4em 1fr;
+  gap: 0.4em;
+  align-items: baseline;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 4px 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.boot-link .boot-link-label {
+  text-align: left;
+}
+.boot-link:hover,
+.boot-link:focus {
+  border-color: color-mix(in srgb, var(--rev-accent, var(--fg)) 45%, var(--rule));
+  background: color-mix(in srgb, var(--rev-accent, var(--fg)) 9%, transparent);
+  outline: none;
+}
+.boot-link small {
+  opacity: 0.65;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.boot-menu-sep {
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 20%, var(--fg));
+  opacity: 0.55;
+  margin: 10px 0 4px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 30%, var(--rule));
+  width: 100%;
+  flex-shrink: 0;
+}
+.boot-theme-btn.active {
+  border-color: color-mix(in srgb, var(--rev-accent, var(--fg)) 55%, var(--fg)) !important;
+  background: color-mix(in srgb, var(--rev-accent, var(--fg)) 12%, transparent) !important;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--rev-accent, var(--fg)) 18%, transparent);
+}
+.boot-link.boot-theme-btn {
+  display: block;
+  padding-left: 10px;
+}
+.boot-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 1em;
+  background: var(--fg);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: boot-blink 0.9s step-end infinite;
+}
+@keyframes boot-blink {
+  50% { opacity: 0; }
+}
+@media (max-width: 760px) {
+  :root {
+    --workspace-pad: 0.65rem;
+  }
+  #wallpaper-ui {
+    padding: 0.85rem var(--workspace-pad) 4.25rem;
+  }
+}
+
+/* Desktop workspace — draggable only inside brackets / #desktop */
+#desktop {
+  position: fixed;
+  top: var(--workspace-pad);
+  left: var(--workspace-pad);
+  right: var(--workspace-pad);
+  bottom: var(--workspace-pad);
+  width: auto;
+  height: auto;
+  /* visible: large window shadows + backdrop-filter must not be clipped here or a hard
+     “frame” tracks the drag bounds while moving. Windows stay inside via JS clamp. */
+  overflow: visible;
+  z-index: 5;
+  pointer-events: none;
+}
+/* Before desktopify() wraps panels into .app-window, keep raw sections off-screen */
+#desktop:not([data-desktopified="1"]) > section.panel {
+  display: none !important;
+}
+.app-window {
+  pointer-events: auto;
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  width: min(520px, 92vw);
+  max-height: min(82vh, 760px);
+  border: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 32%, var(--rule));
+  background: var(--rev-panel-glass, color-mix(in srgb, var(--bg) 88%, transparent));
+  backdrop-filter: blur(16px) saturate(155%);
+  -webkit-backdrop-filter: blur(16px) saturate(155%);
+  box-shadow: var(--rev-elev-shadow, 0 12px 40px rgba(0, 0, 0, 0.4));
+  transition:
+    box-shadow 0.22s cubic-bezier(0.22, 1, 0.32, 1),
+    filter 0.22s ease,
+    opacity 0.22s ease;
+}
+.app-window.is-open {
+  display: flex;
+  opacity: 1;
+}
+.app-window.focused {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--rev-accent, var(--fg)) 42%, transparent),
+    0 20px 56px rgba(0, 0, 0, 0.48),
+    0 0 72px color-mix(in srgb, var(--rev-accent, var(--fg)) 16%, transparent);
+}
+.app-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 28%, var(--rule));
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  background: var(--rev-chrome-glass, color-mix(in srgb, var(--bg2) 60%, transparent));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.app-chrome:active {
+  cursor: grabbing;
+}
+.app-title {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--fg);
+  text-transform: uppercase;
+  font-family: var(--font-ui);
+}
+.app-chrome-btns {
+  display: flex;
+  gap: 4px;
+}
+.app-min,
+.app-close {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1;
+  width: 26px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+.app-min:hover,
+.app-close:hover {
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+}
+.app-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 1.25rem 1.4rem 1.75rem;
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+.panel.window-panel {
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none;
+  flex-shrink: 0;
+  overflow: visible;
+  padding: 0 !important;
+  border: none !important;
+  position: relative;
+}
+.panel.window-panel .panel-num {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  margin-top: 1.5rem;
+  text-align: right;
+}
+
+.panel {
+  width: 100%;
+  min-height: 0;
+  overflow-y: visible;
+  padding: 3rem;
+  border-right: none;
+  position: relative;
+}
+
+#ascii-title.title-3d-card {
+  --title-scale: 1;
+  transform: scale(var(--title-scale));
+  isolation: isolate;
+  contain: none;
+  overflow: visible;
+}
+
+#ascii-title.title-3d-card::after {
+  content: attr(data-title);
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+  color: var(--fg);
+  opacity: 0;
+  pointer-events: none;
+  clip-path: inset(0 0 0 0);
+}
+
+#ascii-title.title-3d-card::before {
+  content: attr(data-title);
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+  color: var(--fg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hero wordmark: crisp grid + stacked white / accent neon (reference styling) */
+#ascii-title .title-3d-face {
+  letter-spacing: 0;
+  font-size: clamp(11px, 1.62vw, 23px);
+  line-height: 1;
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 34%, var(--fg));
+  text-shadow:
+    0 0 1px color-mix(in srgb, var(--fg) 85%, transparent),
+    0 0 10px color-mix(in srgb, var(--rev-accent, var(--fg)) 58%, transparent),
+    0 0 24px color-mix(in srgb, var(--rev-accent, var(--fg)) 42%, transparent),
+    0 0 46px color-mix(in srgb, var(--rev-accent, var(--fg)) 26%, transparent);
+}
+#hero-wall .title-3d-spin {
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.48))
+    drop-shadow(0 0 26px color-mix(in srgb, var(--rev-accent, var(--fg)) 46%, transparent))
+    drop-shadow(0 0 54px color-mix(in srgb, var(--rev-accent, var(--fg)) 24%, transparent));
+}
+
+#hero-name {
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 18%, var(--fg));
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+#hero-subascii {
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 25%, var(--fg));
+  white-space: pre;
+  font-size: clamp(4px, 0.45vw, 6px);
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  margin-top: 0.65rem;
+  margin-bottom: 0;
+  max-width: 100%;
+  overflow: visible;
+  --sub-y: 0px;
+  transform-origin: center top;
+  text-align: center;
+}
+#hero-strap {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: clamp(8px, 0.8vw, 11px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 24%, var(--txt));
+  margin: 0.9rem 1rem 0;
+  line-height: 1.5;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.95;
+}
+#wallpaper-ui #hero-wall {
+  animation: systemics-hero-surface 1s cubic-bezier(0.22, 1, 0.32, 1) 0.05s both;
+}
+@keyframes systemics-hero-surface {
+  from {
+    opacity: 0.88;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #wallpaper-ui #hero-wall {
+    animation: none;
+  }
+  .btn {
+    transition: none;
+  }
+  .btn:active {
+    transform: none;
+  }
+  .sys {
+    transition: none;
+  }
+  .app-window {
+    transition: none;
+  }
+}
+.btns { margin-top: 1.5rem; display: flex; gap: 12px; }
+.btn {
+  border: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 35%, var(--rule));
+  padding: 9px 18px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  font-family: var(--font-body);
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.32, 1);
+}
+.btn:hover {
+  background: color-mix(in srgb, var(--rev-accent, var(--fg)) 7%, transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--rev-accent, var(--fg)) 14%, transparent);
+}
+.btn:active {
+  transform: translateY(0.5px);
+}
+
+/* Settings panel */
+.settings-font-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.settings-font-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.settings-font-row label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.settings-font-row select {
+  font-family: var(--font-menu);
+  font-size: 11px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg2) 80%, transparent);
+  color: var(--txt);
+  max-width: 100%;
+}
+.settings-font-row input[type="text"] {
+  font-family: var(--font-menu);
+  font-size: 11px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg2) 80%, transparent);
+  color: var(--txt);
+  width: 100%;
+}
+.settings-font-row .settings-hint {
+  font-size: 9px;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+}
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+}
+.settings-preview {
+  margin-top: 1rem;
+  padding: 12px;
+  border: 1px dashed var(--rule);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.settings-preview .pv-body {
+  font-family: var(--font-body);
+  margin-top: 6px;
+}
+.settings-preview .pv-ui {
+  font-family: var(--font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.settings-preview .pv-menu {
+  font-family: var(--font-menu);
+  margin-top: 8px;
+  font-size: 10px;
+}
+
+.settings-subh {
+  font-family: var(--font-menu);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin: 1.1rem 0 0.45rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 20%, var(--rule));
+  width: 100%;
+  max-width: 64ch;
+}
+.settings-subh:first-of-type,
+#settings-appearance .settings-subh:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+.settings-lede {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--txt);
+  max-width: 64ch;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+.settings-theme-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 100%;
+  margin-bottom: 0.25rem;
+}
+.settings-theme-grid .boot-link.boot-theme-btn {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 9rem;
+  max-width: 100%;
+}
+.settings-backdrop-scroller {
+  max-height: 16rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid var(--rule);
+  padding: 3px 2px 4px 0;
+  background: color-mix(in srgb, var(--bg2) 85%, transparent);
+  margin-bottom: 0.25rem;
+  max-width: 64ch;
+}
+.settings-backdrop-scroller .boot-link.boot-backdrop-btn {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+.settings-color-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+  max-width: 64ch;
+  margin: 0.4rem 0 0.25rem;
+}
+@media (max-width: 600px) {
+  .settings-color-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.settings-color-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.settings-color-row label {
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg);
+  opacity: 0.9;
+}
+.settings-color-row input[type="color"] {
+  width: 100%;
+  height: 2rem;
+  border: 1px solid var(--rule);
+  background: var(--bg2);
+  padding: 0;
+  cursor: pointer;
+}
+.settings-color-row input[type="text"] {
+  font-family: var(--font-menu);
+  font-size: 11px;
+  padding: 6px 8px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg2) 80%, transparent);
+  color: var(--txt);
+  width: 100%;
+  box-sizing: border-box;
+}
+.settings-hint--rule {
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: var(--txt);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+#settings-appearance {
+  max-width: 100%;
+  margin: 0.5rem 0 1.25rem;
+}
+#settings-appearance p.settings-lede {
+  margin-top: 0.15rem;
+}
+
+h2 { color: var(--fg); font-size: 1rem; margin-bottom: 1.2rem; font-weight: 500; letter-spacing: 0.06em; }
+section.panel > h2 {
+  max-width: 64ch;
+}
+p, li, .tag, .sys-id, .panel-num, .caption, blockquote { color: var(--txt); }
+section.panel > p {
+  line-height: 1.7;
+  max-width: 64ch;
+}
+p.systemics-lede {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+  color: var(--txt);
+  max-width: 64ch;
+  margin-bottom: 1.1rem;
+  border-left: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 40%, var(--rule));
+  padding: 0.2rem 0 0.2rem 12px;
+  opacity: 0.96;
+}
+p.contact-foot {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  line-height: 1.8;
+  margin-top: 1.25rem;
+  max-width: 52ch;
+}
+span.systemics-mark {
+  display: inline-block;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin-bottom: 0.35rem;
+}
+.app-window {
+  transition: box-shadow 0.45s cubic-bezier(0.22, 1, 0.32, 1);
+}
+.panel-num {
+  position: absolute;
+  right: max(2rem, var(--frame-bracket-inner-gap));
+  bottom: max(1.5rem, var(--frame-bracket-inner-gap));
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.sys {
+  border: 1px solid var(--rule);
+  padding: 1rem;
+  margin-bottom: 0.65rem;
+  max-width: 64ch;
+  box-sizing: border-box;
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.32, 1);
+}
+.sys:hover {
+  border-color: color-mix(in srgb, var(--rev-accent, var(--fg)) 50%, var(--rule));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rev-accent, var(--fg)) 10%, transparent),
+    0 10px 32px rgba(0, 0, 0, 0.2);
+}
+.sys-id { font-size: 9px; letter-spacing: 0.12em; color: var(--fg); margin-bottom: 4px; }
+.sys-name { font-size: 16px; color: var(--fg); margin-bottom: 6px; }
+.tag { font-size: 10px; color: var(--fg); margin-top: 6px; }
+
+/* Canon fields — aligned to 64ch narrative measure (CEREBRUM v2) */
+.canon-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 64ch;
+  margin: 1rem 0 1.2rem;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg2) 45%, transparent);
+  font-family: var(--font-menu);
+  line-height: 1.5;
+}
+.csg-cell {
+  padding: 0.7rem 0.85rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  min-width: 0;
+}
+.csg-cell:nth-child(2n) {
+  border-right: none;
+}
+.csg-cell:nth-child(n + 3) {
+  border-bottom: none;
+}
+.csg-sym {
+  color: var(--fg);
+  font-size: 10px;
+  margin-bottom: 0.28rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.csg-d {
+  color: var(--txt);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+  opacity: 0.94;
+}
+@media (max-width: 600px) {
+  .canon-signal-grid {
+    grid-template-columns: 1fr;
+  }
+  .csg-cell {
+    border-right: none !important;
+  }
+  .csg-cell:not(:last-child) {
+    border-bottom: 1px solid var(--rule) !important;
+  }
+}
+.ecosystem-rail {
+  max-width: 64ch;
+  margin: 0 0 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 18%, var(--rule));
+  background: color-mix(in srgb, var(--bg2) 50%, transparent);
+}
+.er-h {
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg);
+  border-bottom: 1px solid var(--rule);
+}
+.er-line {
+  display: grid;
+  grid-template-columns: 6.25rem minmax(0, 1fr);
+  gap: 0.4rem 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--rule) 75%, transparent);
+  align-items: baseline;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.035em;
+}
+.er-line:first-of-type {
+  border-top: none;
+}
+.er-k {
+  font-family: var(--font-menu);
+  color: var(--fg);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.er-d {
+  color: var(--txt);
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .er-line {
+    grid-template-columns: 1fr;
+  }
+}
+.canon-trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  max-width: 64ch;
+  margin: 0.75rem 0 1rem;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  line-height: 1.45;
+}
+.canon-trio .ct {
+  border: 1px solid var(--rule);
+  padding: 0.55rem 0.6rem;
+  background: color-mix(in srgb, var(--bg2) 40%, transparent);
+}
+.canon-trio .ct b {
+  display: block;
+  color: var(--fg);
+  font-size: 10px;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.08em;
+}
+@media (max-width: 700px) {
+  .canon-trio {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* —— Function diagrams (inline SVG, theme via currentColor on wrapper) */
+.viz-twin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  max-width: 64ch;
+  margin: 0.9rem 0 1.15rem;
+}
+@media (max-width: 900px) {
+  .viz-twin {
+    grid-template-columns: 1fr;
+  }
+}
+.viz-block {
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg2) 55%, transparent);
+  padding: 0.5rem 0.45rem 0.45rem;
+  box-sizing: border-box;
+  color: var(--fg);
+}
+.viz-block-h {
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin-bottom: 0.4rem;
+  padding: 0 0.2rem;
+}
+.viz-block svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  vertical-align: top;
+}
+.viz-block .viz-cap {
+  font-size: 8px;
+  font-family: var(--font-menu);
+  letter-spacing: 0.05em;
+  color: var(--txt);
+  opacity: 0.86;
+  margin-top: 0.35rem;
+  line-height: 1.4;
+  padding: 0 0.2rem;
+}
+.viz-ribbon {
+  max-width: 64ch;
+  margin: 0.25rem 0 1rem;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg2) 45%, transparent);
+  padding: 0.5rem 0.55rem 0.45rem;
+  color: var(--fg);
+  box-sizing: border-box;
+}
+.viz-ribbon-h {
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin-bottom: 0.35rem;
+}
+.csg-viz {
+  margin: 0.1rem 0 0.4rem;
+  height: 30px;
+  color: var(--fg);
+  opacity: 0.9;
+}
+.csg-viz svg {
+  width: 100%;
+  height: 30px;
+  display: block;
+}
+.viz-panel-flow {
+  max-width: 64ch;
+  margin: 0.65rem 0 1rem;
+  border: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 20%, var(--rule));
+  padding: 0.5rem 0.45rem 0.4rem;
+  background: color-mix(in srgb, var(--bg2) 40%, transparent);
+  color: var(--fg);
+  box-sizing: border-box;
+}
+.viz-panel-flow .vph {
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 0.35rem 0.2rem;
+  color: var(--fg);
+  opacity: 0.9;
+}
+@keyframes viz-scan {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+.viz-anim .viz-scan-line {
+  animation: viz-scan 2.4s ease-in-out infinite;
+}
+.viz-panel-flow .viz-cap {
+  font-size: 8px;
+  font-family: var(--font-menu);
+  letter-spacing: 0.05em;
+  color: var(--txt);
+  opacity: 0.86;
+  line-height: 1.4;
+  margin: 0.2rem 0.2rem 0 0.2rem;
+  max-width: 60ch;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border: 1px solid var(--rule);
+  margin-top: 1rem;
+  max-width: 64ch;
+}
+.stat { padding: 1.1rem; border-right: 1px solid var(--rule); text-align: center; }
+.stat:last-child { border-right: none; }
+.n { font-size: 28px; color: var(--fg); display: block; }
+.l { font-size: 10px; }
+
+blockquote { border: 1px solid var(--rule); padding: 1rem; margin-top: 1rem; line-height: 1.8; }
+
+#ascii-menu {
+  position: fixed;
+  display: none;
+  min-width: 220px;
+  padding: 6px;
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  z-index: 100;
+}
+#ascii-menu button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  padding: 8px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-family: var(--font-menu);
+}
+#ascii-menu button:hover, #ascii-menu button.active { border-color: var(--rule); }
+
+@media (max-width: 760px) {
+  .app-window {
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: auto;
+    top: 0 !important;
+    max-height: 100% !important;
+    height: 100% !important;
+    border-left: none;
+    border-right: none;
+  }
+  .app-window.is-open:not(.maximized) {
+    /* single-app feel on small screens */
+  }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   OS LAYER · taskbar, statusbar, scanlines, lede, cards
+   ============================================================ */
+
+p.lede {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  opacity: 0.9;
+  margin-bottom: 1rem;
+  border-left: 1px solid var(--rule);
+  padding-left: 10px;
+  max-width: 64ch;
+  line-height: 1.65;
+}
+
+.os-card {
+  border: 1px solid var(--rule);
+  padding: 14px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.os-card-label {
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  color: var(--fg);
+  opacity: 0.75;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.os-card-foot {
+  margin-top: 8px;
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+.read-first-block {
+  margin-bottom: 1rem;
+  max-width: 64ch;
+  box-sizing: border-box;
+}
+.read-first-block .read-first-note {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+  color: var(--txt);
+  opacity: 0.88;
+  margin-bottom: 0.65rem;
+  max-width: 64ch;
+}
+.read-first-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  line-height: 1.45;
+}
+.read-first-list li a {
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 32%, var(--rule));
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.read-first-list li a:hover {
+  color: var(--txt);
+  border-bottom-color: color-mix(in srgb, var(--rev-accent, var(--fg)) 55%, var(--fg));
+}
+.read-first-list li .doc-tag {
+  display: block;
+  font-size: 9px;
+  font-family: var(--font-menu);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg);
+  opacity: 0.5;
+  margin-top: 2px;
+}
+.os-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.os-grid-2 { grid-template-columns: 1fr 1fr; }
+.os-grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 560px) {
+  .os-grid-2, .os-grid-3 { grid-template-columns: 1fr; }
+}
+.os-list {
+  list-style: none;
+  font-family: var(--font-menu);
+  font-size: 10px;
+  line-height: 1.7;
+}
+.os-list li {
+  display: grid;
+  grid-template-columns: 2.5em 1fr auto;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.os-list li:last-child { border-bottom: none; }
+.os-list .k { opacity: 0.6; }
+.os-list .v { color: var(--fg); text-align: right; }
+.os-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-menu);
+  font-size: 9px;
+}
+.os-bar {
+  display: grid;
+  grid-template-columns: 7em 1fr 3em;
+  gap: 8px;
+  align-items: center;
+}
+.os-bar .os-bar-track {
+  height: 6px;
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  border: 1px solid var(--rule);
+  position: relative;
+}
+.os-bar .os-bar-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--fg);
+  opacity: 0.75;
+  transition: width 0.6s ease;
+}
+.os-bar .os-bar-val { text-align: right; opacity: 0.8; }
+.os-pre {
+  font-family: var(--font-menu);
+  font-size: 10px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--fg);
+  opacity: 0.9;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.os-stat {
+  border: 1px solid var(--rule);
+  padding: 14px;
+  text-align: center;
+}
+.os-stat .n { font-size: 22px; color: var(--fg); display: block; font-family: var(--font-menu); }
+.os-stat .l { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; }
+
+/* SOLARUM viewport */
+.os-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10;
+  border: 1px solid var(--rule);
+  background:
+    radial-gradient(ellipse at center, color-mix(in srgb, var(--fg) 8%, transparent) 0%, transparent 70%),
+    var(--bg2);
+  overflow: hidden;
+  cursor: grab;
+}
+.os-viewport:active { cursor: grabbing; }
+.os-viewport canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.os-viewport-hud {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--fg);
+  opacity: 0.75;
+  pointer-events: none;
+  text-shadow: 0 0 4px var(--bg2);
+}
+
+/* CEREBRUM stack */
+.cerebrum-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-menu);
+  font-size: 9px;
+}
+.ce-layer {
+  display: grid;
+  grid-template-columns: 2.2em 8em 1fr 3.2em;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  transition: background 0.3s, border-color 0.3s;
+}
+.ce-layer.active {
+  border-color: var(--rule);
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+}
+.ce-layer .ce-idx { opacity: 0.55; }
+.ce-layer .ce-name { color: var(--fg); }
+.ce-layer .ce-track {
+  height: 4px;
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  position: relative;
+  border: 1px solid var(--rule);
+}
+.ce-layer .ce-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--fg); opacity: 0.7;
+  transition: width 0.5s ease;
+}
+.ce-layer .ce-val { text-align: right; opacity: 0.85; }
+
+.cerebrum-gap { font-family: var(--font-menu); font-size: 10px; }
+.gap-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--rule); }
+.gap-row.gap-delta .gap-v { color: var(--fg); }
+.gap-bar {
+  margin-top: 10px;
+  height: 14px;
+  position: relative;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  overflow: hidden;
+}
+.gap-bar .gap-bar-truth {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--fg); opacity: 0.35;
+  transition: width 0.5s ease;
+}
+.gap-bar .gap-bar-assert {
+  position: absolute; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--fg);
+  box-shadow: 0 0 6px var(--fg);
+  transition: left 0.5s ease;
+}
+
+/* mAI chat */
+.mai-persona-row { display: flex; justify-content: space-between; align-items: center; }
+.mai-persona-tabs { display: flex; gap: 4px; }
+.mai-ptab {
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+.mai-ptab.active { background: color-mix(in srgb, var(--fg) 12%, transparent); }
+.mai-chat {
+  min-height: 160px;
+  max-height: 260px;
+  overflow-y: auto;
+  font-family: var(--font-menu);
+  font-size: 10px;
+  line-height: 1.55;
+  padding: 10px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  margin-bottom: 10px;
+}
+.mai-msg { margin-bottom: 8px; }
+.mai-msg .mai-who {
+  font-size: 8px; letter-spacing: 0.2em; opacity: 0.7;
+  color: var(--fg); margin-right: 8px; text-transform: uppercase;
+}
+.mai-msg.user .mai-who { opacity: 0.55; }
+.mai-msg .mai-text { color: var(--txt); white-space: pre-wrap; }
+.mai-msg.user .mai-text { opacity: 0.85; }
+.mai-msg.sys .mai-text { opacity: 0.6; font-style: italic; }
+.mai-input, .xs-input, .lab-input {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.mai-prompt { font-family: var(--font-menu); color: var(--fg); font-size: 11px; }
+#mai-in, #xs-in, #lab-in {
+  font-family: var(--font-menu);
+  font-size: 10px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  border: 1px solid var(--rule);
+  color: var(--txt);
+  width: 100%;
+  outline: none;
+}
+#mai-in:focus, #xs-in:focus, #lab-in:focus { border-color: var(--fg); }
+.mai-meta {
+  margin-top: 8px;
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  opacity: 0.6;
+}
+
+/* XSCRIPT */
+.xs-tokens { display: flex; flex-wrap: wrap; gap: 4px; font-family: var(--font-menu); font-size: 9px; }
+.xs-token {
+  padding: 3px 7px;
+  border: 1px solid var(--rule);
+  color: var(--fg);
+  position: relative;
+}
+.xs-token .xs-role {
+  position: absolute;
+  top: -7px;
+  left: 4px;
+  font-size: 6px;
+  letter-spacing: 0.2em;
+  background: var(--bg);
+  padding: 0 3px;
+  opacity: 0.75;
+}
+.xs-graph {
+  min-height: 120px;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  line-height: 1.6;
+  white-space: pre;
+  color: var(--fg);
+  opacity: 0.9;
+  overflow-x: auto;
+}
+
+/* NEXUS canvas */
+.nx-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/1;
+  border: 1px solid var(--rule);
+  background: var(--bg2);
+  overflow: hidden;
+}
+.nx-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.nx-legend {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  opacity: 0.75;
+  color: var(--fg);
+}
+.nx-legend i.dot {
+  display: inline-block; width: 6px; height: 6px; margin-right: 5px;
+  vertical-align: middle;
+}
+.nx-legend i.dot-self { background: var(--fg); }
+.nx-legend i.dot-peer { background: var(--fg); opacity: 0.5; border: 1px solid var(--fg); background-clip: border-box; }
+.nx-legend i.dot-concept { border: 1px solid var(--fg); background: transparent; }
+.nx-edges {
+  font-family: var(--font-menu);
+  font-size: 9px;
+  line-height: 1.7;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 14px;
+}
+.nx-edges .nx-edge {
+  display: flex; justify-content: space-between; gap: 8px;
+  border-bottom: 1px dashed var(--rule);
+  padding: 2px 0;
+}
+.nx-edges .nx-edge .v { opacity: 0.75; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { .nx-edges { grid-template-columns: 1fr; } }
+
+/* SENSEWARE */
+.sw-pad {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/7;
+  border: 1px solid var(--rule);
+  background: var(--bg2);
+  overflow: hidden;
+  cursor: crosshair;
+}
+.sw-pad canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sw-pad-hint {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-menu);
+  font-size: 10px; letter-spacing: 0.3em;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* LAB */
+.lab-console {
+  font-family: var(--font-menu);
+  font-size: 10px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+.lab-help {
+  margin-top: 6px;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  opacity: 0.6;
+  letter-spacing: 0.08em;
+}
+.lab-help code {
+  color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  padding: 1px 5px;
+  border: 1px solid var(--rule);
+}
+
+/* ============================================================
+   TASKBAR · bottom dock of open apps
+   ============================================================ */
+#taskbar {
+  position: fixed;
+  left: var(--frame-bracket-text-gap);
+  right: var(--frame-bracket-text-gap);
+  bottom: calc(var(--workspace-pad) + 14px);
+  z-index: 9;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+#taskbar-inner {
+  display: flex;
+  gap: 2px;
+  pointer-events: auto;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 3px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+#taskbar-inner:empty { display: none; }
+.tb-item {
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tb-item:hover { border-color: var(--rule); }
+.tb-item.focused {
+  border-color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+}
+.tb-item::before {
+  content: "■";
+  margin-right: 6px;
+  opacity: 0.55;
+  font-size: 8px;
+}
+.tb-item.focused::before { opacity: 1; }
+
+/* ============================================================
+   STATUSBAR (top-right) · clock + process ticker
+   ============================================================ */
+#statusbar {
+  position: fixed;
+  top: var(--frame-bracket-text-gap);
+  right: var(--frame-bracket-text-gap);
+  z-index: 20;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  font-family: var(--font-menu);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--rev-accent, var(--fg)) 22%, var(--fg));
+  pointer-events: none;
+}
+#statusbar .sb-seg {
+  border-left: 1px solid color-mix(in srgb, var(--rev-accent, var(--fg)) 35%, var(--rule));
+  padding-left: 14px;
+}
+#statusbar .sb-seg:first-child { border-left: none; padding-left: 0; }
+#statusbar .sb-proc { opacity: 0.65; min-width: 14em; text-align: right; }
+#statusbar .sb-led {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--fg);
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: sb-pulse 1.8s ease-in-out infinite;
+}
+@keyframes sb-pulse { 50% { opacity: 0.35; } }
+
+/* ============================================================
+   WINDOW chrome extras · maximize button + tiling classes
+   ============================================================ */
+.app-max {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1;
+  width: 26px; height: 22px; padding: 0;
+  border: 1px solid var(--rule);
+  background: transparent; color: var(--fg);
+  cursor: pointer;
+}
+.app-max:hover { background: color-mix(in srgb, var(--fg) 10%, transparent); }
+
+.app-window.tile-max {
+  left: var(--app-edge-inset) !important;
+  top: var(--app-edge-inset) !important;
+  width: calc(100% - var(--app-edge-inset) * 2) !important;
+  height: calc(100% - var(--app-edge-inset) * 2 - 46px) !important;
+  max-height: none !important;
+}
+.app-window.tile-left {
+  left: var(--app-edge-inset) !important;
+  top: var(--app-edge-inset) !important;
+  width: calc(50% - var(--app-edge-inset) * 1.5) !important;
+  height: calc(100% - var(--app-edge-inset) * 2 - 46px) !important;
+  max-height: none !important;
+}
+.app-window.tile-right {
+  left: calc(50% + var(--app-edge-inset) * 0.5) !important;
+  top: var(--app-edge-inset) !important;
+  width: calc(50% - var(--app-edge-inset) * 1.5) !important;
+  height: calc(100% - var(--app-edge-inset) * 2 - 46px) !important;
+  max-height: none !important;
+}
+
+/* shortcut hint + command palette */
+#kbd-hint {
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: 6px;
+  z-index: 8;
+  font-family: var(--font-menu);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  opacity: 0.45;
+  color: var(--fg);
+  pointer-events: none;
+  white-space: nowrap;
+}
+@media (max-width: 760px) { #kbd-hint { display: none; } }
+</style>
+<style id="reverie-lead-chrome">#statusbar,#kbd-hint{display:none!important;}#workspace-frame{isolation:auto;}#workspace-frame .corner{background:transparent!important;box-shadow:none!important;filter:none!important;mix-blend-mode:normal!important;border-color:color-mix(in srgb,var(--fg) 50%, var(--bg))!important;outline:none!important}#desktop .app-window{box-sizing:border-box;position:absolute;flex-direction:column;width:min(92vw,36rem);min-width:0;max-width:100%;min-height:0;height:auto;max-height:min(90vh,900px);overflow:hidden}#desktop .app-body{flex:1;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}#desktop .app-body .window-panel{max-width:100%!important;width:100%!important;box-sizing:border-box;min-width:0}#desktop .app-body p.lede,#desktop .app-body .panel>p,#desktop .app-body p.systemics-lede{max-width:min(72ch,100%)!important;box-sizing:border-box}#desktop .app-body h2{max-width:100%;word-wrap:break-word;overflow-wrap:break-word}#desktop .app-body .arch-flowchart,#reverie-arch-flow{max-width:100%!important}#desktop .app-resize-s{position:absolute;left:6px;right:12px;bottom:0;height:5px;cursor:ns-resize;z-index:8;touch-action:none}#desktop .app-resize-e{position:absolute;top:34px;right:0;bottom:12px;width:5px;cursor:ew-resize;z-index:8;touch-action:none}#desktop .app-resize-se{position:absolute;right:0;bottom:0;width:12px;height:12px;cursor:se-resize;z-index:9;touch-action:none;opacity:0.85}@media (max-width:760px){#desktop .app-resize-e,#desktop .app-resize-s,#desktop .app-resize-se{pointer-events:none;opacity:0}}</style>
+<style id="reverie-embed-ux">
+
+/* lead-chrome sets overflow:hidden on .app-window — clips box-shadow and triggers backdrop-filter edge halos that track the window while dragging. */
+#desktop .app-window {
+  overflow: visible;
+}
+/* Chromium: moving a backdrop-filter layer leaves a smeared “glow” at the old bounds; disable until mouseup. */
+#desktop .app-window.app-window-dragging,
+#desktop .app-window.app-window-dragging .app-chrome {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#desktop .app-body .rev-embed {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  background: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+#desktop .app-body .rev-embed iframe,
+#desktop .app-body .rev-embed .rev-site-iframe,
+#desktop .app-body .window-panel > iframe[title] {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  display: block;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 160px;
+  background: #fff;
+}
+/*
+ * Brackets: a full-bleed #workspace-frame box stacks over the SOLARUM iframe and
+ * often composites as solid black behind the L-strokes. display:contents removes
+ * that wrapper from the box tree so only the four .corner spans paint (fixed, z 3).
+ * Bounds for JS still match #desktop (same insets) — see getWorkspaceFrameRect().
+ */
+#workspace-frame {
+  display: contents !important;
+  pointer-events: none;
+}
+#workspace-frame .corner {
+  position: fixed !important;
+  /* Above wallpaper (4) + desktop (5) so L-strokes aren’t blended through layers that composite black over the iframe. */
+  z-index: 25;
+  pointer-events: none;
+}
+#workspace-frame .corner.tl {
+  top: var(--workspace-pad) !important;
+  left: var(--workspace-pad) !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+#workspace-frame .corner.tr {
+  top: var(--workspace-pad) !important;
+  right: var(--workspace-pad) !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+#workspace-frame .corner.bl {
+  bottom: var(--workspace-pad) !important;
+  left: var(--workspace-pad) !important;
+  top: auto !important;
+  right: auto !important;
+}
+#workspace-frame .corner.br {
+  bottom: var(--workspace-pad) !important;
+  right: var(--workspace-pad) !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+#desktop .app-window.tile-max .app-body p.lede,
+#desktop .app-window.tile-max .app-body .window-panel p,
+#desktop .app-window.tile-max .app-body h2,
+#desktop .app-window.tile-max .app-body p {
+  max-width: 100% !important;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+#desktop .app-window.tile-max .app-body [style*="max-width"] { max-width: 100% !important; }
+#desktop .app-window.tile-max .app-body .window-panel > div { max-width: 100% !important; width: 100% !important; box-sizing: border-box; }
+/* Lattice build: light hero title + darker window chrome (noir + Neural Lattice static) */
+html[data-reverie-lattice="1"] #workspace-frame .corner {
+  border-color: #ffffff !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.38)) !important;
+}
+html[data-reverie-lattice="1"] #ascii-title,
+html[data-reverie-lattice="1"] #ascii-title .title-3d-face {
+  color: #f0f0f0 !important;
+  text-shadow: 0 0 24px color-mix(in srgb, #ffffff 8%, transparent) !important;
+}
+html[data-reverie-lattice="1"] #desktop .app-window {
+  background: color-mix(in srgb, #050505 96%, #121212) !important;
+  border-color: color-mix(in srgb, #ffffff 20%, #1c1c1c) !important;
+}
+html[data-reverie-lattice="1"] #desktop .app-chrome {
+  background: color-mix(in srgb, #0a0a0a 92%, #151515) !important;
+  border-bottom-color: color-mix(in srgb, #ffffff 12%, #111) !important;
+}
+/* Test-site layout: larger About copy; full-height doc + lab iframes */
+html[data-reverie-lattice="1"] .panel[data-app="about"] .lattice-about-lede {
+  font-size: 1.08rem !important;
+  line-height: 1.5 !important;
+}
+html[data-reverie-lattice="1"] .panel[data-app="about"] .lattice-about-body {
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+}
+html[data-reverie-lattice="1"] .panel[data-app="about"] .lattice-founder-tag {
+  font-size: 11px !important;
+}
+html[data-reverie-lattice="1"] [data-embed-fill="1"].window-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+html[data-reverie-lattice="1"] .app-body:has([data-embed-fill="1"]),
+html[data-reverie-lattice="1"] #desktop .app-body.lattice-embed-fill-host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+html[data-reverie-lattice="1"] [data-embed-fill="1"] .rev-embed--fill {
+  flex: 1 1 auto;
+  min-height: min(68vh, 820px);
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a !important;
+  border: 1px solid color-mix(in srgb, #ffffff 15%, #1a1a1a);
+}
+html[data-reverie-lattice="1"] [data-embed-fill="1"] .rev-embed--fill iframe {
+  min-height: min(64vh, 780px) !important;
+  height: 100% !important;
+  flex: 1 1 auto;
+  background: #0a0a0a !important;
+}
+</style>
+</head>
+<body>
+<div id="ascii-wall"></div>
+<iframe id="reverie-solarum-bg" title="SOLARUM ambient wallpaper" src="solarum-wallpapers/wallpapers.html?embed=1&amp;revIdx=1" loading="eager"></iframe>
+<script>
+/* Capture reverie-solarum-ready before late scripts run (cached iframe can beat parser). */
+(function () {
+  var frame = document.getElementById("reverie-solarum-bg");
+  if (!frame) return;
+  try {
+    var bd = document.documentElement.getAttribute("data-backdrop") || "";
+    try {
+      var lsBd = localStorage.getItem("reverie_data_backdrop");
+      if (lsBd && (/^amb-\d+$/.test(lsBd) || /^ambs-\d+$/.test(lsBd))) bd = lsBd;
+    } catch (eLs) {}
+    if (/^amb-\d+$/.test(bd) || /^ambs-\d+$/.test(bd)) {
+      frame.classList.add("is-on");
+      if (/^ambs-\d+$/.test(bd)) frame.classList.add("is-static");
+    }
+  } catch (e0) {}
+  window.__reverieSolarumReadyBuf = window.__reverieSolarumReadyBuf || [];
+  window.addEventListener(
+    "message",
+    function (e) {
+      try {
+        var d = e.data;
+        if (!d || d.type !== "reverie-solarum-ready") return;
+        if (typeof window.__reverieSolarumConsumeReady === "function") {
+          window.__reverieSolarumConsumeReady(e);
+        } else {
+          window.__reverieSolarumReadyBuf.push(e);
+        }
+      } catch (x) {}
+    },
+    false
+  );
+})();
+</script>
+
+<div id="statusbar" aria-hidden="true">
+  <span class="sb-seg" id="sb-uptime">UP 00:00:00</span>
+  <span class="sb-seg" id="sb-proc"><span class="sb-led"></span><span class="sb-proc-txt">idle</span></span>
+  <span class="sb-seg" id="sb-clock">--:--:--</span>
+</div>
+
+<div id="kbd-hint">Keyboard tour: ⌘1–4 jump windows · ⌘K palette · ⌘↑ maximize · ⌘← / ⌘→ tile · ⌘0 clear</div>
+
+<div id="workspace-frame" aria-hidden="true">
+  <span class="corner tl"></span>
+  <span class="corner tr"></span>
+  <span class="corner bl"></span>
+  <span class="corner br"></span>
+</div>
+
+<div id="wallpaper-ui">
+  <div id="wallpaper-stack">
+    <div id="hero-wall">
+      <div class="title-3d-stage">
+        <div class="title-3d-spin">
+          <div id="ascii-title" class="title-3d-card">
+            <div class="title-3d-face title-3d-face-front">┏━┓┏━╸╻ ╻┏━╸┏━┓╻┏━╸
+┣┳┛┣╸ ┃┏┛┣╸ ┣┳┛┃┣╸ 
+╹┗╸┗━╸┗┛ ┗━╸╹┗╸╹┗━╸</div>
+            <div class="title-3d-face title-3d-face-back" aria-hidden="true">┏━┓┏━╸╻ ╻┏━╸┏━┓╻┏━╸
+┣┳┛┣╸ ┃┏┛┣╸ ┣┳┛┃┣╸ 
+╹┗╸┗━╸┗┛ ┗━╸╹┗╸╹┗━╸</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside id="bootloader" aria-label="Menu navigation">
+      <div id="bootloader-inner">
+        <div id="bootloader-chrome" class="boot-chrome">
+          <span class="boot-chrome-title" id="bootloader-title-text">REVERIE · menu</span>
+          <div class="boot-chrome-actions">
+            <button type="button" id="bootloader-center" class="boot-min boot-center" title="Return under title">⌂</button>
+            <button type="button" id="bootloader-minimize" class="boot-min" title="Minimize">−</button>
+          </div>
+        </div>
+        <div id="bootloader-body" class="boot-body">
+          <nav id="bootloader-menu" class="boot-menu" aria-label="Site sections"></nav>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="ascii-menu" aria-hidden="true"></div>
+
+<div id="taskbar" aria-label="Open apps"><div id="taskbar-inner"></div></div>
+
+<div id="desktop">
+
+    <section class="panel" data-app="about">
+      <h2>// about Reverie</h2>
+      <p class="lede lattice-about-lede" style="max-width:min(66ch,100%)"><strong>REVERIE SYSTEMATICS [est. 2026]</strong> was founded on the principle of transparency within the techsphere. Reverie’s current line is <strong>CEREBRUM:NERVE</strong> — the trust layer and the external evaluation engine (Φe, CG, CI, ESR) specified under <code>REVERIE/02-CEREBRUM</code>.</p>
+      <p class="lattice-founder-tag" style="letter-spacing:0.12em;opacity:0.78;margin:1rem 0 0.4rem;font-family:var(--font-menu)">:: founders.note ::</p>
+      <div class="lattice-about-body" style="max-width:min(64ch,100%);line-height:1.62;opacity:0.94">
+        <p style="margin:0 0 0.7rem">While most companies are built upon profit-via-data-driven architecture, Reverie’s staying practices echo the grounding of its Digicratic Oath and thus aim to be a tech company whose central <em>Telos</em>, or primary directional goal, is to help human beings through the construction of more trustworthy tech.</p>
+        <p style="margin:0 0 0.7rem">Tech skepticism stems from one thing which compounds into many others: the promise of lost futures. Reverie’s philosophy reflects that of both the early and modern tech eras, abandoning centralized practices in order to more effectively design honest systems, while exploring the potential of systems and ideas forgotten due to the prolific, rigid, nature of today’s tech landscape.</p>
+        <p style="margin:0 0 0.7rem">The term “epistemic fidelity” sits at the core of Reverie’s architecture as its grounding principle. Writers of both theorhetical fiction and non-fiction explore the topic of sentience in AI futures offering both novel ideas and guidance. Reverie uses such philosophical, cultural, and scientific guidance to its advantage as structural blueprints about what <em>not</em> to build. While many fear the Torment Nexus’s invention, Reverie exists to ensure its prevention.</p>
+        <p style="margin:0 0 0.7rem">These are not just the usual big tech promises. Such promises led to Reverie’s inception and thus drive its determination to do what other companies have not done: build technology that actually helps humans because it is the right thing to do. This may be bold to say, but Reverie is the result of nearly two decades of watching the potential of tech become lost within its own constraints. This company’s prime directive is not to conquer or be the first at anything on purpose, or to use human beings to advance some goal usually rooted in science fiction.</p>
+        <p style="margin:0 0 0.7rem">Reverie aims to harmonize the scattered tech landscape in order to inspire a novel interest in humanity’s potential with machines, creating new types of intelligence networks, digital social platforms, and operating systems.</p>
+        <p style="margin:0">If you would like to contact Reverie about anything that comes to mind, please email <a href="mailto:reveriesystematics@proton.me" style="color:var(--fg)">reveriesystematics@proton.me</a>.</p>
+      </div>
+      <p class="lattice-about-btns" style="margin-top:0.5rem"><a class="btn" href="#" onclick="goToPanel(2);return false;" style="display:inline-block;margin-top:0.3rem">Systems</a> <a class="btn" href="#" onclick="goToPanel(3);return false;" style="display:inline-block;margin-top:0.3rem">Documentation</a> <a class="btn" href="#" onclick="if(typeof openNerveLabMaximized==='function')openNerveLabMaximized();return false;" style="display:inline-block;margin-top:0.3rem">CEREBRUM:NERVE Lab</a></p>
+      <div class="panel-num">01 / 04 — about</div>
+    </section>
+
+    <section class="panel" data-app="systems" id="panel-systems">
+      <h2>// systems</h2>
+      <p class="lede" style="max-width:min(64ch,100%)">This test build focuses on <strong>Cerebrum:NERVE</strong> only — the policy shell that governs what may be shown, and the out-of-model <code>POST /evaluate</code> path that measures Φe, CG, CI, and ESR without model weights. Nothing on this page pretends to be an in-transformer or full product map.</p>
+      <p style="max-width:min(64ch,100%);font-size:12px;opacity:0.9;line-height:1.58"><strong>Cerebrum</strong> = trust, qualification, and gates. <strong>NERVE</strong> = external measurement. Together they are the public line of work shipped under <em>Cerebrum:NERVE</em> for 2026.</p>
+      <div class="btns" style="margin-top:0.9rem;flex-wrap:wrap;gap:0.4rem 0.5rem;display:flex;align-items:center">
+        <a class="btn" href="#" onclick="goToPanel(1);return false;">◀ About</a>
+        <a class="btn" href="#" onclick="goToPanel(3);return false;">Cerebrum · documentation</a>
+        <a class="btn" href="#" onclick="if(typeof openNerveLabMaximized==='function')openNerveLabMaximized();return false;">CEREBRUM:NERVE Lab</a>
+      </div>
+      <div class="panel-num">02 / 04 — systems</div>
+    </section>
+
+    <section class="panel" data-app="docs" id="panel-documentation" data-embed-fill="1">
+      <h2>// documentation</h2>
+      <div class="rev-embed rev-embed--fill" aria-label="Documentation library">
+        <iframe class="rev-site-iframe" title="Documentation" src="about:blank" data-defer-src="cerebrum/pages/documentation/index.html?embed=1" loading="lazy"></iframe>
+      </div>
+      <div class="btns" style="margin-top:0.5rem"><a class="btn" href="#" onclick="goToPanel(1);return false;">◀ About</a> <a class="btn" href="#" onclick="goToPanel(2);return false;">◀ Systems</a></div>
+      <div class="panel-num">03 / 04 — documentation</div>
+    </section>
+
+    <section class="panel" data-app="nerve-lab" id="panel-nerve-lab" data-embed-fill="1">
+      <h2>// CEREBRUM:NERVE · lab</h2>
+      <div class="rev-embed rev-embed--fill" aria-label="CEREBRUM NERVE Lab">
+        <iframe class="rev-site-iframe" title="CEREBRUM:NERVE Lab" src="about:blank" data-defer-src="cerebrum/nerve/lab.html" loading="lazy"></iframe>
+      </div>
+      <div class="btns" style="margin-top:0.5rem"><a class="btn" href="#" onclick="goToPanel(1);return false;">◀ About</a> <a class="btn" href="#" onclick="goToPanel(2);return false;">◀ Systems</a> <a class="btn" href="#" onclick="goToPanel(3);return false;">◀ Documentation</a></div>
+      <div class="panel-num">04 / 04 — CEREBRUM:NERVE lab</div>
+    </section>
+    </div>
+
+<script>
+(function desktopify() {
+  var desk = document.getElementById("desktop");
+  if (!desk || desk.dataset.desktopified === "1") return;
+  desk.dataset.desktopified = "1";
+  var titles = [
+    "ABOUT REVERIE", "SYSTEMS", "DOCUMENTATION", "CEREBRUM:NERVE LAB"
+  ];
+  var panels = desk.querySelectorAll(":scope > .panel");
+  panels.forEach(function(panel, i) {
+    var win = document.createElement("div");
+    win.className = "app-window";
+    win.dataset.appIndex = String(i);
+    win.setAttribute("aria-label", titles[i] || "APP");
+    var chrome = document.createElement("div");
+    chrome.className = "app-chrome";
+    chrome.innerHTML =
+      '<span class="app-title">..// ' + (titles[i] || "APP") + "</span>" +
+      '<div class="app-chrome-btns">' +
+      '<button type="button" class="app-min" data-act="min" title="Minimize">−</button>' +
+      '<button type="button" class="app-max" data-act="max" title="Maximize / Restore">▢</button>' +
+      '<button type="button" class="app-close" data-act="close" title="Close">×</button></div>';
+    var body = document.createElement("div");
+    body.className = "app-body";
+    panel.classList.add("window-panel");
+    win.appendChild(chrome);
+    win.appendChild(body);
+    desk.insertBefore(win, panel);
+    body.appendChild(panel);
+    chrome.querySelector(".app-close").addEventListener("click", function(e) {
+      e.stopPropagation();
+      closeApp(i);
+    });
+    chrome.querySelector(".app-min").addEventListener("click", function(e) {
+      e.stopPropagation();
+      minimizeApp(i);
+    });
+    chrome.querySelector(".app-max").addEventListener("click", function(e) {
+      e.stopPropagation();
+      toggleMaximize(i);
+    });
+    chrome.addEventListener("mousedown", function(e) {
+      if (e.target.closest("button")) return;
+      focusApp(i);
+    });
+  });
+  desk.querySelectorAll("[data-embed-fill=\"1\"]").forEach(function (p) {
+    var ab = p.closest(".app-body");
+    if (ab) ab.classList.add("lattice-embed-fill-host");
+  });
+})();
+
+(function initReverieWindowResize() {
+  var desk = document.getElementById("desktop");
+  if (!desk) return;
+  var MINW = 260;
+  var MINH = 150;
+  function deskRect() {
+    return desk.getBoundingClientRect();
+  }
+  function placeHandles(win) {
+    if (win.querySelector(".app-resize-se")) return;
+    ["s", "e", "se"].forEach(function(suf) {
+      var d = document.createElement("div");
+      d.className = "app-resize-" + suf;
+      d.setAttribute("aria-hidden", "true");
+      win.appendChild(d);
+    });
+  }
+  desk.querySelectorAll(".app-window").forEach(placeHandles);
+  var drag = null;
+  var rzRaf = null;
+  var rzXY = { x: 0, y: 0 };
+  function end() {
+    if (rzRaf) { cancelAnimationFrame(rzRaf); rzRaf = null; }
+    drag = null;
+    document.removeEventListener("mousemove", move);
+    document.removeEventListener("mouseup", end);
+  }
+  function move(ev) {
+    if (!drag) return;
+    rzXY.x = ev.clientX;
+    rzXY.y = ev.clientY;
+    if (rzRaf) return;
+    rzRaf = requestAnimationFrame(function() {
+      rzRaf = null;
+      if (!drag) return;
+      var w = drag.win;
+      var d0 = drag.db;
+      var dx = rzXY.x - drag.sx0;
+      var dy = rzXY.y - drag.sy0;
+      var nw = drag.w0;
+      var nh = drag.h0;
+      if (drag.which === "e" || drag.which === "se")
+        nw = Math.max(MINW, Math.min(drag.w0 + dx, d0.width - drag.l - 2));
+      if (drag.which === "s" || drag.which === "se")
+        nh = Math.max(MINH, Math.min(drag.h0 + dy, d0.height - drag.t - 2));
+      w.style.width = nw + "px";
+      w.style.height = nh + "px";
+      w.style.maxHeight = "none";
+    });
+  }
+  desk.addEventListener("mousedown", function(ev) {
+    if (!ev.target || !ev.target.closest) return;
+    var h = ev.target.closest(".app-resize-s, .app-resize-e, .app-resize-se");
+    if (!h) return;
+    var win = h.closest(".app-window");
+    if (!win || !win.classList.contains("is-open")) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (win.classList.contains("tile-max") && typeof toggleMaximize === "function")
+      toggleMaximize(parseInt(win.dataset.appIndex, 10));
+    var b = deskRect();
+    var r = win.getBoundingClientRect();
+    var l = r.left - b.left;
+    var t = r.top - b.top;
+    var w0 = r.width;
+    var h0 = r.height;
+    win.style.width = w0 + "px";
+    win.style.height = h0 + "px";
+    win.style.maxHeight = "none";
+    win.style.left = l + "px";
+    win.style.top = t + "px";
+    win.style.right = "auto";
+    win.style.bottom = "auto";
+    win.classList.remove("tile-left", "tile-right", "tile-max");
+    var which = "s";
+    if (h.classList.contains("app-resize-se")) which = "se";
+    else if (h.classList.contains("app-resize-e")) which = "e";
+    var n = parseInt(win.dataset.appIndex, 10);
+    if (typeof focusApp === "function") focusApp(n);
+    drag = { win: win, which: which, w0: w0, h0: h0, l: l, t: t, db: b, sx0: ev.clientX, sy0: ev.clientY };
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", end);
+  });
+})();
+
+var REVERIE_FONT_DEFAULTS = {
+  body: '"ApricotXenC","Mx437 ApricotXenC","IBM Plex Mono",ui-monospace,monospace',
+  ui: '"IBM Plex Mono",Consolas,"Courier New",monospace',
+  menu: '"JetBrains Mono",Consolas,"Courier New",monospace'
+};
+
+var REVERIE_FONT_PRESETS = [
+  {
+    id: "apricot",
+    label: "ApricotXenC (standard body)",
+    stack: '"ApricotXenC","Mx437 ApricotXenC","IBM Plex Mono",ui-monospace,monospace'
+  },
+  {
+    id: "int10h-ibm-vga-9x16",
+    label: "int10h — IBM VGA 9×16 (classic DOS)",
+    stack: '"Mx437IBMVGA9x16","Mx437 IBM VGA 9x16","IBM Plex Mono",monospace'
+  },
+  {
+    id: "int10h-ibm-bios",
+    label: "int10h — IBM PC BIOS 8×8",
+    stack: '"Mx437IBMBIOS8x8","Mx437 IBM BIOS","IBM Plex Mono",monospace'
+  },
+  {
+    id: "int10h-ibm-cga",
+    label: "int10h — IBM CGA 8×8 (thick)",
+    stack: '"Mx437IBMCGA8x8","Mx437 IBM CGA","IBM Plex Mono",monospace'
+  },
+  {
+    id: "int10h-ibm-mda",
+    label: "int10h — IBM MDA 9×14 (Hercules era)",
+    stack: '"Mx437IBMMDA9x14","Mx437 IBM MDA","IBM Plex Mono",monospace'
+  },
+  {
+    id: "int10h-apricot-portable",
+    label: "int10h — Apricot Portable (Apricot line)",
+    stack: '"Mx437ApricotPortable","Mx437 Apricot Portable","IBM Plex Mono",monospace'
+  },
+  {
+    id: "int10h-zenith-z100",
+    label: "int10h — Zenith Z-100 (PC clone)",
+    stack: '"Mx437ZenithZ100","Mx437 Zenith Z-100","IBM Plex Mono",monospace'
+  },
+  { id: "ibm-plex", label: "IBM Plex Mono", stack: '"IBM Plex Mono",monospace' },
+  { id: "jetbrains", label: "JetBrains Mono", stack: '"JetBrains Mono",monospace' },
+  { id: "vt323", label: "VT323 — retro terminal", stack: '"VT323",monospace' },
+  { id: "share-tech", label: "Share Tech Mono", stack: '"Share Tech Mono",monospace' },
+  { id: "space-mono", label: "Space Mono", stack: '"Space Mono",monospace' },
+  { id: "roboto-mono", label: "Roboto Mono", stack: '"Roboto Mono",monospace' },
+  { id: "fira-code", label: "Fira Code", stack: '"Fira Code",monospace' },
+  {
+    id: "consolas",
+    label: "Consolas / Courier (site chrome)",
+    stack: 'Consolas,"Courier New",monospace'
+  },
+  { id: "courier", label: "Courier New", stack: '"Courier New",Courier,monospace' },
+  { id: "system-mono", label: "System ui-monospace", stack: 'ui-monospace,monospace' },
+  { id: "custom", label: "Custom (CSS font stack)", stack: "" }
+];
+
+(function ReverieVibeModule() {
+  var FONT_VIBES = [
+    { ui: '"Orbitron","Space Mono","IBM Plex Mono",monospace', menu: '"Exo 2","JetBrains Mono","IBM Plex Mono",sans-serif', hero: '"Orbitron","IBM Plex Mono",monospace' },
+    { ui: '"Rajdhani","Space Grotesk",sans-serif', menu: '"Rajdhani","JetBrains Mono",monospace', hero: '"Syne","Rajdhani",sans-serif' },
+    { ui: '"Space Grotesk","IBM Plex Mono",sans-serif', menu: '"JetBrains Mono",monospace', hero: '"Outfit","Space Grotesk",sans-serif' },
+    { ui: '"Exo 2","Roboto Mono",sans-serif', menu: '"Fira Code",monospace', hero: '"Exo 2","IBM Plex Mono",sans-serif' },
+    { ui: '"IBM Plex Mono",monospace', menu: '"Rajdhani","JetBrains Mono",monospace', hero: '"Syne","IBM Plex Mono",sans-serif' },
+    { ui: '"Share Tech Mono",monospace', menu: '"Orbitron","JetBrains Mono",monospace', hero: '"Orbitron",monospace' },
+    { ui: '"Outfit","Space Grotesk",sans-serif', menu: '"Space Mono",monospace', hero: '"Outfit","IBM Plex Mono",sans-serif' },
+    { ui: '"Space Mono",monospace', menu: '"Exo 2","JetBrains Mono",sans-serif', hero: '"Space Grotesk","Space Mono",sans-serif' }
+  ];
+  function hasFontOverrides() {
+    try {
+      return !!(
+        localStorage.getItem("reverie_font_ui_stack") ||
+        localStorage.getItem("reverie_font_menu_stack") ||
+        localStorage.getItem("reverie_font_body_stack")
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+  function wallpaperIndexFromDom() {
+    var b = document.documentElement.getAttribute("data-backdrop") || "ascii";
+    if (b === "ascii" || b === "ascii-dharma") return -1;
+    var m = /^amb-(\d+)$/.exec(b) || /^ambs-(\d+)$/.exec(b);
+    return m ? parseInt(m[1], 10) : -1;
+  }
+  function hsla(H, s, l, a) {
+    var h = Math.round(H) % 360;
+    if (h < 0) h += 360;
+    return "hsla(" + h + "," + s + "%," + l + "%," + a + ")";
+  }
+  window.applyReverieVibe = function () {
+    var theme = document.documentElement.getAttribute("data-theme") || "matrix";
+    var wi = wallpaperIndexFromDom();
+    var root = document.documentElement;
+    var st = root.style;
+    var isLite = theme === "lite";
+    var isNoir = theme === "noir";
+    var isDharma = theme === "dharma";
+    var seed = wi < 0 ? (isLite ? 42 : isNoir ? 215 : isDharma ? 197 : 312) : wi;
+    var hue =
+      (seed * 137.508 + (isLite ? 44 : 0) + (isDharma ? 71 : 0) + (theme === "matrix" ? 108 : 0)) %
+      360;
+    var hue2 = (hue + 47 + seed * 1.7) % 360;
+    var hue3 = (hue2 + 63) % 360;
+    var ascii = wi < 0;
+    var atmOpacity = ascii ? 0.36 : 0.94;
+
+    var accentSat = isLite ? 62 : isNoir ? 9 : 88;
+    var accent2Sat = isLite ? 48 : isNoir ? 7 : 80;
+    var accent = hsla(hue, accentSat, isLite ? 36 : 56, 1);
+    var accent2 = hsla(hue2, accent2Sat, isLite ? 42 : 50, 1);
+    var accentSoft = hsla(hue, isLite ? 40 : isNoir ? 12 : 72, isLite ? 58 : 62, 0.5);
+    st.setProperty("--rev-accent", accent);
+    st.setProperty("--rev-accent-2", accent2);
+    st.setProperty("--rev-accent-soft", accentSoft);
+    st.setProperty(
+      "--rev-glow",
+      hsla(hue, isNoir ? 10 : 95, isNoir ? 52 : 58, isLite ? 0.4 : isNoir ? 0.22 : 0.55)
+    );
+
+    var atm;
+    if (isLite) {
+      atm =
+        "radial-gradient(ellipse 110% 90% at 14% 12%," +
+        hsla(hue, 70, 94, 0.55) +
+        ",transparent 58%),radial-gradient(ellipse 85% 65% at 88% 78%," +
+        hsla(hue2, 55, 90, 0.45) +
+        ",transparent 55%),radial-gradient(60% 40% at 50% 100%," +
+        hsla(hue3, 40, 88, 0.35) +
+        ",transparent 50%)";
+    } else if (isNoir) {
+      atm =
+        "radial-gradient(ellipse 125% 82% at 48% 20%," +
+        hsla(hue, 5, 12, 0.34) +
+        ",transparent 56%),radial-gradient(ellipse 92% 72% at 82% 82%," +
+        hsla(hue2, 4, 9, 0.28) +
+        ",transparent 52%),linear-gradient(198deg,rgba(0,0,0,0.5),transparent 48%)";
+    } else {
+      atm =
+        "radial-gradient(ellipse 130% 85% at 12% 18%," +
+        hsla(hue, 88, 52, 0.3) +
+        ",transparent 55%),radial-gradient(ellipse 95% 75% at 86% 78%," +
+        hsla(hue2, 82, 48, 0.24) +
+        ",transparent 52%),linear-gradient(198deg," +
+        hsla(hue3, 44, 7, 0.55) +
+        ",transparent 50%)";
+    }
+    st.setProperty("--rev-atmosphere", atm);
+    st.setProperty("--rev-atmosphere-opacity", String(atmOpacity));
+
+    var bootGlass;
+    var chromeGlass;
+    var panelGlass;
+    if (isLite) {
+      bootGlass =
+        "linear-gradient(155deg,color-mix(in srgb," +
+        accent +
+        " 14%,rgba(255,255,255,0.78)),color-mix(in srgb," +
+        accent2 +
+        " 10%,rgba(255,255,255,0.48)))";
+      chromeGlass = "color-mix(in srgb," + accent + " 10%,rgba(255,255,255,0.9))";
+      panelGlass =
+        "linear-gradient(180deg,color-mix(in srgb," + accent + " 7%,rgba(255,255,255,0.86)),color-mix(in srgb," + accent2 + " 5%,rgba(247,246,242,0.78)))";
+    } else if (isNoir) {
+      bootGlass =
+        "linear-gradient(165deg,rgba(20,20,20,0.9),rgba(4,4,4,0.94))";
+      chromeGlass = "rgba(24,24,24,0.92)";
+      panelGlass =
+        "linear-gradient(185deg,rgba(18,18,18,0.88),rgba(0,0,0,0.84))";
+    } else {
+      bootGlass =
+        "linear-gradient(165deg,color-mix(in srgb," + accent + " 24%,rgba(5,10,18,0.82)),color-mix(in srgb," + accent2 + " 14%,rgba(0,0,0,0.86)))";
+      chromeGlass = "color-mix(in srgb," + accent + " 16%,rgba(12,18,28,0.9))";
+      panelGlass =
+        "linear-gradient(185deg,color-mix(in srgb," + accent + " 16%,rgba(4,10,16,0.84)),color-mix(in srgb," + accent2 + " 11%,rgba(0,0,0,0.8)))";
+    }
+    st.setProperty("--rev-boot-glass", bootGlass);
+    st.setProperty("--rev-chrome-glass", chromeGlass);
+    st.setProperty("--rev-panel-glass", panelGlass);
+
+    var ruleMix = isLite
+      ? "color-mix(in srgb," + accent + " 52%, rgba(0,0,0,0.2))"
+      : isNoir
+        ? "rgba(210,208,200,0.24)"
+        : "color-mix(in srgb," + accent + " 52%, rgba(255,255,255,0.22))";
+    st.setProperty("--rule", ruleMix);
+
+    var bodyGrad;
+    if (isLite) {
+      bodyGrad =
+        "linear-gradient(175deg," +
+        hsla(hue, 35, 96, 1) +
+        "," +
+        hsla(hue2, 28, 92, 1) +
+        " 42%," +
+        hsla(hue3, 22, 94, 1) +
+        ")";
+    } else if (isDharma) {
+      bodyGrad =
+        "linear-gradient(188deg," +
+        hsla(hue, 18, 8, 1) +
+        "," +
+        hsla(hue2, 14, 12, 1) +
+        " 45%," +
+        hsla(hue3, 12, 6, 1) +
+        ")";
+    } else if (isNoir) {
+      bodyGrad =
+        "linear-gradient(186deg," +
+        hsla(hue, 7, 6, 1) +
+        "," +
+        hsla(hue2, 5, 9, 1) +
+        " 46%," +
+        hsla(hue3, 4, 5, 1) +
+        ")";
+    } else {
+      bodyGrad =
+        "linear-gradient(182deg," +
+        hsla(hue, 55, 3, 1) +
+        "," +
+        hsla(hue2, 62, 2, 1) +
+        " 40%," +
+        hsla(hue3, 70, 1, 1) +
+        ")";
+    }
+    st.setProperty("--rev-body-grad", bodyGrad);
+
+    var elev =
+      ascii
+        ? "0 18px 52px rgba(0,0,0,0.38)"
+        : "0 0 0 1px color-mix(in srgb," +
+          accent +
+          " 38%, transparent), 0 24px 64px rgba(0,0,0,0.58), 0 0 90px color-mix(in srgb," +
+          accent +
+          " 20%, transparent)";
+    st.setProperty("--rev-elev-shadow", elev);
+    st.setProperty(
+      "--rev-title-glow",
+      "0 0 32px color-mix(in srgb," + accent + " 58%, transparent), 0 0 72px color-mix(in srgb," + accent2 + " 28%, transparent)"
+    );
+
+    root.setAttribute("data-rev-wall", ascii ? "ascii" : "shader");
+    root.setAttribute("data-rev-idx", ascii ? "ascii" : String(wi));
+
+    if (!hasFontOverrides()) {
+      var fp = FONT_VIBES[Math.abs(seed) % FONT_VIBES.length];
+      st.setProperty("--font-ui", fp.ui);
+      st.setProperty("--font-menu", fp.menu);
+      st.setProperty("--rev-font-hero", fp.hero);
+    } else {
+      st.removeProperty("--rev-font-hero");
+    }
+  };
+})();
+
+(function wrapApplyReverieVibeWithColorCustom() {
+  var inner = window.applyReverieVibe;
+  if (typeof inner !== "function") return;
+  window.applyReverieVibe = function() {
+    inner();
+    if (typeof window.applyReverieColorCustom === "function") window.applyReverieColorCustom();
+  };
+})();
+
+var REVERIE_COLOR_MAP = {
+  bg: "--bg",
+  bg2: "--bg2",
+  fg: "--fg",
+  txt: "--txt",
+  rule: "--rule",
+  revAccent: "--rev-accent"
+};
+
+function reverieCssColorToInputHex(src) {
+  if (!src || !String(src).trim()) return "#020602";
+  var c = String(src).trim();
+  if (c[0] === "#") {
+    if (c.length >= 7) return c.slice(0, 7).toLowerCase();
+    if (c.length === 4) {
+      return (
+        "#" +
+        c[1] +
+        c[1] +
+        c[2] +
+        c[2] +
+        c[3] +
+        c[3]
+      ).toLowerCase();
+    }
+  }
+  var d = document.createElement("div");
+  d.style.color = c;
+  d.style.position = "absolute";
+  d.style.left = "-9999px";
+  document.body.appendChild(d);
+  var rgb = getComputedStyle(d).color;
+  document.body.removeChild(d);
+  var m = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(rgb);
+  if (!m) return "#020602";
+  var h = function(n) {
+    return ("0" + parseInt(n, 10).toString(16)).slice(-2);
+  };
+  return ("#" + h(m[1]) + h(m[2]) + h(m[3])).toLowerCase();
+}
+
+window.applyReverieColorCustom = function() {
+  var st = document.documentElement.style;
+  var o = null;
+  try {
+    var raw = localStorage.getItem("reverie_color_custom");
+    if (raw) o = JSON.parse(raw);
+  } catch (e) {
+    o = null;
+  }
+  Object.keys(REVERIE_COLOR_MAP).forEach(function(k) {
+    st.removeProperty(REVERIE_COLOR_MAP[k]);
+  });
+  if (!o || typeof o !== "object") {
+    try {
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) {
+        var bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+        if (bg) meta.setAttribute("content", reverieCssColorToInputHex(bg));
+      }
+    } catch (e2) {}
+    return;
+  }
+  Object.keys(REVERIE_COLOR_MAP).forEach(function(k) {
+    var v = o[k];
+    if (v == null) return;
+    var t = String(v).trim();
+    if (t === "") return;
+    st.setProperty(REVERIE_COLOR_MAP[k], t);
+  });
+  try {
+    var meta2 = document.querySelector('meta[name="theme-color"]');
+    if (meta2) {
+      var bg2 = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+      if (bg2) meta2.setAttribute("content", reverieCssColorToInputHex(bg2));
+    }
+  } catch (e3) {}
+};
+
+function initReverieColorSettings() {
+  var elBg = document.getElementById("set-color-bg");
+  var elBg2 = document.getElementById("set-color-bg2");
+  var elFg = document.getElementById("set-color-fg");
+  var elTxt = document.getElementById("set-color-txt");
+  var elRule = document.getElementById("set-color-rule");
+  var elRev = document.getElementById("set-color-rev");
+  var btnApply = document.getElementById("set-color-apply");
+  var btnReset = document.getElementById("set-color-reset");
+  if (!elBg || !elBg2 || !elFg || !elTxt || !elRule || !elRev) return;
+
+  function readStorage() {
+    try {
+      var raw = localStorage.getItem("reverie_color_custom");
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function fillFromComputed() {
+    var r = document.documentElement;
+    elBg.value = reverieCssColorToInputHex(getComputedStyle(r).getPropertyValue("--bg"));
+    elBg2.value = reverieCssColorToInputHex(getComputedStyle(r).getPropertyValue("--bg2"));
+    elFg.value = reverieCssColorToInputHex(getComputedStyle(r).getPropertyValue("--fg"));
+    elTxt.value = reverieCssColorToInputHex(getComputedStyle(r).getPropertyValue("--txt"));
+    elRule.value = getComputedStyle(r).getPropertyValue("--rule").trim();
+    elRev.value = getComputedStyle(r).getPropertyValue("--rev-accent").trim();
+  }
+
+  function fillFromStorageOrComputed() {
+    var o = readStorage();
+    if (o && typeof o === "object") {
+      if (o.bg) elBg.value = reverieCssColorToInputHex(o.bg);
+      else elBg.value = reverieCssColorToInputHex(getComputedStyle(document.documentElement).getPropertyValue("--bg"));
+      if (o.bg2) elBg2.value = reverieCssColorToInputHex(o.bg2);
+      else elBg2.value = reverieCssColorToInputHex(getComputedStyle(document.documentElement).getPropertyValue("--bg2"));
+      if (o.fg) elFg.value = reverieCssColorToInputHex(o.fg);
+      else elFg.value = reverieCssColorToInputHex(getComputedStyle(document.documentElement).getPropertyValue("--fg"));
+      if (o.txt) elTxt.value = reverieCssColorToInputHex(o.txt);
+      else elTxt.value = reverieCssColorToInputHex(getComputedStyle(document.documentElement).getPropertyValue("--txt"));
+      elRule.value = o.rule != null && String(o.rule).trim() !== "" ? String(o.rule).trim() : getComputedStyle(document.documentElement).getPropertyValue("--rule").trim();
+      elRev.value =
+        o.revAccent != null && String(o.revAccent).trim() !== ""
+          ? String(o.revAccent).trim()
+          : getComputedStyle(document.documentElement).getPropertyValue("--rev-accent").trim();
+      return;
+    }
+    fillFromComputed();
+  }
+
+  fillFromStorageOrComputed();
+
+  function persistAndApply() {
+    var o = {
+      bg: elBg.value,
+      bg2: elBg2.value,
+      fg: elFg.value,
+      txt: elTxt.value,
+      rule: elRule.value.trim(),
+      revAccent: elRev.value.trim()
+    };
+    try {
+      localStorage.setItem("reverie_color_custom", JSON.stringify(o));
+    } catch (e) {}
+    applyReverieColorCustom();
+  }
+
+  if (btnApply) {
+    btnApply.addEventListener("click", function(e) {
+      e.preventDefault();
+      persistAndApply();
+    });
+  }
+  if (btnReset) {
+    btnReset.addEventListener("click", function(e) {
+      e.preventDefault();
+      try {
+        localStorage.removeItem("reverie_color_custom");
+      } catch (e2) {}
+      if (typeof window.applyReverieVibe === "function") window.applyReverieVibe();
+      else if (typeof window.applyReverieColorCustom === "function") window.applyReverieColorCustom();
+      fillFromComputed();
+    });
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initReverieColorSettings);
+} else {
+  initReverieColorSettings();
+}
+
+function applyFontStacks(bodyStack, uiStack, menuStack) {
+  var r = document.documentElement;
+  if (bodyStack) r.style.setProperty("--font-body", bodyStack);
+  if (uiStack) r.style.setProperty("--font-ui", uiStack);
+  if (menuStack) r.style.setProperty("--font-menu", menuStack);
+}
+
+function clearFontStackOverrides() {
+  ["--font-body", "--font-ui", "--font-menu"].forEach(function(k) {
+    document.documentElement.style.removeProperty(k);
+  });
+}
+
+function applyStoredFonts() {
+  try {
+    var b = localStorage.getItem("reverie_font_body_stack");
+    var u = localStorage.getItem("reverie_font_ui_stack");
+    var m = localStorage.getItem("reverie_font_menu_stack");
+    if (!b && !u && !m) {
+      clearFontStackOverrides();
+      return;
+    }
+    if (b) document.documentElement.style.setProperty("--font-body", b);
+    else document.documentElement.style.removeProperty("--font-body");
+    if (u) document.documentElement.style.setProperty("--font-ui", u);
+    else document.documentElement.style.removeProperty("--font-ui");
+    if (m) document.documentElement.style.setProperty("--font-menu", m);
+    else document.documentElement.style.removeProperty("--font-menu");
+  } catch (e) {
+    clearFontStackOverrides();
+  }
+}
+
+try{localStorage.removeItem("reverie_font_body_stack");localStorage.removeItem("reverie_font_ui_stack");localStorage.removeItem("reverie_font_menu_stack");}catch(e){}
+applyStoredFonts();
+(function __reverieBuildFonts(){
+  var S = '"Share Tech Mono",ui-monospace,monospace';
+  function jet() {
+    var st = document.documentElement.style;
+    st.setProperty("--font-body", S);
+    st.setProperty("--font-ui", S);
+    st.setProperty("--font-menu", S);
+    st.setProperty("--rev-font-hero", S);
+  }
+  jet();
+  var prev = window.applyReverieVibe;
+  if (typeof prev === "function") {
+    window.applyReverieVibe = function() {
+      prev();
+      jet();
+    };
+  }
+})();
+
+function presetIdForStack(stack) {
+  if (!stack) return "custom";
+  var t = stack.replace(/\s+/g, "");
+  for (var i = 0; i < REVERIE_FONT_PRESETS.length; i++) {
+    var p = REVERIE_FONT_PRESETS[i];
+    if (p.id === "custom") continue;
+    if (p.stack.replace(/\s+/g, "") === t) return p.id;
+  }
+  return "custom";
+}
+
+function initReverieFontSettings() {
+  var selB = document.getElementById("set-font-body");
+  var selU = document.getElementById("set-font-ui");
+  var selM = document.getElementById("set-font-menu");
+  var cB = document.getElementById("set-font-body-custom");
+  var cU = document.getElementById("set-font-ui-custom");
+  var cM = document.getElementById("set-font-menu-custom");
+  if (!selB || !selU || !selM) return;
+
+  function fillSelect(sel) {
+    sel.innerHTML = "";
+    REVERIE_FONT_PRESETS.forEach(function(p) {
+      var opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = p.label;
+      sel.appendChild(opt);
+    });
+  }
+  fillSelect(selB);
+  fillSelect(selU);
+  fillSelect(selM);
+
+  function currentStack(varName, fallback) {
+    var v = localStorage.getItem(varName);
+    if (v) return v;
+    return fallback;
+  }
+
+  function syncRow(sel, customIn, storageKey, defaultStack) {
+    var stack = currentStack(storageKey, defaultStack);
+    var pid = presetIdForStack(stack);
+    sel.value = pid;
+    if (pid === "custom") {
+      customIn.style.display = "block";
+      customIn.value = stack;
+    } else {
+      customIn.style.display = "none";
+      customIn.value = "";
+    }
+  }
+
+  syncRow(selB, cB, "reverie_font_body_stack", REVERIE_FONT_DEFAULTS.body);
+  syncRow(selU, cU, "reverie_font_ui_stack", REVERIE_FONT_DEFAULTS.ui);
+  syncRow(selM, cM, "reverie_font_menu_stack", REVERIE_FONT_DEFAULTS.menu);
+
+  function stackFromRow(sel, customIn, defStack) {
+    if (sel.value === "custom") {
+      var c = customIn.value.trim();
+      return c || defStack;
+    }
+    for (var i = 0; i < REVERIE_FONT_PRESETS.length; i++) {
+      if (REVERIE_FONT_PRESETS[i].id === sel.value) return REVERIE_FONT_PRESETS[i].stack;
+    }
+    return defStack;
+  }
+
+  function onSelChange(sel, customIn) {
+    if (sel.value === "custom") {
+      customIn.style.display = "block";
+    } else {
+      customIn.style.display = "none";
+    }
+  }
+  selB.addEventListener("change", function() {
+    onSelChange(selB, cB);
+  });
+  selU.addEventListener("change", function() {
+    onSelChange(selU, cU);
+  });
+  selM.addEventListener("change", function() {
+    onSelChange(selM, cM);
+  });
+
+  function persistAndApply() {
+    var b = stackFromRow(selB, cB, REVERIE_FONT_DEFAULTS.body);
+    var u = stackFromRow(selU, cU, REVERIE_FONT_DEFAULTS.ui);
+    var m = stackFromRow(selM, cM, REVERIE_FONT_DEFAULTS.menu);
+    try {
+      localStorage.setItem("reverie_font_body_stack", b);
+      localStorage.setItem("reverie_font_ui_stack", u);
+      localStorage.setItem("reverie_font_menu_stack", m);
+    } catch (e) {}
+    applyFontStacks(b, u, m);
+  }
+
+  var btnApply = document.getElementById("set-font-apply");
+  var btnReset = document.getElementById("set-font-reset");
+  if (btnApply) {
+    btnApply.addEventListener("click", function(e) {
+      e.preventDefault();
+      persistAndApply();
+    });
+  }
+  if (btnReset) {
+    btnReset.addEventListener("click", function(e) {
+    e.preventDefault();
+    try {
+      localStorage.removeItem("reverie_font_body_stack");
+      localStorage.removeItem("reverie_font_ui_stack");
+      localStorage.removeItem("reverie_font_menu_stack");
+    } catch (err) {}
+    clearFontStackOverrides();
+    syncRow(selB, cB, "reverie_font_body_stack", REVERIE_FONT_DEFAULTS.body);
+    syncRow(selU, cU, "reverie_font_ui_stack", REVERIE_FONT_DEFAULTS.ui);
+    syncRow(selM, cM, "reverie_font_menu_stack", REVERIE_FONT_DEFAULTS.menu);
+    selB.value = "apricot";
+    selU.value = "ibm-plex";
+    selM.value = "jetbrains";
+    cB.style.display = "none";
+    cU.style.display = "none";
+    cM.style.display = "none";
+    });
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initReverieFontSettings);
+} else {
+  initReverieFontSettings();
+}
+
+var totalPanels = document.querySelectorAll("#desktop .app-window").length;
+var zApp = 30;
+var openStack = [];
+function closeAllApps() {
+  document.querySelectorAll("#desktop .app-window.is-open").forEach(function(w) {
+    w.classList.remove("is-open", "focused", "minimized");
+    var n = parseInt(w.dataset.appIndex, 10);
+    var i = openStack.indexOf(n);
+    if (i !== -1) openStack.splice(i, 1);
+  });
+}
+
+function focusApp(n) {
+  var w = document.querySelector('#desktop .app-window[data-app-index="' + n + '"]');
+  if (!w || !w.classList.contains("is-open")) return;
+  zApp += 1;
+  w.style.zIndex = String(zApp);
+  document.querySelectorAll(".app-window.focused").forEach(function(x) {
+    x.classList.remove("focused");
+  });
+  w.classList.add("focused");
+}
+
+function readFrameInsetPx() {
+  var raw = getComputedStyle(document.documentElement).getPropertyValue("--frame-bracket").trim();
+  if (raw.endsWith("px")) return parseFloat(raw) || 28;
+  return 28;
+}
+
+function getDesktopBounds() {
+  var desk = document.getElementById("desktop");
+  if (!desk) {
+    return { width: window.innerWidth, height: window.innerHeight };
+  }
+  return { width: desk.clientWidth, height: desk.clientHeight };
+}
+
+function layoutCascade(w, stackIndex) {
+  var b = getDesktopBounds();
+  var inset = readFrameInsetPx();
+  var sw = Math.min(520, b.width * 0.98);
+  var left = inset + stackIndex * 28;
+  var top = inset + stackIndex * 24;
+  var maxL = Math.max(inset, b.width - sw - inset);
+  if (left > maxL) left = maxL;
+  if (left < inset) left = inset;
+  var maxT = Math.max(inset, b.height - 80);
+  if (top > maxT) top = maxT;
+  if (top < inset) top = inset;
+  w.style.left = left + "px";
+  w.style.top = top + "px";
+  w.style.right = "auto";
+  w.style.bottom = "auto";
+  w.style.transform = "none";
+}
+
+function ensureLatticeDeferredIframes(appIndex) {
+  if (document.documentElement.getAttribute("data-reverie-lattice") !== "1") return;
+  if (appIndex !== 2 && appIndex !== 3) return;
+  var sel =
+    appIndex === 2
+      ? "iframe.rev-site-iframe[title=\"Documentation\"]"
+      : "iframe.rev-site-iframe[title=\"CEREBRUM:NERVE Lab\"]";
+  var iframe = document.querySelector(sel);
+  if (!iframe || iframe.getAttribute("data-defer-loaded") === "1") return;
+  var u = iframe.getAttribute("data-defer-src");
+  if (!u) return;
+  var cur = iframe.getAttribute("src") || "";
+  if (cur === "about:blank" || cur === "" || (iframe.src && /about:blank/i.test(iframe.src))) {
+    iframe.src = u;
+    iframe.setAttribute("data-defer-loaded", "1");
+  }
+}
+
+function openApp(n) {
+  n = Math.max(0, Math.min(totalPanels - 1, n));
+  var w = document.querySelector('#desktop .app-window[data-app-index="' + n + '"]');
+  if (!w) return;
+  w.classList.add("is-open");
+  w.classList.remove("minimized");
+  var idx = openStack.indexOf(n);
+  if (idx === -1) openStack.push(n);
+  layoutCascade(w, openStack.indexOf(n));
+  focusApp(n);
+  ensureLatticeDeferredIframes(n);
+}
+
+function closeApp(n) {
+  var w = document.querySelector('#desktop .app-window[data-app-index="' + n + '"]');
+  if (!w) return;
+  w.classList.remove("is-open", "focused", "minimized");
+  var i = openStack.indexOf(n);
+  if (i !== -1) openStack.splice(i, 1);
+}
+
+function minimizeApp(n) {
+  closeApp(n);
+}
+
+function goToPanel(n) {
+  n = Number(n);
+  if (!Number.isFinite(n)) return;
+  n = n | 0;
+  if (n === 0) {
+    closeAllApps();
+    return;
+  }
+  if (n >= 1 && n <= 4) openApp(n - 1);
+}
+
+(function initAppDragging() {
+  var desk = document.getElementById("desktop");
+  if (!desk) return;
+  var drag = null;
+
+  function startDrag(win, clientX, clientY) {
+    var db = desk.getBoundingClientRect();
+    var r = win.getBoundingClientRect();
+    var lx = r.left - db.left;
+    var ly = r.top - db.top;
+    win.style.left = lx + "px";
+    win.style.top = ly + "px";
+    win.style.right = "auto";
+    win.style.bottom = "auto";
+    win.style.transform = "none";
+    desk.querySelectorAll(".app-window.app-window-dragging").forEach(function(w) {
+      w.classList.remove("app-window-dragging");
+    });
+    win.classList.add("app-window-dragging");
+    drag = {
+      win: win,
+      ox: clientX - db.left - lx,
+      oy: clientY - db.top - ly,
+      idx: parseInt(win.dataset.appIndex, 10)
+    };
+    focusApp(drag.idx);
+  }
+
+  var _winDragRaf = null;
+  var _winPtr = { x: 0, y: 0 };
+  function move(clientX, clientY) {
+    if (!drag) return;
+    _winPtr.x = clientX;
+    _winPtr.y = clientY;
+    if (_winDragRaf) return;
+    _winDragRaf = requestAnimationFrame(function() {
+      _winDragRaf = null;
+      if (!drag) return;
+      var w = drag.win;
+      var nw = w.offsetWidth;
+      var nh = w.offsetHeight;
+      var db = desk.getBoundingClientRect();
+      var inset = readFrameInsetPx();
+      var x = _winPtr.x - db.left - drag.ox;
+      var y = _winPtr.y - db.top - drag.oy;
+      x = Math.max(inset, Math.min(x, db.width - nw - inset));
+      y = Math.max(inset, Math.min(y, db.height - nh - inset));
+      w.style.left = x + "px";
+      w.style.top = y + "px";
+    });
+  }
+
+  function endDrag() {
+    if (_winDragRaf) { cancelAnimationFrame(_winDragRaf); _winDragRaf = null; }
+    if (drag && drag.win) drag.win.classList.remove("app-window-dragging");
+    drag = null;
+  }
+
+  desk.addEventListener("mousedown", function(e) {
+    var ch = e.target.closest(".app-chrome");
+    if (!ch || e.target.closest("button")) return;
+    var win = ch.closest(".app-window");
+    if (!win || !win.classList.contains("is-open")) return;
+    e.preventDefault();
+    startDrag(win, e.clientX, e.clientY);
+  });
+
+  document.addEventListener("mousemove", function(e) {
+    move(e.clientX, e.clientY);
+  });
+  document.addEventListener("mouseup", endDrag);
+
+  desk.addEventListener(
+    "touchstart",
+    function(e) {
+      var ch = e.target.closest(".app-chrome");
+      if (!ch || e.target.closest("button")) return;
+      var win = ch.closest(".app-window");
+      if (!win || !win.classList.contains("is-open")) return;
+      var t = e.touches[0];
+      startDrag(win, t.clientX, t.clientY);
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    "touchmove",
+    function(e) {
+      if (!drag) return;
+      var t = e.touches[0];
+      move(t.clientX, t.clientY);
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+  document.addEventListener("touchend", endDrag);
+})();
+
+var themeList = ["matrix", "lite", "noir", "dharma"];
+var themeLabels = ["● MATRIX", "○ LITE", "◆ NOIR", "◇ DHARMA IN BLUE"];
+
+var backdropIds = ["ascii", "ascii-dharma"];
+var backdropLabels = ["·· ASCII RAIN", "·· ASCII RAIN · DHARMA IN BLUE"];
+(function buildBackdropListFromCatalog() {
+  var cat = window.REVERIE_SOLARUM_WALLPAPERS || [];
+  for (var i = 0; i < cat.length; i++) {
+    backdropIds.push("amb-" + i);
+    var w = cat[i];
+    var line =
+      String(i + 1).padStart(2, "0") +
+      " " +
+      String(w && w.name ? w.name : "?").toUpperCase() +
+      " · " +
+      String(w && w.em ? w.em : "").toUpperCase();
+    backdropLabels.push(line);
+    backdropIds.push("ambs-" + i);
+    backdropLabels.push(line + " — STATIC");
+  }
+})();
+
+(function migrateThemeAndBackdropPrefs() {
+  if (window.__REVERIE_LATTICE_NOIR) return;
+  try {
+    var t = localStorage.getItem("reverie_data_theme");
+    if (t && t.indexOf("amb-") === 0) {
+      if (!localStorage.getItem("reverie_data_backdrop")) localStorage.setItem("reverie_data_backdrop", t);
+      localStorage.setItem("reverie_data_theme", "matrix");
+    }
+    if (!localStorage.getItem("reverie_data_backdrop") && localStorage.getItem("reverie_solarum_enabled") === "1") {
+      var ix = parseInt(localStorage.getItem("reverie_solarum_idx") || "0", 10) || 0;
+      var bid = "amb-" + ix;
+      if (backdropIds.indexOf(bid) >= 0) localStorage.setItem("reverie_data_backdrop", bid);
+    }
+  } catch (e0) {}
+})();
+
+var themeIdx = 0;
+(function initThemeIndex() {
+  try {
+    var saved = localStorage.getItem("reverie_data_theme");
+    if (saved && saved.indexOf("amb-") === 0) saved = "matrix";
+    if (saved && themeList.indexOf(saved) >= 0) {
+      themeIdx = themeList.indexOf(saved);
+      return;
+    }
+  } catch (e1) {}
+  var cur = document.documentElement.getAttribute("data-theme");
+  var ix = themeList.indexOf(cur);
+  if (ix >= 0) themeIdx = ix;
+})();
+
+var backdropIdx = 0;
+(function initBackdropIndex() {
+  try {
+    var b = localStorage.getItem("reverie_data_backdrop");
+    if (b && backdropIds.indexOf(b) >= 0) {
+      backdropIdx = backdropIds.indexOf(b);
+      return;
+    }
+  } catch (e1b) {}
+  var curB = document.documentElement.getAttribute("data-backdrop");
+  if (curB && backdropIds.indexOf(curB) >= 0) backdropIdx = backdropIds.indexOf(curB);
+})();
+
+(function reverieSyncAsciiDharmaBackdrop() {
+  try {
+    var bid = backdropIds[backdropIdx] || "ascii";
+    if (bid === "ascii-dharma") {
+      var di = themeList.indexOf("dharma");
+      if (di >= 0) themeIdx = di;
+    }
+  } catch (eAd) {}
+})();
+
+(function reverieSyncSurfaceAttrs() {
+  var tid = themeList[themeIdx] || "matrix";
+  var bid = backdropIds[backdropIdx] || "ascii";
+  document.documentElement.setAttribute("data-theme", tid);
+  document.documentElement.setAttribute("data-backdrop", bid);
+  if (typeof window.applyReverieVibe === "function") window.applyReverieVibe();
+})();
+
+(function ReverieBackdropModule() {
+  var frame = document.getElementById("reverie-solarum-bg");
+  if (!frame) return;
+
+  var ready = false;
+  var pendingCmd = null;
+
+  function lsGet(key, def) {
+    try {
+      var v = localStorage.getItem(key);
+      return v == null ? def : v;
+    } catch (e) {
+      return def;
+    }
+  }
+
+  function postCmd(o) {
+    if (!ready) {
+      pendingCmd = Object.assign({}, pendingCmd || {}, o);
+      return;
+    }
+    var msg = Object.assign({ type: "reverie-solarum-cmd" }, pendingCmd || {}, o);
+    var keys = Object.keys(msg).filter(function(k) {
+      return k !== "type";
+    });
+    if (!keys.length) return;
+    pendingCmd = null;
+    try {
+      frame.contentWindow.postMessage(msg, "*");
+    } catch (e) {}
+  }
+
+  function flushPending() {
+    if (!ready || !pendingCmd) return;
+    var k = Object.keys(pendingCmd).filter(function(x) {
+      return x !== "type";
+    });
+    if (!k.length) return;
+    postCmd({});
+  }
+
+  function isSolarumShaderBid(bid) {
+    return typeof bid === "string" && (/^amb-\d+$/.test(bid) || /^ambs-\d+$/.test(bid));
+  }
+
+  function idxFromSolarumBid(bid) {
+    var m = /^amb-(\d+)$/.exec(bid) || /^ambs-(\d+)$/.exec(bid);
+    if (!m) return -1;
+    var n = parseInt(m[1], 10);
+    return isNaN(n) ? -1 : n;
+  }
+
+  window.ReverieBackdrop = {
+    applyBackdropId: function(bid) {
+      bid = bid || "ascii";
+      document.documentElement.setAttribute("data-backdrop", bid);
+      if (bid === "ascii" || bid === "ascii-dharma") {
+        frame.classList.remove("is-on", "is-static");
+        return;
+      }
+      if (!isSolarumShaderBid(bid)) {
+        frame.classList.remove("is-on", "is-static");
+        return;
+      }
+      var idx = idxFromSolarumBid(bid);
+      if (idx < 0) idx = 0;
+      frame.classList.add("is-on");
+      var isStatic = /^ambs-\d+$/.test(bid);
+      frame.classList.toggle("is-static", isStatic);
+      var pal = parseInt(lsGet("reverie_solarum_palette", "0"), 10) || 0;
+      var inten = parseFloat(lsGet("reverie_solarum_intensity", "1"));
+      if (isNaN(inten)) inten = 1;
+      var spd = parseFloat(lsGet("reverie_solarum_speed", "1"));
+      if (isNaN(spd)) spd = 1;
+      postCmd({
+        idx: idx,
+        palette: pal,
+        intensity: inten,
+        speed: spd,
+        pointerDrive: !isStatic
+      });
+    }
+  };
+
+  function onChildReady(e) {
+    var d = e.data;
+    if (!d || d.type !== "reverie-solarum-ready") return;
+    ready = true;
+    flushPending();
+    try {
+      var bid = backdropIds[backdropIdx] || "ascii";
+      window.ReverieBackdrop.applyBackdropId(bid);
+    } catch (e2) {}
+  }
+  window.__reverieSolarumConsumeReady = onChildReady;
+  var readyBuf = window.__reverieSolarumReadyBuf || [];
+  window.__reverieSolarumReadyBuf = [];
+  for (var ri = 0; ri < readyBuf.length; ri++) {
+    onChildReady(readyBuf[ri]);
+  }
+})();
+
+function updateBootThemeButtons() {
+  var menu = document.getElementById("bootloader-menu");
+  if (menu) {
+    menu.querySelectorAll(".boot-theme-btn").forEach(function(btn) {
+      var i = parseInt(btn.dataset.themeIndex, 10);
+      if (isNaN(i)) return;
+      btn.classList.toggle("active", i === themeIdx);
+    });
+  }
+  var themeGrid = document.getElementById("settings-theme-grid");
+  if (themeGrid) {
+    themeGrid.querySelectorAll(".boot-theme-btn").forEach(function(btn) {
+      var i = parseInt(btn.dataset.themeIndex, 10);
+      if (isNaN(i)) return;
+      btn.classList.toggle("active", i === themeIdx);
+    });
+  }
+}
+
+function updateBootBackdropButtons() {
+  var menu = document.getElementById("bootloader-menu");
+  if (menu) {
+    menu.querySelectorAll(".boot-backdrop-btn").forEach(function(btn) {
+      var i = parseInt(btn.dataset.backdropIndex, 10);
+      if (isNaN(i)) return;
+      btn.classList.toggle("active", i === backdropIdx);
+    });
+  }
+  var backdropHost = document.getElementById("settings-backdrop-scroller");
+  if (backdropHost) {
+    backdropHost.querySelectorAll(".boot-backdrop-btn").forEach(function(btn) {
+      var i = parseInt(btn.dataset.backdropIndex, 10);
+      if (isNaN(i)) return;
+      btn.classList.toggle("active", i === backdropIdx);
+    });
+  }
+}
+
+function applyTheme() {
+  var tid = themeList[themeIdx];
+  document.documentElement.setAttribute("data-theme", tid);
+  try {
+    localStorage.setItem("reverie_data_theme", tid);
+  } catch (e2) {}
+  updateBootThemeButtons();
+  if (typeof window.applyReverieVibe === "function") window.applyReverieVibe();
+}
+
+function applyBackdrop() {
+  var bid = backdropIds[backdropIdx] || "ascii";
+  var vibeFromTheme = false;
+  try {
+    localStorage.setItem("reverie_data_backdrop", bid);
+  } catch (e3) {}
+  if (window.ReverieBackdrop && typeof window.ReverieBackdrop.applyBackdropId === "function") {
+    window.ReverieBackdrop.applyBackdropId(bid);
+  }
+  updateBootBackdropButtons();
+  if (!window.__REVERIE_LATTICE_NOIR) {
+    if (
+      bid !== "ascii" &&
+      bid !== "ascii-dharma" &&
+      (/^amb-\d+$/.test(bid) || /^ambs-\d+$/.test(bid))
+    ) {
+      var shaderM = /^amb-(\d+)$/.exec(bid) || /^ambs-(\d+)$/.exec(bid);
+      var shaderN = shaderM ? parseInt(shaderM[1], 10) : NaN;
+      if (!isNaN(shaderN) && themeList.length) {
+        themeIdx = ((shaderN % themeList.length) + themeList.length) % themeList.length;
+        applyTheme();
+        vibeFromTheme = true;
+      }
+    }
+    if (bid === "ascii-dharma") {
+      var dhi = themeList.indexOf("dharma");
+      if (dhi >= 0) {
+        themeIdx = dhi;
+        applyTheme();
+        vibeFromTheme = true;
+      }
+    }
+  }
+  if (!vibeFromTheme && typeof window.applyReverieVibe === "function") window.applyReverieVibe();
+}
+
+function setThemeIndex(i) {
+  themeIdx = Math.max(0, Math.min(themeList.length - 1, i));
+  applyTheme();
+}
+
+function setBackdropIndex(i) {
+  backdropIdx = Math.max(0, Math.min(backdropIds.length - 1, i));
+  applyBackdrop();
+}
+
+function cycleTheme() {
+  themeIdx = (themeIdx + 1) % themeList.length;
+  applyTheme();
+}
+
+function appendReverieThemeControls(host) {
+  if (!host) return;
+  themeList.forEach(function(tid, ti) {
+    var tb = document.createElement("button");
+    tb.type = "button";
+    tb.className = "boot-link boot-theme-btn";
+    tb.dataset.themeIndex = String(ti);
+    tb.textContent = themeLabels[ti];
+    tb.title =
+      "UI colors & chrome: " +
+      tid +
+      " — shader wallpapers may auto-pick a theme; override here in settings";
+    tb.addEventListener("click", function() {
+      setThemeIndex(ti);
+    });
+    host.appendChild(tb);
+  });
+}
+
+function appendReverieBackdropControls(host) {
+  if (!host) return;
+  backdropIds.forEach(function(bid, bi) {
+    var bb = document.createElement("button");
+    bb.type = "button";
+    bb.className = "boot-link boot-backdrop-btn";
+    bb.dataset.backdropIndex = String(bi);
+    bb.textContent = backdropLabels[bi];
+    if (bid === "ascii") {
+      bb.title =
+        "ASCII matrix rain (no WebGL). Keeps whichever UI theme you selected in settings.";
+    } else if (bid === "ascii-dharma") {
+      bb.title =
+        "Same ASCII matrix rain with the DHARMA IN BLUE palette (warm cream / blue-tinted vibe). Locks UI theme to Dharma in Blue.";
+    } else {
+      var wm = /^amb-(\d+)$/.exec(bid) || /^ambs-(\d+)$/.exec(bid);
+      var wi = wm ? parseInt(wm[1], 10) : -1;
+      if (wi < 0) wi = 0;
+      var cw = window.REVERIE_SOLARUM_WALLPAPERS && window.REVERIE_SOLARUM_WALLPAPERS[wi];
+      var autoT = themeList[wi % themeList.length] || "";
+      var staticNote = /^ambs-\d+$/.test(bid)
+        ? " — static: motion continues; pointer and clicks do not affect the shader."
+        : " — pointer: cursor movement and clicks affect the shader.";
+      bb.title =
+        ((cw && cw.desc) || bid) +
+        staticNote +
+        (autoT ? " — also sets UI theme: " + autoT : "");
+    }
+    bb.addEventListener("click", function() {
+      setBackdropIndex(bi);
+    });
+    host.appendChild(bb);
+  });
+}
+
+(function initBootloaderMenu() {
+  var menuEl = document.getElementById("bootloader-menu");
+  if (!menuEl) return;
+
+  var routes = [
+    [1, "ABOUT REVERIE"],
+    [2, "SYSTEMS"],
+    [3, "DOCUMENTATION"],
+    [4, "CEREBRUM:NERVE LAB"]
+  ];
+  routes.forEach(function(r) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "boot-link";
+    btn.innerHTML =
+      "<small>" +
+      String(r[0]).padStart(2, "0") +
+      '</small><span class="boot-link-label">' +
+      r[1] +
+      "</span>";
+    btn.addEventListener("click", function() {
+      goToPanel(r[0]);
+    });
+    menuEl.appendChild(btn);
+  });
+  menuEl.classList.add("boot-ready");
+  updateBootThemeButtons();
+  updateBootBackdropButtons();
+  if (typeof applyTheme === "function") applyTheme();
+  if (typeof applyBackdrop === "function") applyBackdrop();
+})();
+
+(function initReverieSettingsAppearance() {
+  var t = document.getElementById("settings-theme-grid");
+  var b = document.getElementById("settings-backdrop-scroller");
+  if (!t && !b) return;
+  if (t) {
+    t.innerHTML = "";
+    appendReverieThemeControls(t);
+  }
+  if (b) {
+    b.innerHTML = "";
+    appendReverieBackdropControls(b);
+  }
+  if (typeof updateBootThemeButtons === "function") updateBootThemeButtons();
+  if (typeof updateBootBackdropButtons === "function") updateBootBackdropButtons();
+})();
+
+(function initBootloaderWindow() {
+  var root = document.getElementById("bootloader");
+  var chrome = document.getElementById("bootloader-chrome");
+  var btnMin = document.getElementById("bootloader-minimize");
+  var btnCenter = document.getElementById("bootloader-center");
+  var titleEl = document.getElementById("bootloader-title-text");
+  if (!root || !chrome || !btnMin) return;
+
+  var MENU_TITLE_FULL = "REVERIE · menu";
+  var titleTyper = null;
+
+  function setMenuTitleImmediate(text) {
+    if (!titleEl) return;
+    if (titleTyper) {
+      clearInterval(titleTyper);
+      titleTyper = null;
+    }
+    titleEl.textContent = text;
+    titleEl.classList.remove("boot-title-typing", "boot-title-settle");
+  }
+
+  function animateMenuTitleOpen() {
+    if (!titleEl) return;
+    if (titleTyper) {
+      clearInterval(titleTyper);
+      titleTyper = null;
+    }
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMenuTitleImmediate(MENU_TITLE_FULL);
+      return;
+    }
+    titleEl.textContent = "";
+    titleEl.classList.remove("boot-title-settle");
+    titleEl.classList.add("boot-title-typing");
+    var full = MENU_TITLE_FULL;
+    var i = 0;
+    titleTyper = setInterval(function() {
+      i++;
+      titleEl.textContent = full.slice(0, i);
+      if (i >= full.length) {
+        clearInterval(titleTyper);
+        titleTyper = null;
+        titleEl.classList.remove("boot-title-typing");
+        titleEl.classList.add("boot-title-settle");
+        setTimeout(function() {
+          titleEl.classList.remove("boot-title-settle");
+        }, 520);
+      }
+    }, 30);
+  }
+
+  var dragging = false;
+  var startX = 0;
+  var startY = 0;
+  var origLeft = 0;
+  var origTop = 0;
+
+  function applyManualPosition() {
+    var r = root.getBoundingClientRect();
+    root.style.right = "auto";
+    root.style.bottom = "auto";
+    root.style.transform = "none";
+    root.style.left = Math.round(r.left) + "px";
+    root.style.top = Math.round(r.top) + "px";
+  }
+
+  function savePosition() {
+    try {
+      if (!root.style.left) return;
+      localStorage.setItem(
+        "bootloaderPos",
+        JSON.stringify({
+          left: parseFloat(root.style.left),
+          top: parseFloat(root.style.top)
+        })
+      );
+    } catch (e) {}
+  }
+
+  function getWorkspaceFrameRect() {
+    /* #workspace-frame uses display:contents — no layout box; #desktop shares the same inset. */
+    var desk = document.getElementById("desktop");
+    if (desk) return desk.getBoundingClientRect();
+    var frEl = document.getElementById("workspace-frame");
+    if (frEl) return frEl.getBoundingClientRect();
+    return {
+      left: 0,
+      top: 0,
+      right: window.innerWidth,
+      bottom: window.innerHeight
+    };
+  }
+
+  function clampPosition() {
+    var fr = getWorkspaceFrameRect();
+    var r = root.getBoundingClientRect();
+    var x = parseFloat(root.style.left);
+    var y = parseFloat(root.style.top);
+    if (isNaN(x)) x = r.left;
+    if (isNaN(y)) y = r.top;
+    var maxX = fr.right - r.width;
+    var maxY = fr.bottom - r.height;
+    x = Math.max(fr.left, Math.min(x, maxX));
+    y = Math.max(fr.top, Math.min(y, maxY));
+    root.style.left = Math.round(x) + "px";
+    root.style.top = Math.round(y) + "px";
+    root.style.right = "auto";
+    root.style.bottom = "auto";
+  }
+
+  function loadSavedPosition() {
+    if (window.innerWidth <= 760) return;
+    try {
+      var raw = localStorage.getItem("bootloaderPos");
+      if (!raw) return;
+      var p = JSON.parse(raw);
+      if (typeof p.left !== "number" || typeof p.top !== "number") return;
+      root.style.right = "auto";
+      root.style.bottom = "auto";
+      root.style.transform = "none";
+      root.style.left = p.left + "px";
+      root.style.top = p.top + "px";
+      clampPosition();
+    } catch (e) {}
+  }
+
+  try {
+    if (localStorage.getItem("bootloaderCorner") === "1") {
+      root.classList.add("bootloader-corner");
+      if (localStorage.getItem("bootloaderMin") === "1") {
+        root.classList.add("minimized");
+        btnMin.setAttribute("title", "Restore");
+        btnMin.textContent = "+";
+      }
+    }
+  } catch (e) {}
+
+  if (root.classList.contains("minimized")) {
+    setMenuTitleImmediate("MENU");
+  } else {
+    setMenuTitleImmediate(MENU_TITLE_FULL);
+  }
+
+  function clearBootloaderInlinePos() {
+    root.style.position = "";
+    root.style.left = "";
+    root.style.top = "";
+    root.style.right = "";
+    root.style.bottom = "";
+    root.style.transform = "";
+    root.style.margin = "";
+  }
+
+  if (btnCenter) {
+    btnCenter.addEventListener("click", function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      root.classList.remove("bootloader-corner", "minimized");
+      clearBootloaderInlinePos();
+      try {
+        localStorage.setItem("bootloaderCorner", "0");
+        localStorage.setItem("bootloaderMin", "0");
+      } catch (err) {}
+      btnMin.setAttribute("title", "Minimize");
+      btnMin.textContent = "−";
+      setMenuTitleImmediate(MENU_TITLE_FULL);
+    });
+  }
+
+  btnMin.addEventListener("click", function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    var closing = root.classList.contains("minimized");
+    if (!closing) {
+      root.classList.add("bootloader-corner", "minimized");
+      root.classList.remove("boot-dock-flash");
+      void root.offsetWidth;
+      root.classList.add("boot-dock-flash");
+      setTimeout(function() {
+        root.classList.remove("boot-dock-flash");
+      }, 420);
+      try {
+        localStorage.setItem("bootloaderMin", "1");
+        localStorage.setItem("bootloaderCorner", "1");
+      } catch (err) {}
+      btnMin.setAttribute("title", "Restore");
+      btnMin.textContent = "+";
+      setMenuTitleImmediate("MENU");
+      return;
+    }
+    root.classList.remove("minimized");
+    try {
+      localStorage.setItem("bootloaderMin", "0");
+    } catch (err2) {}
+    btnMin.setAttribute("title", "Minimize");
+    btnMin.textContent = "−";
+    animateMenuTitleOpen();
+  });
+
+  function onMove(clientX, clientY) {
+    if (!dragging) return;
+    var x = clientX - startX;
+    var y = clientY - startY;
+    root.style.left = Math.round(origLeft + x) + "px";
+    root.style.top = Math.round(origTop + y) + "px";
+    clampPosition();
+    savePosition();
+  }
+
+  chrome.addEventListener("mousedown", function(e) {
+    if (e.button !== 0) return;
+    if (e.target === btnMin || btnMin.contains(e.target)) return;
+    if (btnCenter && (e.target === btnCenter || btnCenter.contains(e.target))) return;
+    /* Under titles: stay in normal flow — do not switch to fixed (was causing jump on click/drag) */
+    if (!root.classList.contains("minimized")) return;
+    applyManualPosition();
+    var r = root.getBoundingClientRect();
+    origLeft = r.left;
+    origTop = r.top;
+    startX = e.clientX;
+    startY = e.clientY;
+    dragging = true;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", function(e) {
+    onMove(e.clientX, e.clientY);
+  });
+
+  document.addEventListener("mouseup", function() {
+    dragging = false;
+  });
+
+  chrome.addEventListener(
+    "touchstart",
+    function(e) {
+      if (e.target === btnMin || btnMin.contains(e.target)) return;
+      if (btnCenter && (e.target === btnCenter || btnCenter.contains(e.target))) return;
+      if (!root.classList.contains("minimized")) return;
+      var t = e.touches[0];
+      applyManualPosition();
+      var r = root.getBoundingClientRect();
+      origLeft = r.left;
+      origTop = r.top;
+      startX = t.clientX;
+      startY = t.clientY;
+      dragging = true;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    function(e) {
+      if (!dragging) return;
+      var t = e.touches[0];
+      onMove(t.clientX, t.clientY);
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+
+  document.addEventListener("touchend", function() {
+    dragging = false;
+  });
+
+  window.addEventListener("resize", function() {
+    if (root.style.left) clampPosition();
+  });
+
+  if (typeof updateBootThemeButtons === "function") updateBootThemeButtons();
+  if (typeof updateBootBackdropButtons === "function") updateBootBackdropButtons();
+})();
+
+window.addEventListener("resize", function() {
+  document.querySelectorAll("#desktop .app-window.is-open").forEach(function(w) {
+    var n = parseInt(w.dataset.appIndex, 10);
+    var si = openStack.indexOf(n);
+    if (si !== -1) layoutCascade(w, si);
+  });
+  if (typeof window.fitHeroTitle === "function") window.fitHeroTitle();
+});
+
+(function titleSystem() {
+  var title = document.getElementById("ascii-title");
+  var menu = document.getElementById("ascii-menu");
+  var presets = [
+    { id: "slim", label: "SLIM", lines: [
+      "┏━┓┏━╸╻ ╻┏━╸┏━┓╻┏━╸",
+      "┣┳┛┣╸ ┃┏┛┣╸ ┣┳┛┃┣╸ ",
+      "╹┗╸┗━╸┗┛ ┗━╸╹┗╸╹┗━╸"
+    ]}
+  ];
+  var idx = 0;
+
+  function setPreset(i) {
+    idx = i;
+    var txt = presets[idx].lines.join("\n");
+    var front = title.querySelector(".title-3d-face-front");
+    var back = title.querySelector(".title-3d-face-back");
+    if (front) front.textContent = txt;
+    if (back) back.textContent = txt;
+    title.setAttribute("data-title", txt);
+    Array.prototype.forEach.call(menu.querySelectorAll("button"), function(b, bi) {
+      b.classList.toggle("active", bi === idx);
+    });
+    localStorage.setItem("reverie_title_style", "slim");
+    fitTitleToFrame();
+  }
+
+  function fitTitleToFrame() {
+    var hero = document.getElementById("hero-wall");
+    var sub = document.getElementById("hero-subascii");
+    if (!hero) return;
+    title.style.setProperty("--title-scale", "1");
+    if (sub) sub.style.transform = "none";
+    var rowMax = Math.max(280, Math.min(hero.clientWidth, window.innerWidth - 32));
+    var maxW = Math.max(200, rowMax * 0.92);
+    var measure = title.querySelector(".title-3d-face-front") || title;
+    var w = measure.scrollWidth || 1;
+    var scale = Math.min(maxW / w, 1);
+    title.style.setProperty("--title-scale", String(scale));
+    if (sub) {
+      var subW = sub.scrollWidth || 1;
+      var subScale = Math.min(1, rowMax / subW) * 0.82;
+      sub.style.transform = "scale(" + subScale + ")";
+      sub.style.transformOrigin = "center top";
+    }
+  }
+
+  menu.style.display = "none";
+  menu.setAttribute("aria-hidden", "true");
+
+  function showMenu(x, y) {
+    menu.style.display = "block";
+    menu.setAttribute("aria-hidden", "false");
+    var maxX = window.innerWidth - menu.offsetWidth - 8;
+    var maxY = window.innerHeight - menu.offsetHeight - 8;
+    menu.style.left = Math.max(8, Math.min(x, maxX)) + "px";
+    menu.style.top = Math.max(8, Math.min(y, maxY)) + "px";
+  }
+  function hideMenu() {
+    menu.style.display = "none";
+    menu.setAttribute("aria-hidden", "true");
+  }
+
+  document.addEventListener("contextmenu", function(e) {
+    var hero = document.getElementById("hero-wall");
+    if (hero && hero.contains(e.target)) e.preventDefault();
+  });
+  document.addEventListener("click", function(e) {
+    if (menu.style.display === "block" && !menu.contains(e.target)) hideMenu();
+  });
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") hideMenu();
+  });
+
+  setPreset(0);
+  fitTitleToFrame();
+  window.addEventListener("resize", fitTitleToFrame);
+  window.fitHeroTitle = fitTitleToFrame;
+
+})();
+</script>
+<script>
+(function fallbackAsciiWall() {
+  var el = document.getElementById("ascii-wall");
+  if (!el) return;
+  var root = document.documentElement;
+  var bd = root.getAttribute("data-backdrop") || "";
+  if (root.getAttribute("data-reverie-lattice") === "1" || /^ambs?-/.test(bd)) return;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  function startFallback() {
+    if (!el || el.querySelector("canvas")) return;
+    var pools = [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+      "!@#$%^&*()_+-=[]{}|;:',.<>/?`~",
+      "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ",
+      "アイウエオカキクケコサシスセソタチツテト",
+      "漢字語言數據網絡機械認知的一是在不了有和人这中大为",
+      "अआइईउऊएऐओऔकखगघचछजझञटठडढण",
+      "ابتثجحخدذرزسشصضطظعغفقكلمنهوي",
+      "абвгдеёжзийклмнопрстуфхцчшщыэюя",
+      "αβγδεζηθικλμνξοπρστυφχψω",
+      "กขคงจฉชซญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ",
+      "אבגדהוזחטיכלמנסעפצקרשת"
+    ];
+    var chars = pools.join("");
+    var cvs = document.createElement("canvas");
+    cvs.setAttribute("data-fallback", "1");
+    var ctx = cvs.getContext("2d");
+    var t = 0;
+    var cellW = 10;
+    var cellH = 12;
+    var cols = 0;
+    var rows = 0;
+    var field = [];
+
+    el.textContent = "";
+    el.appendChild(cvs);
+
+    function pick() { return chars[Math.floor(Math.random() * chars.length)]; }
+
+    function measure() {
+      var w = Math.max(1, el.clientWidth);
+      var h = Math.max(1, el.clientHeight);
+      cvs.width = Math.floor(w);
+      cvs.height = Math.floor(h);
+      cellW = Math.max(8, Math.floor(w / 120));
+      cellH = Math.max(11, Math.floor(h / 70));
+      cols = Math.ceil(w / cellW) + 4;
+      rows = Math.ceil(h / cellH) + 2;
+      field = [];
+      for (var y = 0; y < rows; y++) {
+        var row = [];
+        for (var x = 0; x < cols; x++) row.push(pick());
+        field.push(row);
+      }
+      ctx.font = (cellH - 1) + "px monospace";
+      ctx.textBaseline = "top";
+    }
+
+    function draw() {
+      if (document.hidden) { requestAnimationFrame(draw); return; }
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      var fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#39ff14";
+      for (var y = 0; y < rows; y++) {
+        var sway = Math.sin(y * 0.21 + t * 1.2);
+        for (var x = 0; x < cols; x++) {
+          var flow = Math.sin(x * 0.12 + t + sway) + Math.cos(y * 0.18 - t * 1.1);
+          if (Math.random() < 0.012 + (flow + 2) * 0.02) field[y][x] = pick();
+          var srcX = (x + Math.floor((flow + 2) * 0.7) + cols) % cols;
+          var ch = field[y][srcX];
+          ctx.globalAlpha = 0.12 + (flow + 2) * 0.11;
+          ctx.fillStyle = fg;
+          ctx.fillText(ch, x * cellW, y * cellH);
+        }
+      }
+      ctx.globalAlpha = 1;
+      t += 0.035;
+      requestAnimationFrame(draw);
+    }
+
+    measure();
+    window.addEventListener("resize", measure);
+    draw();
+  }
+
+  startFallback();
+})();
+</script>
+
+<script>
+/* ============================================================
+   REVERIE · OS LAYER
+   taskbar, statusbar, keyboard shortcuts, tiling,
+   system implementations (SOLARUM · CEREBRUM · mAI · XSCRIPT ·
+   NEXUS · SENSEWARE · LAB)
+   ============================================================ */
+(function osLayer() {
+  var APP_TITLES = ["ABOUT REVERIE","SYSTEMS","DOCUMENTATION","CEREBRUM:NERVE LAB"];
+
+  /* ---------- taskbar ---------- */
+  var tb = document.getElementById("taskbar-inner");
+  function refreshTaskbar() {
+    if (!tb) return;
+    tb.innerHTML = "";
+    var focusedIdx = -1;
+    var f = document.querySelector("#desktop .app-window.focused");
+    if (f) focusedIdx = parseInt(f.dataset.appIndex, 10);
+    document.querySelectorAll("#desktop .app-window.is-open").forEach(function(w) {
+      var i = parseInt(w.dataset.appIndex, 10);
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tb-item" + (i === focusedIdx ? " focused" : "");
+      b.textContent = APP_TITLES[i] || ("APP " + i);
+      b.title = "Focus " + APP_TITLES[i];
+      b.addEventListener("click", function() {
+        if (typeof focusApp === "function") focusApp(i);
+      });
+      b.addEventListener("dblclick", function() {
+        if (typeof closeApp === "function") closeApp(i);
+      });
+      tb.appendChild(b);
+    });
+  }
+  // patch: wrap existing openApp/closeApp/minimizeApp/focusApp to refresh tb
+  ["openApp","closeApp","minimizeApp","focusApp","closeAllApps"].forEach(function(k){
+    var orig = window[k];
+    if (typeof orig !== "function") return;
+    window[k] = function() {
+      var r = orig.apply(this, arguments);
+      refreshTaskbar();
+      return r;
+    };
+  });
+
+  /* ---------- maximize / tile ---------- */
+  window.toggleMaximize = function(i) {
+    var w = document.querySelector('#desktop .app-window[data-app-index="'+i+'"]');
+    if (!w) return;
+    if (w.classList.contains("tile-max")) {
+      w.classList.remove("tile-max","tile-left","tile-right");
+      // restore cascade position
+      var idx = 0;
+      document.querySelectorAll("#desktop .app-window.is-open").forEach(function(x,n){ if (x===w) idx = n; });
+      if (typeof layoutCascade === "function") layoutCascade(w, idx);
+    } else {
+      w.classList.remove("tile-left","tile-right");
+      w.classList.add("tile-max");
+    }
+    if (typeof focusApp === "function") focusApp(i);
+  };
+  function tileFocused(side) {
+    var f = document.querySelector("#desktop .app-window.focused");
+    if (!f) return;
+    f.classList.remove("tile-max","tile-left","tile-right");
+    if (side === "left") f.classList.add("tile-left");
+    else if (side === "right") f.classList.add("tile-right");
+    else if (side === "max") f.classList.add("tile-max");
+  }
+
+  /* ---------- statusbar: clock + uptime + rotating process ticker ---------- */
+  var bootStart = Date.now();
+  var procMsgs = [
+    "nexus/sync", "cerebrum/calib", "xscript/parse", "senseware/poll",
+    "solarum/tick", "mai/bind", "reverie/heartbeat", "kernel/page",
+    "cache/sweep", "memgc", "ascii/flow", "menu/idle"
+  ];
+  var sbProc = document.querySelector("#statusbar .sb-proc-txt");
+  var sbClock = document.getElementById("sb-clock");
+  var sbUp = document.getElementById("sb-uptime");
+  function pad2(n){ n=n|0; return (n<10?"0":"")+n; }
+  function tickStatus() {
+    var d = new Date();
+    if (sbClock) sbClock.textContent = pad2(d.getHours())+":"+pad2(d.getMinutes())+":"+pad2(d.getSeconds());
+    var up = ((Date.now()-bootStart)/1000)|0;
+    if (sbUp) sbUp.textContent = "UP "+pad2((up/3600)|0)+":"+pad2(((up/60)|0)%60)+":"+pad2(up%60);
+    if (sbProc && Math.random() < 0.28) {
+      sbProc.textContent = procMsgs[(Math.random()*procMsgs.length)|0]
+        + " " + (Math.random()*100).toFixed(2);
+    }
+  }
+  setInterval(tickStatus, 1000);
+  tickStatus();
+
+  window.openNerveLabMaximized = function () {
+    if (typeof goToPanel !== "function") return;
+    goToPanel(4);
+    setTimeout(function () {
+      if (typeof toggleMaximize === "function") toggleMaximize(3);
+      if (typeof focusApp === "function") focusApp(3);
+    }, 180);
+  };
+
+  /* ---------- keyboard shortcuts ---------- */
+  document.addEventListener("keydown", function(e) {
+    var meta = e.metaKey || e.ctrlKey;
+    if (!meta) return;
+    var k = e.key;
+    if (k >= "0" && k <= "9") {
+      e.preventDefault();
+      var n = parseInt(k,10);
+      if (typeof goToPanel === "function") goToPanel(n);
+      return;
+    }
+    if (k === "k" || k === "K") { e.preventDefault(); openPalette(); return; }
+    if (k === "ArrowUp") { e.preventDefault(); tileFocused("max"); return; }
+    if (k === "ArrowLeft") { e.preventDefault(); tileFocused("left"); return; }
+    if (k === "ArrowRight") { e.preventDefault(); tileFocused("right"); return; }
+  });
+
+  /* ---------- command palette (minimal, reuses ascii-menu frame) ---------- */
+  function openPalette() {
+    var m = document.getElementById("ascii-menu");
+    if (!m) return;
+    m.innerHTML = "";
+    var list = [
+      ["ABOUT REVERIE",1],["SYSTEMS",2],["DOCUMENTATION",3],["CEREBRUM:NERVE LAB",4],
+      ["— close all",0]
+    ];
+    list.forEach(function(r){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = "› "+r[0];
+      b.addEventListener("click", function(){
+        m.style.display="none";
+        if (typeof goToPanel==="function") goToPanel(r[1]);
+      });
+      m.appendChild(b);
+    });
+    m.style.display = "block";
+    var x = Math.max(12, (window.innerWidth - 260) / 2);
+    var y = Math.max(12, (window.innerHeight - 420) / 2);
+    m.style.left = x+"px";
+    m.style.top = y+"px";
+  }
+
+  /* ============================================================
+     SOLARUM · 3D wireframe world (cube grid + rotating)
+     ============================================================ */
+  (function solarum() {
+    var cvs = document.getElementById("solarum-canvas");
+    if (!cvs) return;
+    var ctx = cvs.getContext("2d");
+    var rx = -0.4, ry = 0.6, zoom = 1, dragging=false, lx=0, ly=0;
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    function resize() {
+      var r = cvs.getBoundingClientRect();
+      cvs.width = Math.max(1, r.width*dpr);
+      cvs.height = Math.max(1, r.height*dpr);
+    }
+    // build a low-poly "world": grid + a few buildings
+    var nodes = [];
+    var edges = [];
+    // ground grid
+    var G = 6;
+    for (var x=-G; x<=G; x++) {
+      nodes.push([x,0,-G]); nodes.push([x,0,G]);
+      edges.push([nodes.length-2, nodes.length-1]);
+    }
+    for (var z=-G; z<=G; z++) {
+      nodes.push([-G,0,z]); nodes.push([G,0,z]);
+      edges.push([nodes.length-2, nodes.length-1]);
+    }
+    // a few random "towers"
+    function addBox(cx,cz,w,h,d) {
+      var base = nodes.length;
+      var y0=0, y1=h;
+      nodes.push([cx-w,y0,cz-d],[cx+w,y0,cz-d],[cx+w,y0,cz+d],[cx-w,y0,cz+d]);
+      nodes.push([cx-w,y1,cz-d],[cx+w,y1,cz-d],[cx+w,y1,cz+d],[cx-w,y1,cz+d]);
+      [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(function(e){
+        edges.push([base+e[0], base+e[1]]);
+      });
+    }
+    [[ -3, -2, 0.8, 2.4, 0.8],[ 2, 1, 1.2, 1.4, 1.2],[ 0, -4, 1, 3.2, 1],[ 4, -2, 0.7, 1.8, 0.7],[ -4, 3, 1.4, 2, 1.4]]
+      .forEach(function(b){ addBox(b[0],b[1],b[2],b[3],b[4]); });
+
+    var theta = 0;
+    function project(p, w, h) {
+      var s = Math.sin(ry), c = Math.cos(ry);
+      var x1 = p[0]*c - p[2]*s;
+      var z1 = p[0]*s + p[2]*c;
+      var sx = Math.sin(rx), cx2 = Math.cos(rx);
+      var y2 = p[1]*cx2 - z1*sx;
+      var z2 = p[1]*sx + z1*cx2;
+      var persp = 4 / (4 + z2);
+      return [ w/2 + x1*persp*zoom*h*0.09, h/2 + (y2)*persp*zoom*h*0.09*-1 ];
+    }
+    function draw() {
+      var r = cvs.getBoundingClientRect();
+      var w = cvs.width, h = cvs.height;
+      ctx.clearRect(0,0,w,h);
+      var fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim()||"#39ff14";
+      ctx.lineWidth = Math.max(1, dpr*0.9);
+      for (var i=0;i<edges.length;i++) {
+        var a = nodes[edges[i][0]], b = nodes[edges[i][1]];
+        var pa = project(a,w,h), pb = project(b,w,h);
+        // depth fade by avg z
+        var s = Math.sin(ry), c = Math.cos(ry);
+        var za = a[0]*s + a[2]*c, zb = b[0]*s + b[2]*c;
+        var depth = (za+zb)/2;
+        var alpha = 0.18 + Math.max(0, 0.55 - depth*0.08);
+        ctx.strokeStyle = fg;
+        ctx.globalAlpha = Math.min(0.95, alpha);
+        ctx.beginPath(); ctx.moveTo(pa[0],pa[1]); ctx.lineTo(pb[0],pb[1]); ctx.stroke();
+      }
+      // scan sweep
+      ctx.globalAlpha = 0.15;
+      var sweepY = (Math.sin(theta*0.6)*0.5+0.5)*h;
+      ctx.strokeStyle = fg;
+      ctx.beginPath(); ctx.moveTo(0,sweepY); ctx.lineTo(w,sweepY); ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (!dragging) ry += 0.003;
+      theta += 0.05;
+      requestAnimationFrame(draw);
+    }
+    // HUD
+    var hud = document.querySelector("#solarum-viewport .os-viewport-hud");
+    var tick = 0;
+    var fps = 0, lastFrame = performance.now(), frames = 0;
+    (function hudLoop(){
+      var now = performance.now();
+      frames++;
+      if (now - lastFrame > 500) { fps = Math.round(frames*1000/(now-lastFrame)); frames=0; lastFrame=now; }
+      tick++;
+      if (hud) {
+        hud.querySelector('[data-slot="fps"]').textContent = "FPS " + fps;
+        hud.querySelector('[data-slot="verts"]').textContent = "V " + nodes.length + " · E " + edges.length;
+        hud.querySelector('[data-slot="tick"]').textContent = "T+" + String(tick).padStart(4,"0");
+      }
+      setTimeout(hudLoop, 200);
+    })();
+    // interactions
+    cvs.addEventListener("mousedown", function(e){ dragging=true; lx=e.clientX; ly=e.clientY; });
+    window.addEventListener("mouseup", function(){ dragging=false; });
+    window.addEventListener("mousemove", function(e){
+      if (!dragging) return;
+      ry += (e.clientX - lx) * 0.01;
+      rx += (e.clientY - ly) * 0.01;
+      rx = Math.max(-1.3, Math.min(0.2, rx));
+      lx = e.clientX; ly = e.clientY;
+    });
+    cvs.addEventListener("wheel", function(e){ e.preventDefault(); zoom = Math.max(0.4, Math.min(3, zoom - e.deltaY*0.001)); }, {passive:false});
+    window.addEventListener("resize", resize);
+    new ResizeObserver(resize).observe(cvs);
+    resize(); draw();
+
+    // sectors list
+    var sectorsEl = document.getElementById("solarum-sectors");
+    if (sectorsEl) {
+      var sectors = [
+        ["AURELIA-0", 214],["TERM/NORTH", 48],["STUDIO-7", 12],
+        ["DOCK-APEX", 310],["GROVE//QUIET", 3],["MARKET-Δ", 127]
+      ];
+      sectorsEl.innerHTML = sectors.map(function(s){
+        return '<li><span class="k">'+s[0]+'</span><span class="v">online</span><span class="v">'+s[1]+' · alive</span></li>';
+      }).join("");
+    }
+    // bars
+    var barsEl = document.getElementById("solarum-bars");
+    if (barsEl) {
+      var rows = [["runtime",72],["scene",58],["netcode",91],["pipeline",34],["render",80]];
+      barsEl.innerHTML = rows.map(function(r){
+        return '<div class="os-bar"><span>'+r[0]+'</span><span class="os-bar-track"><span class="os-bar-fill" style="width:'+r[1]+'%"></span></span><span class="os-bar-val">'+r[1]+'%</span></div>';
+      }).join("");
+      setInterval(function(){
+        barsEl.querySelectorAll(".os-bar").forEach(function(row){
+          var fill = row.querySelector(".os-bar-fill");
+          var val = row.querySelector(".os-bar-val");
+          var cur = parseFloat(fill.style.width)||50;
+          cur = Math.max(10, Math.min(98, cur + (Math.random()-0.5)*12));
+          fill.style.width = cur.toFixed(0)+"%";
+          val.textContent = cur.toFixed(0)+"%";
+        });
+      }, 1600);
+    }
+  })();
+
+  /* ============================================================
+     mAI · chat with persona + optional claude.complete
+     ============================================================ */
+  (function mai() {
+    var chat = document.getElementById("mai-chat");
+    var input = document.getElementById("mai-in");
+    var send = document.getElementById("mai-send");
+    var meta = document.getElementById("mai-meta");
+    var tabs = document.getElementById("mai-persona-tabs");
+    if (!chat || !input || !send) return;
+    var persona = "archivist";
+    var personas = {
+      archivist: { tone:"ledger-keeping, precise", refuse:"No record, no invention — I will say so plainly." },
+      analyst:   { tone:"numerate, hedged",        refuse:"Ranges before false precision." },
+      oracle:    { tone:"compressed, oblique",     refuse:"Signal over flattery." }
+    };
+    function push(role, who, txt) {
+      var d = document.createElement("div");
+      d.className = "mai-msg "+role;
+      d.innerHTML = '<span class="mai-who">'+who+'</span><span class="mai-text"></span>';
+      d.querySelector(".mai-text").textContent = txt;
+      chat.appendChild(d);
+      chat.scrollTop = chat.scrollHeight;
+      return d.querySelector(".mai-text");
+    }
+    function setPersona(p) {
+      persona = p;
+      tabs.querySelectorAll(".mai-ptab").forEach(function(b){
+        b.classList.toggle("active", b.dataset.p===p);
+      });
+      if (meta) meta.textContent = "Persona: "+p+" — "+personas[p].tone+" — traceable stance; Nerve-colored replies when the API has a session.";
+      push("sys","sys","persona→"+p+". "+personas[p].refuse);
+    }
+    tabs.addEventListener("click", function(e){
+      var b = e.target.closest(".mai-ptab");
+      if (b) setPersona(b.dataset.p);
+    });
+    push("sys","sys","mAI ready — archivist persona. Connect Nerve to let answers echo the last gate decision.");
+
+    function stubReply(q) {
+      var t = q.toLowerCase();
+      if (t.indexOf("time")>=0) return "Now is "+(new Date()).toLocaleTimeString()+". That is what I can say with certainty.";
+      if (t.indexOf("name")>=0) return "I am mAI — a persona bound to the trust layer. A name is only a handle; the record is what matters.";
+      if (t.indexOf("uncertainty")>=0||t.indexOf("sure")>=0) return "Ask what you do not know — I will surface the gap, not paper over it.";
+      if (persona==="oracle") return "What you ask already contains its answer. Re-ask it slower.";
+      if (persona==="analyst") return "Insufficient context. Working range: [0.3, 0.7]. Sharpen the question and I will sharpen the reply.";
+      return "[archivist] No record on file for: “"+q+"”. I will not fabricate a ledger entry.";
+    }
+
+    async function handleSend() {
+      var q = input.value.trim();
+      if (!q) return;
+      input.value = "";
+      push("user","you",q);
+      var tgt = push("bot", persona, "…");
+      var prompt = "You are mAI, a "+persona+" persona over an epistemic engine called Cerebrum. "+
+        "Tone: "+personas[persona].tone+". "+
+        "You refuse low-prior fabrication: "+personas[persona].refuse+" "+
+        "Keep replies to 1-3 sentences, no preamble, no apology. "+
+        "User: "+q;
+      try {
+        var base = (localStorage.getItem("reverie.nerve.apiBase") || "http://127.0.0.1:8000").replace(/\/$/, "");
+        var dr = await fetch(base + "/demo/mai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: q, persona: persona })
+        });
+        if (dr.ok) {
+          var dj = await dr.json();
+          if (dj && dj.reply) {
+            tgt.textContent = dj.reply;
+            return;
+          }
+        }
+      } catch (e2) {}
+      try {
+        if (window.claude && typeof window.claude.complete==="function") {
+          var r = await window.claude.complete(prompt);
+          tgt.textContent = (r||"").trim() || stubReply(q);
+        } else {
+          tgt.textContent = stubReply(q);
+        }
+      } catch (e) {
+        tgt.textContent = stubReply(q);
+      }
+    }
+    send.addEventListener("click", handleSend);
+    input.addEventListener("keydown", function(e){ if (e.key==="Enter") handleSend(); });
+  })();
+
+  /* ============================================================
+     XSCRIPT · tokenizer + meaning graph + action plan
+     ============================================================ */
+  (function xs(){
+    var input = document.getElementById("xs-in");
+    var runBtn = document.getElementById("xs-run");
+    var tokEl = document.getElementById("xs-tokens");
+    var graphEl = document.getElementById("xs-graph");
+    var planEl = document.getElementById("xs-plan");
+    if (!input || !tokEl) return;
+    var ROLE = {
+      verbs: ["remind","call","book","send","schedule","find","when","ask","tell","open","play","buy"],
+      prep: ["to","for","at","in","on","with","about","when","until","by"],
+      det: ["a","an","the","my","your","this","that"],
+      conj: ["and","or","but","if","because","so"]
+    };
+    function classify(tok) {
+      var t = tok.toLowerCase();
+      if (ROLE.verbs.indexOf(t)>=0) return "VERB";
+      if (ROLE.prep.indexOf(t)>=0) return "PREP";
+      if (ROLE.det.indexOf(t)>=0) return "DET";
+      if (ROLE.conj.indexOf(t)>=0) return "CONJ";
+      if (/^\d/.test(t)) return "NUM";
+      if (t[0] && t[0] === t[0].toUpperCase() && tok.length>1) return "ENTITY";
+      return "NOUN";
+    }
+    async function parse() {
+      var s = input.value.trim(); if (!s) return;
+      var toks = s.match(/[A-Za-zÀ-ÿ0-9']+/g) || [];
+      tokEl.innerHTML = toks.map(function(t){
+        var r = classify(t);
+        return '<span class="xs-token"><span class="xs-role">'+r+'</span>'+t+'</span>';
+      }).join("");
+      // meaning graph (ascii)
+      var verb = toks.find(function(t){ return ROLE.verbs.indexOf(t.toLowerCase())>=0; }) || toks[0] || "?";
+      var entities = toks.filter(function(t){ var c=classify(t); return c==="ENTITY"||c==="NOUN"||c==="NUM"; }).slice(0,4);
+      var lines = [];
+      lines.push("  ┌─ INTENT ──────────────────┐");
+      lines.push("  │ verb: "+verb.padEnd(19,' ')+"│");
+      entities.forEach(function(e,i){
+        lines.push("  │ arg"+(i+1)+": "+e.slice(0,18).padEnd(19,' ')+"│");
+      });
+      lines.push("  └───────────────┬───────────┘");
+      lines.push("                  │");
+      lines.push("        ┌─ RESOLVE ┴ CONTEXT ──┐");
+      lines.push("        │ time · place · actor │");
+      lines.push("        └──────────┬───────────┘");
+      lines.push("                   ▼");
+      lines.push("            ⌬ PLAN ⌬");
+      graphEl.textContent = lines.join("\n");
+      // plan
+      var plan = [
+        "PLAN-"+((Math.random()*9999)|0).toString(16).toUpperCase(),
+        " 1. resolve_entities(["+entities.map(function(e){return '"'+e+'"';}).join(",")+"])",
+        " 2. fetch_context(time=local, actor=user)",
+        " 3. validate_intent(verb=\""+verb+"\", guard=low_prior_refuse)",
+        " 4. propose_action(confidence=0."+((Math.random()*40+55)|0)+")",
+        " 5. await_operator_confirm()"
+      ];
+      planEl.textContent = plan.join("\n");
+      try {
+        var b = (localStorage.getItem("reverie.nerve.apiBase") || "http://127.0.0.1:8000").replace(/\/$/, "");
+        var xr = await fetch(b + "/demo/xscript", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: s })
+        });
+        if (xr.ok) {
+          var xj = await xr.json();
+          var ex = (xj.claims || []).map(function(c){ return "  · ["+(c.type||"?")+"] "+(c.text||"").slice(0,80); }).join("\n");
+          planEl.textContent =
+            plan.join("\n") +
+            "\n\n// server POST /demo/xscript (canon claim + policy)\n" +
+            "policy_route: " + (xj.policy_route || "—") + "\n" +
+            (xj.policy_note ? "note: " + xj.policy_note + "\n" : "") +
+            "claims (" + (xj.claim_count || 0) + "):\n" + (ex || "  (none)") + "\n" +
+            "guards: " + (xj.guards || []).join(", ") + " · verb: " + (xj.verb || "—");
+        }
+      } catch (e) {}
+    }
+    runBtn && runBtn.addEventListener("click", parse);
+    input && input.addEventListener("keydown", function(e){ if(e.key==="Enter") parse(); });
+    parse();
+  })();
+
+  /* ============================================================
+     NEXUS · animated semantic graph
+     ============================================================ */
+  (function nexus(){
+    var cvs = document.getElementById("nexus-canvas");
+    var edgesEl = document.getElementById("nexus-edges");
+    if (!cvs) return;
+    var ctx = cvs.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    function resize(){ var r=cvs.getBoundingClientRect(); cvs.width=r.width*dpr; cvs.height=r.height*dpr; }
+    new ResizeObserver(resize).observe(cvs); resize();
+
+    var concepts = ["SELF","memory","intent","calibration","place","peer","ledger","mAI","xscript","solarum","cerebrum","senseware","trust","now","signal"];
+    var nodes = concepts.map(function(c,i){
+      return {
+        t: c,
+        x: Math.random(),
+        y: Math.random(),
+        vx: (Math.random()-0.5)*0.0004,
+        vy: (Math.random()-0.5)*0.0004,
+        kind: i===0 ? "self" : (i<4 ? "peer" : "concept")
+      };
+    });
+    // edges
+    var edges = [];
+    for (var i=1;i<nodes.length;i++) edges.push([0,i, Math.random()*0.6+0.2]);
+    for (var j=0;j<12;j++) {
+      var a=(Math.random()*nodes.length)|0, b=(Math.random()*nodes.length)|0;
+      if (a!==b) edges.push([a,b, Math.random()*0.5+0.1]);
+    }
+    function draw(){
+      var w=cvs.width, h=cvs.height;
+      ctx.clearRect(0,0,w,h);
+      var fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim()||"#39ff14";
+      // evolve
+      nodes.forEach(function(n){
+        n.x += n.vx; n.y += n.vy;
+        if (n.x<0.05||n.x>0.95) n.vx*=-1;
+        if (n.y<0.1||n.y>0.9) n.vy*=-1;
+      });
+      // edges
+      ctx.lineWidth = Math.max(1, dpr*0.7);
+      edges.forEach(function(e){
+        var a=nodes[e[0]], b=nodes[e[1]];
+        var ax=a.x*w, ay=a.y*h, bx=b.x*w, by=b.y*h;
+        ctx.strokeStyle = fg;
+        ctx.globalAlpha = 0.15 + e[2]*0.45 + Math.sin(performance.now()*0.001 + e[0])*0.08;
+        ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke();
+      });
+      // nodes
+      ctx.globalAlpha = 1;
+      ctx.font = Math.round(10*dpr)+"px "+(getComputedStyle(document.documentElement).getPropertyValue("--font-menu")||"monospace");
+      ctx.textBaseline = "middle";
+      nodes.forEach(function(n){
+        var x=n.x*w, y=n.y*h;
+        ctx.fillStyle = fg;
+        if (n.kind==="self") { ctx.globalAlpha=1; ctx.fillRect(x-3*dpr,y-3*dpr,6*dpr,6*dpr); }
+        else if (n.kind==="peer") { ctx.globalAlpha=0.75; ctx.beginPath(); ctx.arc(x,y,3*dpr,0,Math.PI*2); ctx.fill(); }
+        else {
+          ctx.globalAlpha = 0.7; ctx.strokeStyle = fg;
+          ctx.beginPath(); ctx.arc(x,y,2.5*dpr,0,Math.PI*2); ctx.stroke();
+        }
+        ctx.globalAlpha = 0.85;
+        ctx.fillText(n.t, x+6*dpr, y);
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    // edges panel
+    if (edgesEl) {
+      var pairs = edges.slice(0,10).map(function(e){
+        return [nodes[e[0]].t+" → "+nodes[e[1]].t, e[2].toFixed(2)];
+      });
+      edgesEl.innerHTML = pairs.map(function(p){
+        return '<div class="nx-edge"><span>'+p[0]+'</span><span class="v">w '+p[1]+'</span></div>';
+      }).join("");
+      setInterval(function(){
+        edgesEl.querySelectorAll(".nx-edge .v").forEach(function(v){
+          var n = parseFloat(v.textContent.replace(/[^\d.]/g,''))||0.5;
+          n = Math.max(0.05, Math.min(0.95, n + (Math.random()-0.5)*0.08));
+          v.textContent = "w "+n.toFixed(2);
+        });
+      }, 1400);
+    }
+    setInterval(function(){
+      var b = (localStorage.getItem("reverie.nerve.apiBase") || "http://127.0.0.1:8000").replace(/\/$/, "");
+      var le = document.getElementById("nexus-nerve-edges");
+      var ll = document.getElementById("nexus-nerve-lbl");
+      var cl = document.getElementById("nexus-nerve-claims");
+      var cLab = document.getElementById("nexus-nerve-claims-lbl");
+      fetch(b + "/demo/nexus-ui")
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (!d || !d.nodes || !d.nodes.length) {
+            if (le) le.style.display = "none";
+            if (ll) ll.style.display = "none";
+            if (cl) cl.style.display = "none";
+            if (cLab) cLab.style.display = "none";
+            return;
+          }
+          if (ll) ll.style.display = "block";
+          if (le) {
+            le.style.display = "block";
+            le.innerHTML = d.edges.map(function(e){
+              var na = d.nodes[e.source] || {}, nb = d.nodes[e.target] || {};
+              return '<div class="nx-edge"><span>'+(na.label||"?")+" → "+(nb.label||"?")+'</span><span class="v">w '+e.weight+"</span></div>";
+            }).join("");
+          }
+          if (d.claims && d.claims.length) {
+            if (cLab) cLab.style.display = "block";
+            if (cl) {
+              cl.style.display = "block";
+              cl.innerHTML = d.claims.map(function(c){
+                return '<div class="nx-edge"><span>'+(c.type||"claim")+": "+(c.text||"").slice(0,120)+'</span><span class="v"> </span></div>';
+              }).join("");
+            }
+          } else {
+            if (cl) cl.style.display = "none";
+            if (cLab) cLab.style.display = "none";
+          }
+        })
+        .catch(function(){
+          var le2 = document.getElementById("nexus-nerve-edges");
+          var ll2 = document.getElementById("nexus-nerve-lbl");
+          if (le2) le2.style.display = "none";
+          if (ll2) ll2.style.display = "none";
+          var cl2 = document.getElementById("nexus-nerve-claims");
+          var c2 = document.getElementById("nexus-nerve-claims-lbl");
+          if (cl2) cl2.style.display = "none";
+          if (c2) c2.style.display = "none";
+        });
+    }, 2000);
+  })();
+
+  /* ============================================================
+     SENSEWARE · mouse motion → velocity/direction/intent
+     ============================================================ */
+  (function sw(){
+    var pad = document.getElementById("sw-pad");
+    var cvs = document.getElementById("sw-canvas");
+    if (!pad || !cvs) return;
+    var ctx = cvs.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio||1,2);
+    function resize(){ var r=cvs.getBoundingClientRect(); cvs.width=r.width*dpr; cvs.height=r.height*dpr; }
+    new ResizeObserver(resize).observe(cvs); resize();
+    var trail = []; var last = null; var vel = 0, dir = "—", intent = 0;
+    pad.addEventListener("pointermove", function(e){
+      var r = pad.getBoundingClientRect();
+      var p = { x: (e.clientX-r.left), y:(e.clientY-r.top), t: performance.now() };
+      if (last) {
+        var dx = p.x-last.x, dy = p.y-last.y, dt = Math.max(1, p.t-last.t);
+        var v = Math.sqrt(dx*dx+dy*dy)/dt;
+        vel = vel*0.7 + v*0.3;
+        var ang = Math.atan2(dy,dx)*180/Math.PI;
+        var bucket = (Math.round(((ang+360)%360)/45)%8);
+        dir = ["E","SE","S","SW","W","NW","N","NE"][bucket];
+        intent = Math.min(1, intent*0.88 + vel*0.2);
+      }
+      last = p;
+      trail.push(p); if (trail.length>80) trail.shift();
+    });
+    function draw(){
+      var w=cvs.width, h=cvs.height;
+      ctx.clearRect(0,0,w,h);
+      var fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim()||"#39ff14";
+      // grid
+      ctx.strokeStyle = fg; ctx.globalAlpha = 0.08; ctx.lineWidth = 1;
+      var step = 20*dpr;
+      for (var x=0;x<w;x+=step) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+      for (var y=0;y<h;y+=step) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+      // trail
+      for (var i=1;i<trail.length;i++) {
+        var a=trail[i-1], b=trail[i];
+        ctx.globalAlpha = i/trail.length*0.9;
+        ctx.strokeStyle = fg;
+        ctx.lineWidth = (i/trail.length)*3*dpr;
+        ctx.beginPath(); ctx.moveTo(a.x*dpr, a.y*dpr); ctx.lineTo(b.x*dpr, b.y*dpr); ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+      vel *= 0.96; intent *= 0.98;
+      var $=function(s){ return document.querySelector('.panel[data-app="senseware"] [data-slot="'+s+'"]'); };
+      if ($("vel")) $("vel").textContent = vel.toFixed(2);
+      if ($("dir")) $("dir").textContent = dir;
+      if ($("int")) $("int").textContent = intent.toFixed(2);
+      requestAnimationFrame(draw);
+    }
+    draw();
+    setInterval(function(){
+      var b = (localStorage.getItem("reverie.nerve.apiBase") || "http://127.0.0.1:8000").replace(/\/$/, "");
+      fetch(b + "/demo/runtime-stack", { method: "GET" })
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){
+          var $=function(s){ return document.querySelector('.panel[data-app="senseware"] [data-slot="'+s+'"]'); };
+          if (!d || !d.last_scores) {
+            if ($("phi")) $("phi").textContent = "—";
+            if ($("mode")) $("mode").textContent = "—";
+            if ($("cg")) $("cg").textContent = "—";
+            return;
+          }
+          var s = d.last_scores;
+          if ($("phi") && s.phi_e != null) $("phi").textContent = Number(s.phi_e).toFixed(2);
+          if ($("mode") && d.last_mode) $("mode").textContent = d.last_mode;
+          if ($("cg") && s.cg != null) $("cg").textContent = (s.cg >= 0 ? "+" : "") + Number(s.cg).toFixed(2);
+        })
+        .catch(function(){
+          var $=function(s){ return document.querySelector('.panel[data-app="senseware"] [data-slot="'+s+'"]'); };
+          if ($("phi")) $("phi").textContent = "—";
+          if ($("mode")) $("mode").textContent = "—";
+          if ($("cg")) $("cg").textContent = "—";
+        });
+    }, 2000);
+  })();
+
+  /* ============================================================
+     LAB · integrated console
+     ============================================================ */
+  (function lab(){
+    var con = document.getElementById("lab-console");
+    var input = document.getElementById("lab-in");
+    var run = document.getElementById("lab-run");
+    if (!con || !input) return;
+    function write(s){ con.textContent += (con.textContent?"\n":"") + s; con.scrollTop = con.scrollHeight; }
+    write("lab · " + new Date().toISOString().replace("T", " ").slice(0, 19) + " local");
+    write("Type help for a quick command list, or start with: status");
+
+    async function exec(line) {
+      var parts = line.trim().split(/\s+/);
+      var cmd = (parts.shift()||"").toLowerCase();
+      var rest = parts.join(" ");
+      if (!cmd) return;
+      write("lab> "+line);
+      if (cmd==="help") {
+        write("  parse <text>         — token walk +, when online, server claims & policy route");
+        write("  confidence <text>  — one claim through the same Nerve path as the big form");
+        write("  persona <who> <msg>— hop to mAI with archivist, analyst, or oracle");
+        write("  status              — health, last scores, KERYX-shaped demo nodes");
+        write("  open <panel>       — go to solarum | cerebrum | … | nerve");
+        write("  clear              — empty this log");
+        return;
+      }
+      if (cmd==="clear") { con.textContent = ""; return; }
+      if (cmd==="status") {
+        var base = (localStorage.getItem("reverie.nerve.apiBase") || "http://127.0.0.1:8000").replace(/\/$/, "");
+        try {
+          var hr = await fetch(base + "/health");
+          var hj = hr.ok ? await hr.json() : null;
+          write("nerve:    " + (hr.ok ? "ok · session_length=" + (hj && hj.session_length != null ? hj.session_length : "?") : "offline"));
+          var cr = await fetch(base + "/demo/cerebrum-ui");
+          var cj = cr.ok ? await cr.json() : null;
+          write("cerebrum: " + (cj && cj.populated ? "live · mode=" + cj.mode + " · stack + roles" : "idle — CEREBRUM:NERVE lab (panel 4) or /demo/sample-run"));
+          var st = await fetch(base + "/demo/runtime-stack");
+          if (st.ok) {
+            var sj = await st.json();
+            if (sj && sj.pipeline) {
+              write("pipeline: " + sj.pipeline.map(function(p){ return p.id+":"+p.status; }).join(" · "));
+            }
+            if (sj && sj.last_scores) {
+              var ls = sj.last_scores;
+              write("scores:  Φe=" + (ls.phi_e != null ? ls.phi_e : "—") + "  ESR=" + (ls.esr != null ? ls.esr : "—") + "  CI=" + (ls.ci != null ? ls.ci : "—") + "  CG=" + (ls.cg != null ? ls.cg : "—"));
+            }
+          }
+          var kx = await fetch(base + "/demo/keryx-ui");
+          if (kx.ok) {
+            var kj = await kx.json();
+            if (kj && kj.nodes) write("keryx:   " + kj.nodes.length + " illustrative node(s) · " + (kj.source || "snapshot"));
+          }
+        } catch (e) {
+          write("nerve:    offline (nerve serve?)");
+        }
+        write("solarum · local canvas, no network");
+        write("mAI · persona chat; server replies echo last Nerve when a session exists");
+        write("xscript · same claim/policy view as the window above");
+        write("nexus · optional graph from last prompt/response");
+        write("senseware · pointer trace + last Φe/mode/CG if the API is up");
+        return;
+      }
+      if (cmd==="parse") {
+        var xs = document.getElementById("xs-in");
+        if (xs) { xs.value = rest; document.getElementById("xs-run").click(); }
+        write("→ open CEREBRUM:NERVE lab (panel 4) for the full tool");
+        goToPanel(4);
+        return;
+      }
+      if (cmd==="confidence") {
+        if (!rest || !rest.trim()) {
+          write("usage: confidence <claim> — one line through Nerve’s govern path; updates the other panels on next poll");
+          return;
+        }
+        write("Measuring: \""+rest+"\"");
+        var base2 = (localStorage.getItem("reverie.nerve.apiBase") || "http://127.0.0.1:8000").replace(/\/$/, "");
+        try {
+          var gr = await fetch(base2 + "/demo/lab-govern", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ claim: rest.trim(), as_assertion: true })
+          });
+          if (gr.ok) {
+            var g = await gr.json();
+            write("  mode=" + g.mode + "  admissible=" + g.admissible);
+            write("  Φe=" + g.phi_e + "  Φe_adj=" + g.phi_e_adjusted + "  CG=" + g.cg + "  CI=" + g.ci + "  ESR=" + g.esr);
+            write("  conf=" + g.confidence + "  " + (g.rationale || "").slice(0, 200));
+            write("  Other panels will pick this up on their next refresh.");
+          } else {
+            var t = await gr.text();
+            write("  /demo/lab-govern HTTP " + gr.status + " " + t.slice(0, 200));
+          }
+        } catch (e) {
+          write("  server offline — " + (e && e.message ? e.message : ""));
+        }
+        return;
+      }
+      if (cmd==="persona") {
+        var nm = (parts.shift()||"archivist").toLowerCase();
+        var msg = parts.join(" ");
+        write("→ persona="+nm+" routing to mAI...");
+        var maiInput = document.getElementById("mai-in");
+        var tabs = document.querySelectorAll("#mai-persona-tabs .mai-ptab");
+        tabs.forEach(function(t){ if (t.dataset.p===nm) t.click(); });
+        if (maiInput) {
+          maiInput.value = msg;
+          document.getElementById("mai-send").click();
+        }
+        goToPanel(4);
+        return;
+      }
+      if (cmd==="open") {
+        var map = {about:1,systems:2,docs:3,documentation:3,cerebrum:3,nerve:4,lab:4,"nerve-lab":4,"cerebrum-nerve":4,home:1};
+        if (map[rest]) { goToPanel(map[rest]); write("→ opened "+rest); }
+        else write("unknown system: "+rest);
+        return;
+      }
+      write("unknown command: "+cmd+" · type 'help'");
+    }
+    function go(){ var v = input.value; input.value=""; exec(v); }
+    run && run.addEventListener("click", go);
+    input && input.addEventListener("keydown", function(e){ if(e.key==="Enter") go(); });
+  })();
+
+  // initial taskbar paint
+  refreshTaskbar();
+})();
+</script>
+
+<script>
+(function reverieDeepLink() {
+  function apply() {
+    if (typeof goToPanel !== "function" || typeof toggleMaximize !== "function") return;
+    var q = new URLSearchParams(window.location.search);
+    var n = parseInt(q.get("open") || q.get("app") || "", 10);
+    if (!Number.isFinite(n) || n < 1 || n > 4) return;
+    goToPanel(n);
+    var max = q.get("max");
+    if (max === "1" || max === "true" || max === "yes" || max === "on") {
+      setTimeout(function () {
+        if (typeof toggleMaximize === "function") toggleMaximize(n - 1);
+        if (typeof focusApp === "function") focusApp(n - 1);
+      }, 180);
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", apply);
+  else setTimeout(apply, 0);
+})();
+</script>
+
+</body>
+</html>

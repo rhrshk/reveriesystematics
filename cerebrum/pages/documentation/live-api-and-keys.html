@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Live API and keys | Documentation</title>
+<link rel="stylesheet" href="docs.css"/>
+<link rel="stylesheet" href="docs-lattice-embed.css"/>
+</head>
+<body>
+<nav class="doc-nav" aria-label="Site">
+  <a href="../../../">Home</a><span class="sep">|</span>
+  <a href="../../">Cerebrum</a><span class="sep">|</span>
+  <a href="../../nerve/lab.html">NERVE lab</a><span class="sep">|</span>
+  <a href="index.html">Documentation</a>
+</nav>
+<main class="doc-wrap">
+  <h1>Live API and keys</h1>
+  <p class="lede">Live mode calls the provider you select from the <strong>browser</strong>. NERVE’s scoring stays in-page as JavaScript; only the <strong>chat completion</strong> (or messages) request goes to the provider.</p>
+  <h2>What the model sees</h2>
+  <p>If <strong>Context</strong> is empty, the API request body uses the <strong>Prompt</strong> only. If context is present, the app sends one user message: a labeled grounding block, then the user request—so the model can condition on your facts. <strong>NERVE</strong> still evaluates using the separate Prompt, Context, and Response fields, not a hidden wrapper string.</p>
+  <h2>Confidence: logprobs vs proxy</h2>
+  <ul>
+    <li><strong>OpenAI / Groq</strong> — Requests may include logprobs; if returned, <strong>Confidence(t)</strong> is derived from token logprobs.</li>
+    <li><strong>Groq</strong> — If a logprobs request fails, the app may retry without logprobs; Confidence falls back to the linguistic proxy.</li>
+    <li><strong>Anthropic / Gemini</strong> — No logprobs in the integration; <strong>linguistic confidence</strong> is used for Confidence(t).</li>
+  </ul>
+  <h2>Browser and CORS</h2>
+  <p>Calls use <code>fetch</code> to the provider’s public API. Whether a key works in-browser depends on the provider’s CORS policy and, for Anthropic, browser-specific headers. If requests fail, check those policies and any origin restrictions on the provider side.</p>
+  <p><a href="exports-and-data.html">Next: Exports and data →</a></p>
+</main>
+</body>
+</html>

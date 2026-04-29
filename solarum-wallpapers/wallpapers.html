@@ -1,0 +1,2699 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SOLARUM // Ambient Wallpapers</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search || "");
+      if (params.get("embed") === "1" || window.self !== window.top) {
+        document.documentElement.classList.add("solarum-embed");
+      }
+    } catch (e) {
+      // Safe fallback for restricted iframe contexts.
+      try { document.documentElement.classList.add("solarum-embed"); } catch (x) {}
+    }
+  })();
+</script>
+<style>
+  :root{
+    --mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+    --sans: "IBM Plex Mono", Consolas, "Courier New", monospace;
+    --ink: #e8ecf3;
+    --dim: #8892a6;
+    --line: rgba(232,236,243,0.14);
+    --panel: rgba(10,12,18,0.55);
+    --panel-solid: rgba(10,12,18,0.88);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#05070c;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  canvas#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;cursor:crosshair}
+
+  /* ---------- HUD corners ---------- */
+  .hud{position:fixed;pointer-events:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);mix-blend-mode:screen;z-index:5}
+  .hud .dim{color:var(--dim)}
+  .hud-tl{top:22px;left:24px}
+  .hud-tr{top:22px;right:24px;text-align:right}
+  .hud-bl{bottom:22px;left:24px}
+  .hud-br{bottom:22px;right:24px;text-align:right}
+  .hud .row{display:flex;gap:10px;align-items:center;margin-bottom:4px}
+  .hud .dot{width:6px;height:6px;border-radius:50%;background:#6effb8;box-shadow:0 0 8px #6effb8}
+  .hud .tick{opacity:.55}
+
+  /* ---------- Switcher ---------- */
+  .switcher{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%);
+    display:flex;gap:4px;padding:6px;z-index:10;flex-wrap:wrap;justify-content:center;
+    max-width:min(92vw, 820px);
+    background:var(--panel);backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border:1px solid var(--line);border-radius:14px;
+  }
+  .switcher button{
+    all:unset;cursor:pointer;position:relative;
+    width:36px;height:28px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:10px;color:var(--dim);
+    transition:background .2s,color .2s;
+  }
+  .switcher button:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+  .switcher button.active{color:#05070c;background:var(--ink)}
+  .switcher .sep{width:1px;background:var(--line);margin:4px 2px}
+
+  /* ---------- Title card ---------- */
+  .titlecard{
+    position:fixed;left:24px;top:50%;transform:translateY(-50%);
+    z-index:6;pointer-events:none;max-width:380px;
+  }
+  .titlecard .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--dim);margin-bottom:14px;text-transform:uppercase}
+  .titlecard h1{font-family:var(--sans);font-weight:300;font-size:56px;letter-spacing:-.02em;line-height:.95;margin-bottom:14px}
+  .titlecard h1 em{font-style:normal;font-weight:500}
+  .titlecard p{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--dim);max-width:320px}
+  .titlecard .meta{margin-top:20px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;display:flex;gap:18px}
+  .titlecard .meta span b{color:var(--ink);font-weight:500;letter-spacing:.05em}
+
+  .fade-in{animation:fade .7s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(-50%) translateX(-6px)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+
+  /* ---------- Tweaks panel ---------- */
+  .tweaks{
+    position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:20;
+    width:260px;padding:16px;border-radius:14px;
+    background:var(--panel-solid);border:1px solid var(--line);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    font-family:var(--mono);font-size:11px;color:var(--ink);
+    display:none;
+  }
+  .tweaks.visible{display:block}
+  .tweaks h3{font-size:10px;letter-spacing:.3em;color:var(--dim);margin-bottom:12px;text-transform:uppercase;font-weight:500}
+  .tweaks label{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+  .tweaks label b{color:var(--ink);font-weight:500}
+  .tweaks input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:rgba(255,255,255,.1);border-radius:2px;outline:none}
+  .tweaks input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--ink);cursor:pointer}
+  .tweaks input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--ink);border:0;cursor:pointer}
+  .tweaks .swatches{display:flex;gap:6px;margin-top:8px}
+  .tweaks .sw{width:22px;height:22px;border-radius:6px;cursor:pointer;border:1px solid var(--line);transition:transform .15s}
+  .tweaks .sw:hover{transform:scale(1.1)}
+  .tweaks .sw.active{outline:2px solid var(--ink);outline-offset:2px}
+
+  /* help */
+  .help{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;
+    background:var(--panel-solid);border:1px solid var(--line);border-radius:16px;
+    padding:28px 34px;font-family:var(--mono);font-size:12px;color:var(--ink);
+    max-width:440px;display:none;backdrop-filter:blur(20px)}
+  .help.visible{display:block}
+  .help h2{font-family:var(--sans);font-weight:400;font-size:22px;margin-bottom:14px;letter-spacing:-.01em}
+  .help kbd{display:inline-block;padding:2px 7px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:4px;font-family:var(--mono);font-size:10px;margin:0 2px}
+  .help ul{list-style:none;margin-top:12px}
+  .help li{padding:6px 0;color:var(--dim);display:flex;justify-content:space-between;gap:20px}
+  .help li b{color:var(--ink);font-weight:500}
+  .help .close{position:absolute;top:12px;right:16px;cursor:pointer;color:var(--dim);font-size:18px;background:none;border:0}
+
+  .tick-grid{position:fixed;inset:0;pointer-events:none;z-index:4;opacity:.3;mix-blend-mode:screen}
+
+  /* Embedded in REVERIE — chrome hidden; canvas only */
+  html.solarum-embed .switcher,
+  html.solarum-embed .titlecard,
+  html.solarum-embed .hud,
+  html.solarum-embed .help,
+  html.solarum-embed .tick-grid,
+  html.solarum-embed .tweaks { display: none !important; }
+  /* Transparent under the canvas so the parent page (not solid black) shows at compositing edges. */
+  html.solarum-embed, html.solarum-embed body { background: transparent !important; }
+</style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+
+  <svg class="tick-grid" width="100%" height="100%">
+    <defs>
+      <pattern id="p" width="80" height="80" patternUnits="userSpaceOnUse">
+        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#p)"/>
+  </svg>
+
+  <!-- HUD corners -->
+  <div class="hud hud-tl">
+    <div class="row"><span class="dot"></span><span>SOLARUM OS</span><span class="dim">v4.2.1</span></div>
+    <div class="dim">AMBIENT / SHADER ENGINE</div>
+  </div>
+  <div class="hud hud-tr">
+    <div id="hud-coord">CURSOR 0.00, 0.00</div>
+    <div class="dim" id="hud-fps">— FPS</div>
+  </div>
+  <div class="hud hud-bl">
+    <div class="dim">CLICK TO INTERACT</div>
+    <div class="tick"><span id="hud-time">00:00:00</span> UTC</div>
+  </div>
+  <div class="hud hud-br">
+    <div class="dim" id="hud-slot">SLOT 01 / 66</div>
+    <div class="tick">PRESS <b style="color:var(--ink)">?</b> FOR KEYS</div>
+  </div>
+
+  <!-- Title card -->
+  <div class="titlecard" id="titlecard">
+    <div class="eyebrow" id="tc-eyebrow">/ 01</div>
+    <h1 id="tc-title">Aurora <em>Field</em></h1>
+    <p id="tc-desc">Iridescent ribbons of charged particles, bending toward the cursor. Drag to stir the field.</p>
+    <div class="meta">
+      <span>MODE <b id="tc-mode">AURORA</b></span>
+      <span>PALETTE <b id="tc-pal">COLD</b></span>
+    </div>
+  </div>
+
+  <!-- Switcher -->
+  <div class="switcher" id="switcher"></div>
+
+  <!-- Tweaks -->
+  <div class="tweaks" id="tweaks">
+    <h3>Tweaks</h3>
+    <label>Intensity <b id="lv-intensity">1.0</b></label>
+    <input type="range" id="tw-intensity" min="0" max="2" step="0.01" value="1">
+    <label>Speed <b id="lv-speed">1.0</b></label>
+    <input type="range" id="tw-speed" min="0" max="3" step="0.01" value="1">
+    <label>Palette</label>
+    <div class="swatches" id="tw-swatches"></div>
+    <label style="margin-top:14px">Show HUD <b id="lv-hud">ON</b></label>
+    <input type="range" id="tw-hud" min="0" max="1" step="1" value="1">
+  </div>
+
+  <!-- Help overlay -->
+  <div class="help" id="help">
+    <button class="close" onclick="document.getElementById('help').classList.remove('visible')">×</button>
+    <h2>Ambient Shader Engine</h2>
+    <div style="color:var(--dim)">Ten interactive wallpapers. Your cursor is part of every scene.</div>
+    <ul>
+      <li><span>Switch wallpaper</span><b>1–0, alpha keys, switcher</b></li>
+      <li><span>Next / previous</span><b><kbd>→</kbd> <kbd>←</kbd></b></li>
+      <li><span>Pulse / shockwave</span><b>Click</b></li>
+      <li><span>Stir the field</span><b>Drag</b></li>
+      <li><span>Toggle HUD</span><b><kbd>H</kbd></b></li>
+      <li><span>This panel</span><b><kbd>?</kbd></b></li>
+    </ul>
+  </div>
+
+<script id="vs" type="x-shader/x-vertex">
+attribute vec2 p;
+void main(){gl_Position=vec4(p,0.0,1.0);}
+</script>
+
+<!-- Common fragment prelude injected into every shader -->
+<script id="fs-common" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 uRes;
+uniform vec2 uMouse;       // 0..1, y flipped to GL
+uniform vec2 uMouseSmooth; // smoothed
+uniform float uTime;
+uniform float uClick;      // 0..1 pulse envelope
+uniform vec2  uClickPos;   // 0..1 last click
+uniform float uIntensity;
+uniform float uSpeed;
+uniform float uPalette;    // palette selector 0..n
+
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453123); }
+float hash1(float p){ return fract(sin(p*127.1)*43758.5453); }
+vec2  hash2(vec2 p){ return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453); }
+
+float noise(vec2 p){
+  vec2 i=floor(p), f=fract(p);
+  float a=hash(i),b=hash(i+vec2(1,0)),c=hash(i+vec2(0,1)),d=hash(i+vec2(1,1));
+  vec2 u=f*f*(3.0-2.0*f);
+  return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
+}
+
+float fbm(vec2 p){
+  float v=0.0,a=0.5;
+  mat2 R=mat2(0.8,-0.6,0.6,0.8);
+  for(int i=0;i<6;i++){ v+=a*noise(p); p=R*p*2.02; a*=0.5; }
+  return v;
+}
+
+vec3 pal(float t, vec3 a, vec3 b, vec3 c, vec3 d){
+  return a + b*cos(6.28318*(c*t+d));
+}
+
+// 2d rotation
+mat2 rot(float a){ float s=sin(a),c=cos(a); return mat2(c,-s,s,c); }
+</script>
+
+<!-- ============================================================= -->
+<!-- 01 · AURORA FIELD                                             -->
+<!-- ============================================================= -->
+<script id="fs-0" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.15*uSpeed;
+
+  vec2 p = uv;
+  // warp toward mouse
+  vec2 d = p - m;
+  float r = length(d);
+  p -= d * 0.35 * exp(-r*1.6) * (0.6 + 0.8*uClick);
+
+  float acc=0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    vec2 q = p*vec2(1.3,2.6) + vec2(0.0, t + fi*0.3);
+    float band = fbm(q + fbm(q*1.3 + t));
+    float y = p.y + 0.3*sin(t*0.6 + fi*1.7 + p.x*1.2);
+    float ribbon = exp(-pow((y - (fi-2.0)*0.22)*3.0, 2.0)*1.8);
+    acc += ribbon * (0.4 + 0.8*band);
+  }
+  acc *= uIntensity;
+
+  vec3 col;
+  if(uPalette<0.5){      // cold aurora
+    col = pal(acc*0.7 + 0.1*uTime*0.02,
+      vec3(0.05,0.02,0.1), vec3(0.5,0.6,0.9),
+      vec3(1.0,1.0,1.0), vec3(0.0,0.33,0.67));
+  } else if(uPalette<1.5){ // warm aurora
+    col = pal(acc*0.7,
+      vec3(0.1,0.04,0.06), vec3(0.7,0.4,0.5),
+      vec3(1.0,0.9,0.7), vec3(0.0,0.15,0.4));
+  } else {                 // toxic aurora
+    col = pal(acc*0.7,
+      vec3(0.02,0.05,0.04), vec3(0.3,0.7,0.5),
+      vec3(1.0,1.0,0.5), vec3(0.2,0.5,0.2));
+  }
+  col *= acc*1.3;
+  col += 0.02; // lift
+  // stars
+  float s = pow(hash(floor(uv*900.0)), 120.0);
+  col += vec3(s);
+  gl_FragColor = vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 02 · NEURAL LATTICE                                           -->
+<!-- ============================================================= -->
+<script id="fs-1" type="x-shader/x-fragment">
+float latticeLine(vec2 p){
+  vec2 g = abs(fract(p)-0.5);
+  float d = min(g.x, g.y);
+  return smoothstep(0.02, 0.0, d);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.2*uSpeed;
+
+  // gravity well toward mouse
+  vec2 d = uv - m;
+  float r = length(d);
+  float warp = 0.5/(r*r+0.15);
+  vec2 p = uv + normalize(d+1e-5)*(-warp*0.06)*(1.0+uClick*0.8);
+
+  // 3D-ish perspective
+  float z = 1.0 + p.y*0.5;
+  vec2 grid = p*8.0/z + vec2(0.0,t);
+  float line = latticeLine(grid);
+  // second layer, finer
+  float line2 = latticeLine(grid*2.0 + 0.5) * 0.4;
+
+  // nodes
+  vec2 gi = floor(grid);
+  float node = 0.0;
+  for(int i=-1;i<=1;i++) for(int j=-1;j<=1;j++){
+    vec2 c = gi+vec2(i,j);
+    vec2 center = c+0.5;
+    float rr = length(grid-center);
+    float pulse = 0.5+0.5*sin(t*3.0 + hash(c)*10.0);
+    node += smoothstep(0.12, 0.0, rr)*pulse;
+  }
+
+  vec3 base;
+  if(uPalette<0.5) base = vec3(0.3,0.7,1.0);           // cyan
+  else if(uPalette<1.5) base = vec3(1.0,0.4,0.7);      // magenta
+  else base = vec3(0.6,1.0,0.5);                       // green
+
+  vec3 col = base*(line+line2)*0.8 + base*node*1.4;
+  col *= uIntensity;
+
+  // glow near cursor
+  col += base*0.4*exp(-r*3.0)*(0.7+uClick);
+  // vignette
+  col *= 1.0 - length(uv)*0.25;
+  gl_FragColor = vec4(col, 1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 03 · PLASMA REACTOR                                           -->
+<!-- ============================================================= -->
+<script id="fs-2" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.3*uSpeed;
+
+  vec2 p = uv;
+  // swirl toward mouse
+  vec2 d = p - m;
+  float r = length(d);
+  float a = atan(d.y,d.x);
+  a += 1.5*exp(-r*1.2);
+  p = m + vec2(cos(a),sin(a))*r;
+
+  float v = 0.0;
+  v += sin(p.x*3.0 + t);
+  v += sin(p.y*4.0 - t*1.3);
+  v += sin((p.x+p.y)*2.5 + t*0.7);
+  v += sin(length(p*3.0 - m*0.5)*4.0 - t*2.0);
+  v /= 4.0;
+
+  // click shockwave ring
+  vec2 cd = uv - (uClickPos*2.0 - vec2(uRes.x/uRes.y,1.0));
+  float cr = length(cd);
+  float ring = exp(-pow((cr - uClick*1.5)*8.0, 2.0))*uClick;
+
+  vec3 col;
+  if(uPalette<0.5) col = pal(v, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.0,0.2,0.5));
+  else if(uPalette<1.5) col = pal(v, vec3(0.5,0.3,0.5), vec3(0.5), vec3(1.0), vec3(0.3,0.2,0.0));
+  else col = pal(v, vec3(0.2,0.5,0.3), vec3(0.5), vec3(1.0), vec3(0.3,0.5,0.2));
+
+  col *= 0.8 + 0.6*abs(v);
+  col += ring*vec3(1.0,0.9,0.7);
+  col *= uIntensity;
+  gl_FragColor = vec4(col, 1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 04 · STARFIELD WARP                                           -->
+<!-- ============================================================= -->
+<script id="fs-3" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth/uRes - 0.5);
+  float t = uTime*uSpeed;
+
+  // steer direction with mouse
+  vec2 dir = uv - m*0.6;
+  float a = atan(dir.y, dir.x);
+  float r = length(dir);
+  // log radial space -> streaks
+  float lr = log(r+0.001);
+  float speed = 0.7 + 0.8*uClick;
+
+  float col = 0.0;
+  for(int i=0;i<4;i++){
+    float fi = float(i);
+    float row = floor(a*30.0 + fi*7.0);
+    float cellA = (a*30.0 + fi*7.0) - row;
+    float seed = hash1(row + fi*91.0);
+    float slot = fract(lr*3.0 - t*speed*(0.5+seed) + seed*10.0);
+    float star = exp(-pow((cellA-0.5)*8.0,2.0));
+    float len  = smoothstep(0.0,0.2,slot)*smoothstep(1.0,0.7,slot);
+    col += star * len * (0.5+seed);
+  }
+
+  // near-origin nebula glow
+  float neb = exp(-r*1.2)*0.5 * (0.6+0.4*sin(t*0.5));
+
+  vec3 base;
+  if(uPalette<0.5) base = vec3(0.7,0.85,1.0);
+  else if(uPalette<1.5) base = vec3(1.0,0.7,0.85);
+  else base = vec3(1.0,0.9,0.6);
+
+  vec3 c = base*col + base*neb*0.7;
+  c *= uIntensity;
+  // star cluster at center
+  c += vec3(1.0)*exp(-r*30.0);
+  gl_FragColor = vec4(c,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 05 · LIQUID METAL                                             -->
+<!-- ============================================================= -->
+<script id="fs-4" type="x-shader/x-fragment">
+float metaballs(vec2 p, vec2 m, float t){
+  float s=0.0;
+  for(int i=0;i<6;i++){
+    float fi=float(i);
+    vec2 c = vec2(
+      sin(t*0.6+fi*1.7)*0.7,
+      cos(t*0.5+fi*2.3)*0.5
+    );
+    if(i==0) c = m; // first blob follows cursor
+    float r = 0.18 + 0.05*sin(t+fi);
+    s += r*r/(dot(p-c,p-c)+0.001);
+  }
+  return s;
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  float f = metaballs(uv, m, t);
+  // surface
+  float surf = smoothstep(1.2, 1.5, f);
+  // normal via derivatives
+  float e = 0.002;
+  float fx = metaballs(uv+vec2(e,0), m, t) - metaballs(uv-vec2(e,0), m, t);
+  float fy = metaballs(uv+vec2(0,e), m, t) - metaballs(uv-vec2(0,e), m, t);
+  vec3 n = normalize(vec3(-fx,-fy, 0.05));
+  vec3 L = normalize(vec3(0.4,0.6,1.0));
+  float diff = max(0.0, dot(n,L));
+  float spec = pow(max(0.0,dot(reflect(-L,n),vec3(0,0,1))),30.0);
+
+  // iridescent tint by normal
+  vec3 tint;
+  if(uPalette<0.5) tint = pal(n.x+n.y, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.0,0.33,0.67));
+  else if(uPalette<1.5) tint = vec3(0.9,0.9,0.95); // silver
+  else tint = pal(n.x*0.7, vec3(0.5,0.3,0.4), vec3(0.5), vec3(1.0), vec3(0.2,0.0,0.2));
+
+  vec3 bg = mix(vec3(0.02,0.03,0.06), vec3(0.05,0.06,0.12), uv.y+0.5);
+  vec3 col = mix(bg, tint*diff + vec3(spec), surf);
+  col += 0.3*surf*uClick*vec3(1.0,0.9,0.7);
+  col *= uIntensity;
+  gl_FragColor = vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 06 · VOXEL RAIN                                               -->
+<!-- ============================================================= -->
+<script id="fs-5" type="x-shader/x-fragment">
+void main(){
+  vec2 frag = gl_FragCoord.xy;
+  vec2 res = uRes;
+  float t = uTime*uSpeed;
+
+  float cell = 14.0;
+  vec2 cid = floor(frag/cell);
+  vec2 cfr = fract(frag/cell);
+
+  // column-based falling speed
+  float colSeed = hash1(cid.x*0.173);
+  float speed = 40.0 + colSeed*120.0;
+  // cursor attraction: nearer columns speed up
+  float mx = uMouseSmooth.x;
+  float pull = exp(-abs(frag.x-mx)/120.0);
+  speed *= 1.0 + pull*2.0 + uClick*3.0;
+
+  float y = frag.y + t*speed;
+  float rowF = floor(y/cell);
+  float bright = hash(vec2(cid.x, rowF));
+  // trailing tail
+  float tail = fract(y/cell);
+  float alpha = smoothstep(0.0, 1.0, bright-0.3);
+
+  // "glyph" — 5x5 blocky bits inside cell
+  vec2 g = floor(cfr*5.0);
+  float bit = step(0.5, hash(vec2(cid.x+rowF*13.0, g.x + g.y*5.0)));
+
+  vec3 base;
+  if(uPalette<0.5) base = vec3(0.4,1.0,0.7);   // phosphor green
+  else if(uPalette<1.5) base = vec3(0.6,0.8,1.0); // cool blue
+  else base = vec3(1.0,0.7,0.4);                 // amber terminal
+
+  float head = smoothstep(0.7,1.0,bright)*smoothstep(0.0,0.3,tail);
+  vec3 col = base * bit * (alpha*0.6 + head*1.4);
+  // scanlines
+  col *= 0.85 + 0.15*sin(frag.y*2.0);
+  col *= uIntensity;
+  col += base*0.05*pull;
+  gl_FragColor = vec4(col, 1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 07 · BLACK HOLE                                               -->
+<!-- ============================================================= -->
+<script id="fs-6" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed*0.5;
+
+  // position relative to BH (at mouse)
+  vec2 p = uv - m;
+  float r = length(p);
+  float a = atan(p.y, p.x);
+
+  // gravitational lensing of starfield behind
+  float lens = 0.08/(r+0.05);
+  vec2 bg = uv + normalize(p+1e-5)* -lens;
+  float stars = pow(hash(floor(bg*600.0)), 80.0);
+
+  // accretion disc
+  float disc = 0.0;
+  for(int i=0;i<3;i++){
+    float fi=float(i);
+    float rr = 0.22 + fi*0.05;
+    float band = exp(-pow((r-rr)*20.0,2.0));
+    float swirl = 0.5+0.5*sin(a*(6.0+fi*2.0) + t*(3.0-fi) + r*15.0);
+    disc += band*swirl;
+  }
+  // Doppler brightening on one side
+  float dop = 0.5 + 0.8*cos(a + t*0.2);
+  disc *= dop;
+
+  // event horizon
+  float horizon = smoothstep(0.13, 0.11, r);
+  // photon ring
+  float ring = exp(-pow((r-0.15)*40.0,2.0))*0.8;
+
+  vec3 hot = vec3(1.0, 0.7, 0.4);
+  vec3 cold = vec3(0.4, 0.6, 1.0);
+  vec3 tint;
+  if(uPalette<0.5) tint = hot;
+  else if(uPalette<1.5) tint = cold;
+  else tint = vec3(0.9,0.4,0.9);
+
+  vec3 col = vec3(stars)*0.8 + tint*disc*2.5 + vec3(1.0)*ring;
+  col = mix(col, vec3(0.0), horizon);
+  col += tint*uClick*exp(-r*3.0)*1.5;
+  col *= uIntensity;
+  gl_FragColor = vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 08 · CRYSTAL CAUSTICS                                         -->
+<!-- ============================================================= -->
+<script id="fs-7" type="x-shader/x-fragment">
+float caustic(vec2 p, float t){
+  vec2 i = p;
+  float c=0.0;
+  float inten=0.005;
+  for(int n=0;n<5;n++){
+    float tt = t*(1.0-3.0/(float(n)+1.0));
+    i = p + vec2(cos(tt-i.x)+sin(tt+i.y), sin(tt-i.y)+cos(tt+i.x));
+    c += 1.0/length(vec2(p.x/(sin(i.x+tt)/inten), p.y/(cos(i.y+tt)/inten)));
+  }
+  c /= 5.0;
+  c = 1.17 - pow(c, 1.4);
+  return pow(abs(c), 8.0);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes - 0.5);
+  uv.x *= uRes.x/uRes.y;
+  vec2 m = (uMouseSmooth/uRes - 0.5); m.x *= uRes.x/uRes.y;
+  float t = uTime*0.3*uSpeed;
+
+  // light source at mouse deforms pattern
+  vec2 p = uv - m*0.3;
+  // soft zoom pulse on click
+  p *= 1.0 - 0.15*uClick;
+  float c = caustic(p*3.5, t);
+
+  // edge refraction chromatic
+  float cR = caustic(p*3.5 + vec2(0.01,0), t);
+  float cB = caustic(p*3.5 - vec2(0.01,0), t);
+
+  vec3 tint;
+  if(uPalette<0.5) tint = vec3(0.5,0.85,1.0);
+  else if(uPalette<1.5) tint = vec3(1.0,0.85,0.6);
+  else tint = vec3(0.9,0.5,1.0);
+
+  vec3 col = vec3(cR, c, cB);
+  col = mix(col, col*tint, 0.7);
+  // darken edges
+  float vign = 1.0 - length(uv)*0.6;
+  col *= vign;
+  col *= uIntensity;
+  // highlight at mouse
+  col += tint*0.3*exp(-length(uv-m)*5.0)*(0.5+uClick);
+  gl_FragColor = vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 09 · FRACTAL NEBULA                                           -->
+<!-- ============================================================= -->
+<script id="fs-8" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth/uRes - 0.5);
+  float t = uTime*0.1*uSpeed;
+
+  // kaleidoscopic symmetry
+  vec2 p = uv;
+  p -= m*0.5;
+  float a = atan(p.y,p.x);
+  float r = length(p);
+  float seg = 6.0;
+  a = mod(a, 6.2831/seg);
+  a = abs(a - 3.1415/seg);
+  p = vec2(cos(a),sin(a))*r;
+
+  // fractal iteration
+  vec2 z = p*2.0;
+  vec2 cc = vec2(0.285+0.1*sin(t), 0.01+0.1*cos(t*0.7));
+  cc += m*0.3;
+  float it = 0.0;
+  for(int i=0;i<30;i++){
+    z = vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + cc;
+    if(dot(z,z)>20.0) break;
+    it += 1.0;
+  }
+  float n = it/30.0;
+
+  vec3 col;
+  if(uPalette<0.5) col = pal(n+t*2.0, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.0,0.33,0.67));
+  else if(uPalette<1.5) col = pal(n, vec3(0.3,0.2,0.5), vec3(0.7,0.4,0.6), vec3(1.0,1.0,1.0), vec3(0.0,0.2,0.5));
+  else col = pal(n, vec3(0.2,0.5,0.3), vec3(0.6,0.4,0.2), vec3(1.0,1.0,0.5), vec3(0.2,0.5,0.2));
+
+  col *= 1.0 - smoothstep(0.95,1.0,n);
+  col *= uIntensity;
+  col += 0.5*exp(-length(uv-m)*4.0)*uClick*vec3(1.0,0.9,0.7);
+  gl_FragColor = vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 10 · WAVE INTERFEROMETER                                      -->
+<!-- ============================================================= -->
+<script id="fs-9" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  vec2 cp=(uClickPos - vec2(0.5*uRes.x/uRes.y, 0.5));
+  // actually compute click pos properly:
+  vec2 c = (vec2(uClickPos.x*uRes.x, uClickPos.y*uRes.y) - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  // three stationary emitters + mouse + click
+  vec2 e1 = vec2(-0.6,-0.3);
+  vec2 e2 = vec2( 0.55,-0.35);
+  vec2 e3 = vec2( 0.0, 0.55);
+
+  float w = 0.0;
+  w += sin(length(uv-e1)*18.0 - t*2.0);
+  w += sin(length(uv-e2)*18.0 - t*2.2);
+  w += sin(length(uv-e3)*18.0 - t*1.8);
+  w += 1.5*sin(length(uv-m)*22.0 - t*3.0);
+  w += uClick*3.0*sin(length(uv-c)*30.0 - t*6.0);
+  w /= 5.0;
+
+  // bands
+  float band = 0.5+0.5*w;
+  // isolines
+  float iso = smoothstep(0.02,0.0, abs(fract(band*12.0)-0.5));
+
+  vec3 base;
+  if(uPalette<0.5) base = vec3(0.3,0.7,1.0);
+  else if(uPalette<1.5) base = vec3(1.0,0.5,0.7);
+  else base = vec3(0.7,1.0,0.6);
+
+  vec3 col = base*band*0.8 + base*iso*0.6;
+  // emitters glow
+  col += base*0.3*exp(-length(uv-e1)*15.0);
+  col += base*0.3*exp(-length(uv-e2)*15.0);
+  col += base*0.3*exp(-length(uv-e3)*15.0);
+  col += vec3(1.0)*0.5*exp(-length(uv-m)*20.0);
+  col *= uIntensity;
+  gl_FragColor = vec4(col, 1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 11 · HEX TUNNEL                                               -->
+<!-- ============================================================= -->
+<script id="fs-10" type="x-shader/x-fragment">
+float hex(vec2 p){
+  p = abs(p);
+  return max(p.x*0.866+p.y*0.5, p.y);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth/uRes - 0.5);
+  float t = uTime*uSpeed;
+
+  // steer by mouse
+  uv -= m*0.6;
+  // polar tunnel
+  float r = length(uv);
+  float a = atan(uv.y, uv.x);
+  float z = 1.0/(r+0.01) + t*2.0*(1.0+uClick*4.0);
+  vec2 tp = vec2(a/3.14159*3.0, z);
+  vec2 g = fract(tp)-0.5;
+  float h = hex(g);
+  float cell = smoothstep(0.48,0.46,h);
+  float edge = smoothstep(0.5,0.47,h) - smoothstep(0.47,0.44,h);
+
+  // cell identity -> random brightness
+  vec2 id = floor(tp);
+  float rnd = hash(id);
+  float pulse = step(0.92, fract(rnd*10.0 + t*0.5));
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.3,0.8,1.0);
+  else if(uPalette<1.5) base=vec3(0.7,0.4,1.0);
+  else base=vec3(1.0,0.7,0.3);
+
+  float depth = exp(-r*0.8);
+  vec3 col = base*edge*1.3*depth + base*cell*0.08*rnd + base*pulse*cell*0.8;
+  // end-of-tunnel glow
+  col += base*exp(-r*3.0)*0.6*(0.5+uClick);
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 12 · HELIX STRAND                                             -->
+<!-- ============================================================= -->
+<script id="fs-11" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth/uRes - 0.5);
+  float t = uTime*uSpeed;
+
+  // axis twists with mouse
+  float twist = m.x*2.5;
+  uv.x += twist*uv.y*0.15;
+
+  float acc=0.0;
+  float pitch = 1.8 + m.y*0.8;
+  for(int i=0;i<2;i++){
+    float phase = float(i)*3.14159 + t*1.5;
+    float x = 0.35*sin(uv.y*pitch + phase);
+    float d = abs(uv.x - x);
+    float w = 0.015 + 0.01*sin(uv.y*4.0+t);
+    acc += smoothstep(w, 0.0, d);
+    // rungs
+    float rung = abs(mod(uv.y*pitch+phase, 1.05) - 0.525);
+    float rwidth = smoothstep(0.02,0.0,rung)*smoothstep(0.0,0.02,0.35-abs(uv.x));
+    acc += rwidth*0.6;
+  }
+  // click severs
+  float cut = smoothstep(0.05,0.0, abs(uv.y - (uClickPos.y*2.0-1.0)))*uClick;
+  acc *= 1.0 - cut;
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.5,1.0,0.7);
+  else if(uPalette<1.5) base=vec3(1.0,0.6,0.3);
+  else base=vec3(1.0,0.5,0.8);
+
+  // background gradient
+  vec3 bg = mix(vec3(0.02,0.03,0.05), vec3(0.06,0.05,0.1), uv.y+0.5);
+  vec3 col = bg + base*acc*1.3;
+  // glowing particles
+  float sp = hash(floor(uv*40.0)+floor(t*2.0));
+  col += base*0.3*pow(sp,40.0);
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 13 · REACTION-DIFFUSION (analytic look-alike)                 -->
+<!-- ============================================================= -->
+<script id="fs-12" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.25*uSpeed;
+
+  // base fbm pattern warped by itself
+  vec2 q = vec2(fbm(uv*2.0+t), fbm(uv*2.0-t+5.0));
+  vec2 r = vec2(fbm(uv*3.0+q+t*0.7), fbm(uv*3.0+q-t*0.5+3.0));
+  float n = fbm(uv*4.0+r*1.5);
+
+  // "cell boundaries" — isolines of the pattern
+  float bands = abs(fract(n*6.0)-0.5);
+  float line = smoothstep(0.02,0.0, bands);
+
+  // cursor seed — grows a local mound
+  float md = length(uv-m);
+  float seed = exp(-md*3.0)*0.7;
+  n = clamp(n + seed + uClick*0.5*exp(-md*6.0), 0.0, 1.0);
+
+  vec3 a,b;
+  if(uPalette<0.5){ a=vec3(0.02,0.05,0.08); b=vec3(1.0,0.5,0.4); }
+  else if(uPalette<1.5){ a=vec3(0.04,0.06,0.03); b=vec3(0.6,0.9,0.4); }
+  else { a=vec3(0.05,0.07,0.1); b=vec3(0.7,0.9,1.0); }
+
+  vec3 col = mix(a, b, smoothstep(0.3,0.7,n));
+  col += b*line*0.25;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 14 · ORBITAL SHELLS                                           -->
+<!-- ============================================================= -->
+<script id="fs-13" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  vec2 p = uv - m;
+  float r = length(p);
+  float a = atan(p.y,p.x);
+
+  // orbital shells with different angular symmetry
+  float shell = 0.0;
+  for(int i=1;i<=5;i++){
+    float fi=float(i);
+    float rr = fi*0.11;
+    float lobe = 0.5+0.5*cos(a*fi + t*0.7);
+    float band = exp(-pow((r-rr)*18.0,2.0));
+    shell += band*lobe;
+  }
+  // click excites — pushes shells outward briefly
+  shell *= 1.0 + uClick*1.5;
+
+  // probability cloud fuzz
+  float fuzz = fbm(p*8.0 + t*0.2);
+  shell *= 0.6 + 0.6*fuzz;
+
+  // nucleus
+  float nuc = exp(-r*40.0);
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.7,0.4,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.7,0.3);
+  else base=vec3(0.4,1.0,0.7);
+
+  vec3 col = base*shell*1.3 + vec3(1.0,0.95,0.85)*nuc*1.5;
+  col *= uIntensity;
+  col *= 1.0 - length(uv)*0.3;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 15 · TOPO CONTOURS                                            -->
+<!-- ============================================================= -->
+<script id="fs-14" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.15*uSpeed;
+
+  // heightmap
+  vec2 p = uv*1.5;
+  float h = fbm(p + vec2(t,0.0));
+  h += 0.5*fbm(p*2.0 - vec2(0.0,t*0.7));
+
+  // cursor pushes up
+  float md = length(uv-m);
+  h += 0.6*exp(-md*3.5)*(1.0+uClick*2.0);
+
+  // contour lines
+  float lines = abs(fract(h*10.0)-0.5);
+  float contour = smoothstep(0.04,0.0, lines);
+  // major lines every 5
+  float major = abs(fract(h*2.0)-0.5);
+  float majorC = smoothstep(0.015,0.0, major);
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.6,0.7,0.85);
+  else if(uPalette<1.5) base=vec3(0.85,0.55,0.3);
+  else base=vec3(0.6,0.8,0.5);
+
+  // elevation fill
+  vec3 lo = base*0.08;
+  vec3 hi = base*0.45;
+  vec3 col = mix(lo, hi, h);
+  col += base*contour*0.35;
+  col += base*majorC*0.8;
+  // subtle grid ticks
+  float tick = smoothstep(0.01,0.0, min(abs(fract(uv.x*4.0)-0.5), abs(fract(uv.y*4.0)-0.5)));
+  col += vec3(0.05)*tick;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 16 · CIRCUIT BLOOM                                            -->
+<!-- ============================================================= -->
+<script id="fs-15" type="x-shader/x-fragment">
+float circuit(vec2 p, float scale){
+  vec2 g = p*scale;
+  vec2 id = floor(g);
+  vec2 f = fract(g) - 0.5;
+  float r = hash(id);
+  // 90-degree rotations
+  if(r<0.25) f = f;
+  else if(r<0.5) f = vec2(-f.y, f.x);
+  else if(r<0.75) f = -f;
+  else f = vec2(f.y, -f.x);
+  // L-shape trace
+  float d = min(abs(f.x), abs(f.y+0.2));
+  d = min(d, abs(f.y));
+  // nodes at cell centers sometimes
+  if(hash(id+13.0)>0.7){
+    d = min(d, length(f)-0.08);
+  }
+  return smoothstep(0.04,0.0, d);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  float c1 = circuit(uv, 8.0);
+  float c2 = circuit(uv+0.3, 16.0)*0.5;
+  float line = max(c1, c2);
+
+  // data packet flowing
+  float flow = 0.0;
+  for(int i=0;i<4;i++){
+    float fi = float(i);
+    vec2 dir = normalize(m - uv + 0.001);
+    float along = dot(uv-m, dir);
+    float perp = abs(dot(uv-m, vec2(-dir.y,dir.x)));
+    flow += exp(-perp*40.0)*smoothstep(0.0,0.2, fract(along*2.0 - t*1.5 - fi*0.3))*smoothstep(0.4,0.1, fract(along*2.0 - t*1.5 - fi*0.3));
+  }
+
+  // cursor glow mask
+  float md = length(uv-m);
+  float glow = exp(-md*1.5);
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.3,1.0,0.8);
+  else if(uPalette<1.5) base=vec3(1.0,0.5,0.3);
+  else base=pal(uv.x+t*0.1, vec3(0.5),vec3(0.5),vec3(1.0),vec3(0.0,0.33,0.67));
+
+  vec3 dim = vec3(0.04,0.06,0.08);
+  vec3 col = dim + base*line*0.25;
+  col += base*line*glow*1.5;
+  col += base*flow*1.2;
+  col += base*uClick*exp(-md*3.0)*line;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 17 · BINARY STARS                                             -->
+<!-- ============================================================= -->
+<script id="fs-16" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.4*uSpeed;
+
+  // two stars orbit mouse
+  float orbit = 0.35;
+  vec2 s1 = m + vec2(cos(t),sin(t))*orbit;
+  vec2 s2 = m - vec2(cos(t),sin(t))*orbit;
+  // third star follows clicks
+  vec2 c = (vec2(uClickPos.x*uRes.x, uClickPos.y*uRes.y) - 0.5*uRes)/uRes.y;
+  vec2 s3 = c;
+
+  float d1 = length(uv-s1), d2 = length(uv-s2), d3 = length(uv-s3);
+
+  // coronae
+  float g1 = 0.03/d1 + exp(-d1*12.0);
+  float g2 = 0.03/d2 + exp(-d2*12.0);
+  float g3 = uClick*(0.04/max(d3,0.02) + exp(-d3*10.0));
+
+  // stellar dust between them
+  vec2 mid = (s1+s2)*0.5;
+  float dust = fbm(uv*4.0 - t*0.3) * exp(-length(uv-mid)*2.0);
+
+  // gravitational lensing crossfade near stars
+  vec2 lens = normalize(uv-s1+1e-4)*(0.02/d1) + normalize(uv-s2+1e-4)*(0.02/d2);
+  float stars = pow(hash(floor((uv-lens)*800.0)),100.0);
+
+  vec3 A,B,C;
+  if(uPalette<0.5){ A=vec3(1.0,0.7,0.4); B=vec3(0.5,0.7,1.0); C=vec3(1.0,0.9,0.5); }
+  else if(uPalette<1.5){ A=vec3(0.5,0.8,1.0); B=vec3(0.7,0.9,1.0); C=vec3(1.0,1.0,0.9); }
+  else { A=vec3(1.0,0.5,0.8); B=vec3(0.5,1.0,0.8); C=vec3(1.0,0.9,0.5); }
+
+  vec3 col = A*g1 + B*g2 + C*g3 + (A+B)*0.5*dust*0.3 + vec3(stars);
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 18 · GLYPH ORACLE                                             -->
+<!-- ============================================================= -->
+<script id="fs-17" type="x-shader/x-fragment">
+float glyph(vec2 p, float seed){
+  float d = 1e3;
+  // three random strokes per glyph
+  for(int k=0;k<3;k++){
+    float kf=float(k);
+    vec2 a = (hash2(vec2(seed,kf))-0.5)*0.7;
+    vec2 b = (hash2(vec2(seed,kf+10.0))-0.5)*0.7;
+    vec2 pa = p-a, ba=b-a;
+    float h = clamp(dot(pa,ba)/dot(ba,ba), 0.0, 1.0);
+    d = min(d, length(pa-ba*h));
+  }
+  return smoothstep(0.04,0.02,d);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.5*uSpeed;
+
+  vec2 p = uv - m;
+  float r = length(p);
+  float a = atan(p.y,p.x) + t*0.2;
+
+  // multiple rings of glyphs
+  float col=0.0;
+  for(int i=0;i<3;i++){
+    float fi=float(i);
+    float rr = 0.28 + fi*0.14;
+    float spin = t*(1.0 - fi*0.4);
+    float ang = a + spin;
+    int slots = 10 + i*2;
+    float slot = floor(ang/6.2831 * float(slots));
+    float sa = (slot+0.5)*6.2831/float(slots);
+    vec2 gp = vec2(cos(sa), sin(sa))*rr;
+    vec2 local = (p - gp) * 10.0;
+    float g = glyph(local, slot*7.0 + fi*91.0 + floor(t*0.3+fi));
+    float band = smoothstep(0.12, 0.0, abs(r-rr)-0.06);
+    col += g*band;
+  }
+
+  // central sigil
+  float sigil = glyph(p*5.0, floor(t*0.5));
+  float cring = smoothstep(0.005,0.0, abs(r-0.15));
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(1.0,0.5,0.8);   // rune purple-pink
+  else if(uPalette<1.5) base=vec3(0.4,0.7,1.0); // void blue
+  else base=vec3(1.0,0.85,0.4);               // gold
+
+  vec3 bg = vec3(0.015,0.01,0.03);
+  vec3 final = bg + base*col*1.2 + base*sigil*0.8 + base*cring*0.7;
+  // click flash
+  final += base*uClick*exp(-r*1.8);
+  // rotating background rune-dust
+  float dust = pow(hash(floor(uv*200.0)+floor(t*2.0)),60.0);
+  final += base*0.25*dust;
+  final *= uIntensity;
+  gl_FragColor=vec4(final,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 19 · VORTEX FIELD                                             -->
+<!-- ============================================================= -->
+<script id="fs-18" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  vec2 p = uv - m;
+  float r = length(p);
+  float a = atan(p.y,p.x);
+
+  // spiral flowfield
+  float polarity = 1.0 - 2.0*step(0.5, uClick);
+  float spiral = a*3.0 - r*8.0 + t*2.0*polarity;
+  float bands = 0.5+0.5*sin(spiral);
+
+  // particle streaks
+  float streaks=0.0;
+  for(int i=0;i<6;i++){
+    float fi=float(i);
+    float ang = a + t*0.3*polarity + fi*1.04;
+    float rr = r + 0.15*sin(t+fi);
+    vec2 pp = vec2(cos(ang),sin(ang))*rr;
+    streaks += exp(-length(p-pp)*18.0);
+  }
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.4,0.7,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.3,0.4);
+  else base=vec3(1.0,0.85,0.5);
+
+  vec3 col = base*bands*0.4 + base*streaks*1.4;
+  col += base*exp(-r*2.0)*0.5;
+  col *= 1.0 - smoothstep(1.5,2.5,r);
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 20 · TERRAIN RAY                                              -->
+<!-- ============================================================= -->
+<script id="fs-19" type="x-shader/x-fragment">
+float terrain(vec2 p){
+  return fbm(p*0.8)*0.8 + fbm(p*2.5)*0.2;
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes - 0.5);
+  uv.x *= uRes.x/uRes.y;
+  vec2 m =(uMouseSmooth/uRes - 0.5);
+  float t = uTime*0.1*uSpeed;
+
+  // simple heightfield raymarch
+  float horizon = 0.05 + m.y*0.15;
+  vec3 col;
+  if(uv.y > horizon){
+    // sky
+    float sunX = m.x*1.2;
+    float sunD = length(uv - vec2(sunX, horizon+0.35));
+    vec3 skyA, skyB, sun;
+    if(uPalette<0.5){ skyA=vec3(0.9,0.6,0.4); skyB=vec3(0.3,0.2,0.4); sun=vec3(1.0,0.8,0.5); }
+    else if(uPalette<1.5){ skyA=vec3(0.5,0.3,0.5); skyB=vec3(0.1,0.1,0.25); sun=vec3(1.0,0.5,0.4); }
+    else { skyA=vec3(0.05,0.08,0.15); skyB=vec3(0.02,0.02,0.05); sun=vec3(0.7,0.8,1.0); }
+    float skyT = smoothstep(horizon, horizon+0.6, uv.y);
+    col = mix(skyA, skyB, skyT);
+    col += sun * exp(-sunD*6.0);
+    // stars on night palette
+    if(uPalette>1.5) col += vec3(pow(hash(floor(uv*600.0)),100.0));
+  } else {
+    // ground: march z forward
+    float z = 1.0;
+    float hitZ = 0.0;
+    for(int i=0;i<40;i++){
+      float fz = z;
+      vec2 wp = vec2(uv.x*fz, -1.0) + vec2(m.x*0.5, t*fz*0.3);
+      float h = terrain(wp);
+      // cursor ridge
+      float md = abs(uv.x*fz - m.x*0.5);
+      h += 0.3*exp(-md*3.0)*(0.5+uClick);
+      float screenY = horizon - h*0.3/fz - 0.3/fz;
+      if(uv.y > screenY){ hitZ = fz; break; }
+      z += 0.15;
+    }
+    float depth = 1.0 - clamp(hitZ*0.12, 0.0, 1.0);
+    vec3 gA, gB;
+    if(uPalette<0.5){ gA=vec3(0.4,0.25,0.15); gB=vec3(0.9,0.7,0.4); }
+    else if(uPalette<1.5){ gA=vec3(0.3,0.15,0.2); gB=vec3(0.7,0.35,0.3); }
+    else { gA=vec3(0.02,0.03,0.05); gB=vec3(0.15,0.2,0.3); }
+    col = mix(gA, gB, depth);
+  }
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 21 · GEL CHAMBER                                              -->
+<!-- ============================================================= -->
+<script id="fs-20" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.4*uSpeed;
+
+  // voronoi-ish cells that drift
+  float minD = 1e3, secD = 1e3;
+  vec2 minC;
+  for(int j=-1;j<=1;j++) for(int i=-1;i<=1;i++){
+    vec2 g = floor(uv*3.0) + vec2(i,j);
+    vec2 o = hash2(g);
+    vec2 cp = (g + 0.5 + 0.35*vec2(sin(t+o.x*6.0), cos(t+o.y*6.0)))/3.0;
+    float d = length(uv - cp);
+    if(d<minD){ secD=minD; minD=d; minC=cp; }
+    else if(d<secD){ secD=d; }
+  }
+  // membrane edge
+  float edge = secD - minD;
+  float wall = smoothstep(0.03,0.005, edge);
+  // cursor push distorts nearest cell
+  float push = exp(-length(uv-m)*3.0)*(0.08+0.1*uClick);
+  wall *= 1.0 - push*3.0;
+
+  // inner gradient per cell
+  float cellN = hash(floor(minC*100.0));
+  float inner = 1.0 - minD*3.0;
+
+  vec3 A,B;
+  if(uPalette<0.5){ A=vec3(0.05,0.15,0.25); B=vec3(0.4,0.85,1.0); }
+  else if(uPalette<1.5){ A=vec3(0.2,0.05,0.12); B=vec3(1.0,0.5,0.7); }
+  else { A=vec3(0.05,0.15,0.1); B=vec3(0.4,1.0,0.6); }
+
+  vec3 col = mix(A, B, inner*(0.4+0.6*cellN));
+  col += B*wall*0.9;
+  // nuclei
+  float nuc = exp(-length(uv-minC)*15.0);
+  col += B*nuc*(0.3+0.5*cellN);
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 22 · CRT SIGNAL                                               -->
+<!-- ============================================================= -->
+<script id="fs-21" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes);
+  vec2 m =(uMouseSmooth/uRes);
+  float t = uTime*uSpeed;
+
+  // horizontal tear & rolling offset
+  float tear = sin(uv.y*40.0 + t*3.0)*0.005;
+  tear += uClick*0.1*sin(uv.y*80.0 + t*20.0);
+  uv.x += tear + (m.x-0.5)*0.1;
+
+  // ghost image: concentric rings "bullseye" signal
+  vec2 c = uv - m;
+  c.x *= uRes.x/uRes.y;
+  float rings = 0.5+0.5*sin(length(c)*25.0 - t*1.5);
+  float ghost = smoothstep(0.3,0.0, length(c)) * rings;
+
+  // scanlines
+  float scan = 0.7 + 0.3*sin(uv.y*uRes.y*0.8);
+  // noise
+  float n = hash(floor(uv*vec2(uRes.x,uRes.y)*0.3) + floor(t*30.0));
+
+  // channel tune
+  float tune = 1.0 - 0.7*abs(m.y-0.5);
+  float signal = mix(n, ghost*1.4, tune);
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.4,1.0,0.5);
+  else if(uPalette<1.5) base=vec3(1.0,0.7,0.3);
+  else base=vec3(1.0);
+
+  vec3 col = base*signal*scan;
+  // chromatic aberration on click
+  col.r += uClick*0.3*hash(floor(uv*400.0)+10.0);
+  col.b += uClick*0.3*hash(floor(uv*400.0)+20.0);
+  // vignette
+  col *= 1.0 - pow(length(uv-0.5)*1.3, 3.0);
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 23 · LIGHTNING TESLA                                          -->
+<!-- ============================================================= -->
+<script id="fs-22" type="x-shader/x-fragment">
+float bolt(vec2 p, vec2 a, vec2 b, float seed, float tt){
+  vec2 d = b-a;
+  float len = length(d);
+  vec2 dir = d/len;
+  vec2 nrm = vec2(-dir.y, dir.x);
+  float along = dot(p-a, dir)/len;
+  float perp  = dot(p-a, nrm);
+  if(along<0.0 || along>1.0) return 0.0;
+  // zig-zag offset along path
+  float wig = sin(along*18.0 + seed*6.0 + tt*10.0)*0.04;
+  wig += sin(along*43.0 + seed*13.0 - tt*7.0)*0.02;
+  float d2 = abs(perp - wig);
+  return exp(-d2*70.0);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  // coil at bottom-center
+  vec2 coil = vec2(0.0, -0.55);
+  float strikes = 0.0;
+  // flicker: some bolts on, some off
+  for(int i=0;i<4;i++){
+    float fi=float(i);
+    float seed = fi*37.3;
+    float active = step(0.4, hash1(floor(t*8.0+fi)));
+    vec2 target = m + 0.08*vec2(sin(t*5.0+fi*2.0),cos(t*6.0+fi*1.7));
+    strikes += bolt(uv, coil, target, seed, t)*active;
+  }
+  // ground strike on click
+  float ground = 0.0;
+  if(uClick>0.0){
+    vec2 g = vec2(m.x, -0.8);
+    ground = bolt(uv, m, g, 11.0, t)*uClick;
+  }
+
+  // coil glow & halo
+  float halo = exp(-length(uv-coil)*6.0);
+  // cursor glow
+  float cursorG = exp(-length(uv-m)*8.0);
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.6,0.8,1.0);    // ion
+  else if(uPalette<1.5) base=vec3(1.0,0.9,0.4); // volt
+  else base=vec3(1.0,0.5,1.0);                   // plasma
+
+  vec3 bg = vec3(0.02,0.02,0.05);
+  vec3 col = bg + base*strikes*1.5 + base*ground*2.0;
+  col += base*halo*0.6 + base*cursorG*0.8;
+  // coil body
+  float coilBody = smoothstep(0.04,0.0, length(uv-coil)-0.05);
+  col += vec3(0.8,0.85,0.9)*coilBody;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 24 · VOLUME CLOUDS                                            -->
+<!-- ============================================================= -->
+<script id="fs-23" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes - 0.5);
+  uv.x *= uRes.x/uRes.y;
+  vec2 m =(uMouseSmooth/uRes - 0.5);
+  float t = uTime*0.05*uSpeed;
+
+  // stratified layers
+  float density = 0.0;
+  for(int i=0;i<4;i++){
+    float fi=float(i);
+    float y = uv.y - 0.3 + fi*0.22;
+    vec2 p = vec2(uv.x*(1.0+fi*0.3) - t*(1.0+fi*0.4), y);
+    float cloud = fbm(p*2.0);
+    float band = exp(-pow(y*3.0, 2.0));
+    // cursor parts them
+    float push = exp(-length(uv-m)*3.0)*(0.3+uClick*0.6);
+    cloud -= push;
+    density += max(0.0, cloud-0.3) * band;
+  }
+
+  // sun
+  vec2 sunPos = vec2(m.x*1.2, 0.3);
+  float sun = exp(-length(uv-sunPos)*4.0);
+  // god-rays
+  vec2 toSun = normalize(sunPos-uv);
+  float rays = 0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    vec2 sp = uv + toSun*fi*0.1;
+    rays += fbm(sp*3.0 + t)*0.15;
+  }
+
+  vec3 skyA, skyB, sunC, cloudC;
+  if(uPalette<0.5){ skyA=vec3(0.5,0.55,0.6); skyB=vec3(0.2,0.25,0.35); sunC=vec3(1.0,0.9,0.7); cloudC=vec3(0.9,0.9,0.95); }
+  else if(uPalette<1.5){ skyA=vec3(1.0,0.6,0.4); skyB=vec3(0.3,0.2,0.3); sunC=vec3(1.0,0.7,0.3); cloudC=vec3(1.0,0.7,0.5); }
+  else { skyA=vec3(0.05,0.08,0.15); skyB=vec3(0.0,0.0,0.03); sunC=vec3(0.6,0.7,1.0); cloudC=vec3(0.15,0.2,0.3); }
+
+  vec3 sky = mix(skyB, skyA, smoothstep(-0.5, 0.5, uv.y));
+  vec3 col = sky + sunC*sun;
+  col = mix(col, cloudC*(0.6+rays), min(density*2.0, 1.0));
+  if(uPalette>1.5) col += vec3(pow(hash(floor(uv*700.0)),100.0));
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 25 · SCHLIEREN OPTICS                                         -->
+<!-- ============================================================= -->
+<script id="fs-24" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*uSpeed;
+
+  // heat field emanating from cursor
+  float r = length(uv-m);
+  float heat = exp(-r*1.5);
+  // turbulent refraction
+  vec2 turb = vec2(
+    fbm(uv*4.0 + vec2(t*0.5, 0.0)),
+    fbm(uv*4.0 - vec2(0.0, t*0.7))
+  ) - 0.5;
+  turb *= heat*0.15;
+  // click shockwave adds radial distortion
+  turb += normalize(uv-m+1e-4) * uClick * 0.1 * exp(-abs(r - uClick*1.2)*8.0);
+
+  vec2 s = uv + turb;
+
+  // geometric grid underneath
+  vec2 g = s*6.0;
+  float line = smoothstep(0.04,0.0, min(abs(fract(g.x)-0.5), abs(fract(g.y)-0.5)));
+  // diagonal accents
+  float diag = smoothstep(0.04,0.0, abs(fract((g.x+g.y)*0.5)-0.5));
+
+  // schlieren rendering: derivative of refraction
+  float dx = fbm((s+vec2(0.01,0))*4.0) - fbm((s-vec2(0.01,0))*4.0);
+  float dy = fbm((s+vec2(0,0.01))*4.0) - fbm((s-vec2(0,0.01))*4.0);
+  float shimmer = (dx+dy)*heat*10.0;
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.5,0.7,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.4,0.2);
+  else base=vec3(0.7,1.0,0.3);
+
+  vec3 bg = vec3(0.02,0.03,0.05);
+  vec3 col = bg + base*line*0.25 + base*diag*0.12;
+  col += base*abs(shimmer)*1.5;
+  col += base*heat*0.15;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 26 · GEODESIC TILING                                          -->
+<!-- ============================================================= -->
+<script id="fs-25" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.3*uSpeed;
+
+  // triangular tiling
+  vec2 p = uv*3.5;
+  p.x += p.y*0.5774; // skew into triangular lattice
+  vec2 id = floor(p);
+  vec2 f = fract(p);
+  float tri = step(f.x+f.y, 1.0);
+  vec2 cell = id + (tri>0.5 ? vec2(0.333,0.333) : vec2(0.666,0.666));
+
+  // distance to cell center (in skewed coords, approximate)
+  float d = length(f - (tri>0.5 ? vec2(0.333,0.333) : vec2(0.666,0.666)));
+
+  // breathing via cursor proximity
+  vec2 cw = (cell - vec2(id.y*0.5774, 0.0))/3.5;
+  float md = length(cw-m);
+  float breathe = 0.5+0.5*sin(t + hash(cell)*10.0 - md*4.0);
+  // flip on click
+  float flip = step(0.7, hash(cell + floor(t + uClick*5.0)));
+
+  // edge
+  float edge = smoothstep(0.02,0.0, min(min(f.x,f.y), 1.0-f.x-f.y));
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.5,0.65,0.8);
+  else if(uPalette<1.5) base=vec3(1.0,0.7,0.4);
+  else base=vec3(1.0,0.5,0.5);
+
+  vec3 col = vec3(0.02,0.03,0.05);
+  col += base*breathe*0.4*(1.0-d);
+  col += base*flip*0.3;
+  col += base*edge*0.6;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 27 · CURL FLOW                                                -->
+<!-- ============================================================= -->
+<script id="fs-26" type="x-shader/x-fragment">
+vec2 curl(vec2 p, float t){
+  float e=0.01;
+  float n1 = fbm(p+vec2(0,e)+t) - fbm(p-vec2(0,e)+t);
+  float n2 = fbm(p+vec2(e,0)+t) - fbm(p-vec2(e,0)+t);
+  return vec2(n1, -n2);
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.1*uSpeed;
+
+  vec2 p = uv;
+  // advect along curl field, trail-style
+  float density = 0.0;
+  for(int i=0;i<16;i++){
+    vec2 v = curl(p*2.0, t);
+    // cursor disturbance
+    vec2 d = p-m;
+    v += normalize(d+1e-4) * 0.04 * exp(-dot(d,d)*3.0) * (1.0+uClick*3.0);
+    p += v*0.02;
+    density += fbm(p*3.0 + t*2.0)*0.08;
+  }
+  density = pow(density, 1.3);
+
+  vec3 A,B,C;
+  if(uPalette<0.5){ A=vec3(0.01,0.02,0.04); B=vec3(0.1,0.2,0.4); C=vec3(0.9,0.95,1.0); }
+  else if(uPalette<1.5){ A=vec3(0.05,0.03,0.02); B=vec3(0.5,0.25,0.1); C=vec3(1.0,0.85,0.5); }
+  else { A=vec3(0.02,0.01,0.04); B=vec3(0.15,0.1,0.3); C=vec3(0.6,0.5,0.9); }
+
+  vec3 col = mix(A, B, smoothstep(0.2,0.6,density));
+  col = mix(col, C, smoothstep(0.7,1.1,density));
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 28 · MIRROR HALL                                              -->
+<!-- ============================================================= -->
+<script id="fs-27" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy - 0.5*uRes)/uRes.y;
+  vec2 m =(uMouseSmooth - 0.5*uRes)/uRes.y;
+  float t = uTime*0.1*uSpeed;
+
+  vec2 p = uv;
+  // self-similar fold: repeatedly fold + scale + rotate toward mouse
+  float acc=0.0;
+  float scale=1.0;
+  for(int i=0;i<6;i++){
+    p = abs(p) - 0.3;
+    p *= rot(t*0.2 + m.x*0.5 + float(i)*0.1);
+    p -= m*0.1;
+    p *= 1.15;
+    scale *= 1.15;
+    float ring = exp(-abs(length(p)-0.3)*12.0);
+    acc += ring/scale;
+  }
+  // vanishing point pulse
+  acc += exp(-length(uv-m)*3.0)*(0.3+uClick*0.6);
+
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.7,0.85,1.0);
+  else if(uPalette<1.5) base=pal(acc+t, vec3(0.5),vec3(0.5),vec3(1.0),vec3(0.0,0.33,0.67));
+  else base=vec3(0.4,0.45,0.55);
+
+  vec3 bg = vec3(0.02,0.03,0.05);
+  vec3 col = bg + base*acc*1.2;
+  col *= 1.0 - length(uv)*0.2;
+  col *= uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 29 · KELP CANOPY                                              -->
+<!-- ============================================================= -->
+<script id="fs-28" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes);
+  vec2 m=(uMouseSmooth/uRes);
+  float t=uTime*0.3*uSpeed;
+  vec2 p=uv; p.x-=0.5; p.x*=uRes.x/uRes.y;
+  float current=(m.x-0.5)*2.0;
+  float acc=0.0;
+  for(int i=0;i<9;i++){
+    float fi=float(i);
+    float x0=-0.9+fi*0.22;
+    float bend=sin(uv.y*2.2+t+fi*1.7)*0.12 + current*uv.y*0.3;
+    float x=x0+bend;
+    float d=abs(p.x-x);
+    float w=0.01+uv.y*0.025;
+    acc+=smoothstep(w,0.0,d)*(1.0-uv.y*0.5);
+  }
+  float sun=exp(-length(p-vec2(0.0,1.1))*1.2);
+  vec3 sky,deep,bloom;
+  if(uPalette<0.5){sky=vec3(0.08,0.22,0.35);deep=vec3(0.01,0.03,0.08);bloom=vec3(0.5,0.9,1.0);}
+  else if(uPalette<1.5){sky=vec3(0.4,0.25,0.4);deep=vec3(0.05,0.02,0.1);bloom=vec3(1.0,0.6,0.8);}
+  else {sky=vec3(0.1,0.3,0.25);deep=vec3(0.02,0.05,0.06);bloom=vec3(0.5,1.0,0.7);}
+  vec3 bg=mix(deep,sky,uv.y);
+  bg+=vec3(1.0,0.9,0.7)*sun*0.5;
+  // god rays
+  float ray=0.0;
+  for(int i=0;i<5;i++){float fi=float(i); ray+=exp(-pow(p.x-(-0.4+fi*0.2 + sin(t+fi)*0.1),2.0)*20.0)*uv.y*0.15;}
+  bg+=vec3(1.0,0.95,0.8)*ray;
+  vec3 col=mix(bg, deep*0.3, acc);
+  // motes: cursor releases bioluminescent dots
+  float motes=0.0;
+  for(int i=0;i<6;i++){float fi=float(i); vec2 mp=m+vec2(sin(t*2.0+fi*1.3),cos(t*2.0+fi*0.9))*(0.1+fi*0.05); motes+=exp(-length(uv-mp)*30.0)*(0.4+0.6*uClick);}
+  col+=bloom*motes*1.2;
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 30 · ION STORM                                                -->
+<!-- ============================================================= -->
+<script id="fs-29" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*uSpeed;
+  float acc=0.0;
+  for(int i=0;i<20;i++){
+    float fi=float(i);
+    float seed=hash1(fi);
+    vec2 orbit=m+vec2(cos(t*(0.5+seed)+fi*0.6),sin(t*(0.4+seed)+fi*0.5))*(0.2+seed*0.8);
+    float trail=0.0;
+    for(int k=0;k<6;k++){
+      float fk=float(k);
+      vec2 prev=orbit - vec2(cos(t*(0.5+seed)+fi*0.6-fk*0.03),sin(t*(0.4+seed)+fi*0.5-fk*0.03))*(0.02*fk);
+      trail+=exp(-length(uv-prev)*30.0)*(1.0-fk/6.0);
+    }
+    acc+=trail;
+  }
+  // lightning skein on click
+  float skein=0.0;
+  if(uClick>0.0){
+    vec2 a=m, b=m+vec2(cos(t*2.0),sin(t*3.0))*0.6;
+    vec2 ab=b-a; float along=clamp(dot(uv-a,ab)/dot(ab,ab),0.0,1.0);
+    vec2 proj=a+ab*along;
+    float wig=sin(along*30.0+t*8.0)*0.04;
+    float d=length(uv-proj)-abs(wig);
+    skein=exp(-abs(d)*60.0)*uClick;
+  }
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.5,0.8,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.6,0.3);
+  else base=vec3(0.5,1.0,0.5);
+  vec3 col=vec3(0.01,0.01,0.03)+base*acc*1.3+base*skein*1.8;
+  col+=base*exp(-length(uv-m)*5.0)*0.4;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 31 · SHATTER GLASS                                            -->
+<!-- ============================================================= -->
+<script id="fs-30" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.2*uSpeed;
+  // voronoi shards
+  float md=1e3,md2=1e3;
+  vec2 mc;
+  for(int j=-2;j<=2;j++) for(int i=-2;i<=2;i++){
+    vec2 gc=floor(uv*2.5)+vec2(i,j);
+    vec2 o=hash2(gc);
+    vec2 cp=(gc+o)/2.5;
+    float d=length(uv-cp);
+    if(d<md){md2=md; md=d; mc=cp;} else if(d<md2) md2=d;
+  }
+  float shard=md2-md;
+  float crack=smoothstep(0.02,0.0,shard);
+  // cursor-emanating cracks: boost lines near cursor
+  float cursorAmp=exp(-length(uv-m)*3.0)*(1.0+uClick*3.0);
+  crack*=(0.3+cursorAmp);
+  // per-shard tint
+  float seed=hash(floor(mc*20.0));
+  vec3 A,B;
+  if(uPalette<0.5){A=vec3(0.05,0.08,0.12); B=vec3(0.7,0.85,1.0);}
+  else if(uPalette<1.5){A=vec3(0.1,0.02,0.03); B=vec3(1.0,0.3,0.3);}
+  else {A=vec3(0.02,0.02,0.04); B=vec3(0.4,0.3,0.5);}
+  vec3 col=mix(A, A+B*0.2, seed);
+  col+=B*crack*1.2;
+  col+=B*exp(-length(uv-m)*2.0)*0.2;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 32 · RIBBON CASCADE                                           -->
+<!-- ============================================================= -->
+<script id="fs-31" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.3*uSpeed;
+  float acc=0.0;
+  for(int i=0;i<8;i++){
+    float fi=float(i);
+    float phase=fi*0.7+t;
+    float x=sin(uv.y*1.6+phase)*0.5;
+    x+=m.x*exp(-pow(uv.y-m.y,2.0)*4.0)*0.7;
+    float width=0.06+0.04*sin(uv.y*3.0+phase);
+    float d=abs(uv.x-x-(fi-3.5)*0.18);
+    float r=smoothstep(width,0.0,d);
+    // translucent alpha — stack additively with fade
+    acc+=r*(0.15+0.15*sin(uv.y*4.0+phase));
+  }
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.95,0.9,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.7,0.8);
+  else base=vec3(0.7,1.0,0.8);
+  vec3 bg=mix(vec3(0.03,0.03,0.06),vec3(0.08,0.06,0.12),uv.y+0.5);
+  vec3 col=bg+base*acc*1.5;
+  col+=base*uClick*exp(-length(uv-m)*3.0)*0.5;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 33 · QUASICRYSTAL                                             -->
+<!-- ============================================================= -->
+<script id="fs-32" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.15*uSpeed;
+  float acc=0.0;
+  float n=7.0;
+  float tilt=m.x*1.5;
+  for(int i=0;i<7;i++){
+    float fi=float(i);
+    float ang=fi*3.14159/n + t + tilt;
+    vec2 d=vec2(cos(ang),sin(ang));
+    acc+=cos(dot(uv*8.0, d) + t*(1.0+m.y*0.5));
+  }
+  acc/=n;
+  float v=0.5+0.5*acc;
+  vec3 col;
+  if(uPalette<0.5) col=pal(v, vec3(0.5),vec3(0.5),vec3(1.0),vec3(0.0,0.1,0.2));
+  else if(uPalette<1.5) col=pal(v, vec3(0.4,0.3,0.2),vec3(0.4,0.3,0.1),vec3(1.0),vec3(0.2,0.3,0.0));
+  else col=pal(v, vec3(0.3,0.3,0.5),vec3(0.4,0.4,0.5),vec3(1.0),vec3(0.6,0.7,0.9));
+  col*=0.6+0.6*v;
+  col+=vec3(1.0)*uClick*exp(-length(uv-m)*2.0)*0.3;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 34 · ECHO CHAMBER                                             -->
+<!-- ============================================================= -->
+<script id="fs-33" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*uSpeed;
+  vec2 target=vec2(sin(t*0.3)*0.4, cos(t*0.2)*0.3);
+  // ping rings from cursor
+  float rings=0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    float age=fract(t*0.4 - fi*0.2);
+    float rad=age*1.2;
+    float d=length(uv-m)-rad;
+    rings+=exp(-abs(d)*15.0)*(1.0-age);
+  }
+  // click ping
+  if(uClick>0.0){
+    vec2 cp=(vec2(uClickPos.x*uRes.x,uClickPos.y*uRes.y)-0.5*uRes)/uRes.y;
+    float d=length(uv-cp)-uClick*1.2;
+    rings+=exp(-abs(d)*12.0)*uClick*1.5;
+  }
+  // target blip (bounces back)
+  float blip=exp(-length(uv-target)*30.0)*(0.6+0.4*sin(t*8.0));
+  // faint grid
+  vec2 g=uv*6.0;
+  float grid=smoothstep(0.02,0.0,min(abs(fract(g.x)-0.5),abs(fract(g.y)-0.5)));
+  // center crosshair
+  float cross=smoothstep(0.005,0.0,abs(uv.x))+smoothstep(0.005,0.0,abs(uv.y));
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.3,0.7,1.0);
+  else if(uPalette<1.5) base=vec3(0.4,1.0,0.5);
+  else base=vec3(1.0,0.3,0.3);
+  vec3 col=vec3(0.01,0.02,0.04)+base*0.06*grid+base*rings*0.9+base*blip+base*cross*0.15;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 35 · FEATHER MOIRE                                            -->
+<!-- ============================================================= -->
+<script id="fs-34" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.1*uSpeed;
+  float acc=0.0;
+  for(int i=0;i<4;i++){
+    float fi=float(i);
+    float ang=t+fi*0.08+m.x*0.3;
+    vec2 p=uv*rot(ang);
+    // cursor bends a line through
+    float bend=sin(p.x*2.0+m.y*3.0)*0.08;
+    float v=sin((p.y+bend)*80.0 + fi*1.3);
+    acc+=v;
+  }
+  acc/=4.0;
+  float stripe=0.5+0.5*acc;
+  // click amplifies into bloom
+  float bloom=uClick*exp(-length(uv-m)*3.0);
+  vec3 base;
+  if(uPalette<0.5) base=vec3(1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.6,0.3);
+  else base=vec3(0.7,0.4,1.0);
+  vec3 bg=vec3(0.02,0.02,0.03);
+  vec3 col=bg+base*pow(stripe,2.0)*0.35+base*bloom;
+  col*=1.0-length(uv)*0.2;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 36 · GRAV LENS                                                -->
+<!-- ============================================================= -->
+<script id="fs-35" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.1*uSpeed;
+  vec2 d=uv-m;
+  float r=length(d);
+  float lens=0.15/(r*r+0.3);
+  vec2 bg=uv + normalize(d+1e-4)*(-lens*0.08);
+  // starfield behind
+  float stars=pow(hash(floor(bg*700.0+t*3.0)),90.0);
+  stars+=pow(hash(floor(bg*400.0)),60.0)*0.5;
+  // nebula dust
+  float neb=fbm(bg*1.5+t*0.3);
+  vec3 nebC;
+  if(uPalette<0.5) nebC=vec3(0.1,0.15,0.35);
+  else if(uPalette<1.5) nebC=vec3(0.35,0.25,0.35);
+  else nebC=vec3(0.3,0.25,0.15);
+  // lens ring
+  float ring=exp(-abs(r-0.25)*25.0);
+  // lens core brighten on click
+  float core=exp(-r*2.0)*(0.15+uClick*0.8);
+  vec3 col=vec3(stars)+nebC*neb*0.4;
+  col+=vec3(0.9,0.9,1.0)*ring*0.4;
+  col+=vec3(1.0)*core*0.4;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 37 · EMBER PLATE                                              -->
+<!-- ============================================================= -->
+<script id="fs-36" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.2*uSpeed;
+  // heat intensity map
+  float heat=fbm(uv*3.0+t*vec2(1.0,-0.5));
+  heat+=0.3*fbm(uv*8.0+t*vec2(-0.7,0.3));
+  // cursor cools (blow on plate)
+  float cool=exp(-length(uv-m)*3.5);
+  heat -= cool*0.4;
+  // click sears a pattern
+  if(uClick>0.0){
+    vec2 cp=(vec2(uClickPos.x*uRes.x,uClickPos.y*uRes.y)-0.5*uRes)/uRes.y;
+    heat += exp(-length(uv-cp)*2.5)*uClick*0.8;
+  }
+  heat=clamp(heat,0.0,1.2);
+  // temperature -> emission
+  vec3 cold,mid,hot;
+  if(uPalette<0.5){cold=vec3(0.05,0.02,0.01); mid=vec3(0.8,0.2,0.05); hot=vec3(1.0,0.9,0.6);}
+  else if(uPalette<1.5){cold=vec3(0.02); mid=vec3(0.3,0.05,0.02); hot=vec3(1.0,0.5,0.2);}
+  else {cold=vec3(0.02,0.03,0.04); mid=vec3(0.2,0.4,0.5); hot=vec3(0.9,1.0,1.0);}
+  vec3 col=mix(cold,mid,smoothstep(0.2,0.6,heat));
+  col=mix(col,hot,smoothstep(0.7,1.0,heat));
+  // shimmering heat haze at top
+  col+=hot*0.1*smoothstep(0.4,1.0,heat)*sin(uv.y*40.0+t*6.0);
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 38 · LAVA LAMP                                                -->
+<!-- ============================================================= -->
+<script id="fs-37" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.3*uSpeed;
+  float f=0.0;
+  for(int i=0;i<7;i++){
+    float fi=float(i);
+    vec2 c=vec2(sin(t*0.4+fi*1.3+fi*fi*0.2)*0.5, sin(t*0.3+fi*0.9)*0.8);
+    if(i==0) c=m;
+    float r=0.14+0.05*sin(t+fi);
+    f+=r*r/(dot(uv-c,uv-c)+0.001);
+  }
+  // click drop
+  if(uClick>0.0){
+    vec2 cp=(vec2(uClickPos.x*uRes.x,uClickPos.y*uRes.y)-0.5*uRes)/uRes.y;
+    f += 0.03/(dot(uv-cp,uv-cp)+0.001)*uClick;
+  }
+  float shape=smoothstep(1.0,1.6,f);
+  vec3 A,B,bg;
+  if(uPalette<0.5){A=vec3(1.0,0.5,0.1); B=vec3(1.0,0.9,0.3); bg=vec3(0.05,0.02,0.0);}
+  else if(uPalette<1.5){A=vec3(1.0,0.1,0.05); B=vec3(0.8,0.1,0.3); bg=vec3(0.08,0.01,0.02);}
+  else {A=vec3(0.2,0.5,1.0); B=vec3(0.6,0.9,1.0); bg=vec3(0.01,0.03,0.06);}
+  vec3 blob=mix(A,B,smoothstep(1.0,2.5,f));
+  vec3 col=mix(bg,blob,shape);
+  // inner glow
+  col+=blob*0.3*smoothstep(1.5,3.0,f);
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 39 · SNOW GLOBE                                               -->
+<!-- ============================================================= -->
+<script id="fs-38" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*uSpeed;
+  float shake=uClick*3.0;
+  vec2 wind=vec2(m.x*0.3 + sin(t*0.7+shake)*shake*0.2, -0.3);
+  float flakes=0.0;
+  for(int L=0;L<3;L++){
+    float fl=float(L);
+    float scale=6.0+fl*8.0;
+    vec2 p=uv*scale + wind*t*(0.5+fl*0.4);
+    vec2 id=floor(p);
+    vec2 f=fract(p)-0.5;
+    float r=hash(id);
+    float size=0.12+0.1*r;
+    float d=length(f);
+    float f1=smoothstep(size,0.0,d)*(0.4+0.6*r);
+    flakes+=f1/(1.0+fl);
+  }
+  vec3 sky,ground;
+  if(uPalette<0.5){sky=vec3(0.55,0.6,0.75); ground=vec3(0.8,0.8,0.9);}
+  else if(uPalette<1.5){sky=vec3(0.05,0.08,0.18); ground=vec3(0.2,0.25,0.4);}
+  else {sky=vec3(0.05,0.12,0.08); ground=vec3(0.1,0.2,0.12);}
+  float horizon=-0.2;
+  vec3 bg=mix(ground*0.6, sky, smoothstep(horizon-0.05,horizon+0.05,uv.y));
+  // tiny trees silhouettes
+  float trees=0.0;
+  for(int i=0;i<8;i++){float fi=float(i); float x=-1.3+fi*0.35; float h=0.1+0.06*hash1(fi); trees+=smoothstep(0.02,0.0, abs(uv.x-x)-0.05)*step(horizon,uv.y)*step(uv.y,horizon+h);}
+  bg=mix(bg, ground*0.3, trees);
+  vec3 col=bg+vec3(1.0)*flakes*0.8;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 40 · POINTILLIST                                              -->
+<!-- ============================================================= -->
+<script id="fs-39" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.3*uSpeed;
+  vec2 p=uv*18.0;
+  vec2 id=floor(p); vec2 f=fract(p)-0.5;
+  vec2 off=(hash2(id)-0.5)*0.8;
+  off += uClick*2.0*(hash2(id+13.0)-0.5);
+  float d=length(f-off);
+  float size=0.15+0.2*hash(id+7.0);
+  float dot_=smoothstep(size,size-0.1,d);
+  // color per dot based on position gradient
+  float g=smoothstep(-0.5,0.5,uv.y);
+  vec3 A,B,C;
+  if(uPalette<0.5){A=vec3(0.2,0.6,0.3); B=vec3(0.9,0.8,0.3); C=vec3(0.2,0.4,0.7);}
+  else if(uPalette<1.5){A=vec3(0.1,0.3,0.5); B=vec3(0.9,0.7,0.4); C=vec3(0.6,0.2,0.3);}
+  else {A=vec3(0.3,0.2,0.4); B=vec3(0.8,0.4,0.5); C=vec3(0.9,0.7,0.4);}
+  vec3 dotC=mix(A,B,hash(id));
+  dotC=mix(dotC,C,g);
+  // pulse with cursor proximity
+  float pulse=exp(-length(uv-m)*2.5)*(0.5+0.5*sin(t*3.0+hash(id)*10.0));
+  dotC*=0.7+pulse;
+  vec3 bg=vec3(0.04,0.04,0.05);
+  vec3 col=mix(bg,dotC,dot_);
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 41 · SOUND GRAPH                                              -->
+<!-- ============================================================= -->
+<script id="fs-40" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth/uRes - 0.5);
+  float t=uTime*uSpeed;
+  float acc=0.0;
+  int rows=6;
+  for(int i=0;i<6;i++){
+    float fi=float(i);
+    float cy=-0.5 + (fi+0.5)/float(rows);
+    float freq=6.0+fi*2.0+m.x*8.0;
+    float amp=0.06+0.02*fi;
+    float phase=t*(1.0+fi*0.3);
+    float y=cy+sin(uv.x*freq+phase)*amp*(1.0+uClick*1.5*exp(-abs(uv.x)*1.0));
+    float d=abs(uv.y-y);
+    acc+=exp(-d*80.0);
+  }
+  // playhead vertical line at cursor x
+  float play=smoothstep(0.003,0.0, abs(uv.x-m.x));
+  // grid
+  float grid=smoothstep(0.002,0.0, min(abs(fract(uv.x*10.0)-0.5), abs(fract(uv.y*10.0)-0.5)));
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.3,1.0,0.6);
+  else if(uPalette<1.5) base=vec3(1.0,0.4,0.8);
+  else base=vec3(1.0);
+  vec3 col=vec3(0.01,0.02,0.02)+base*0.06*grid+base*acc*1.1+base*play*0.3;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 42 · NEON BLADE                                               -->
+<!-- ============================================================= -->
+<script id="fs-41" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.2*uSpeed;
+  float acc=0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    vec2 p=uv*rot(fi*0.5+t);
+    // bent by cursor
+    p += m*exp(-length(uv-m)*1.5)*0.3;
+    float ribbon=0.0;
+    // parametric curve
+    float phase=t*0.5+fi*1.7;
+    float x=0.7*sin(phase*1.3);
+    float y=0.7*sin(phase*0.9);
+    vec2 center=vec2(x,y);
+    float r=length(p-center);
+    ribbon=exp(-abs(r-0.4-fi*0.05)*15.0);
+    // cut on click
+    ribbon *= 1.0 - uClick*step(abs(p.y),0.02);
+    acc+=ribbon;
+  }
+  vec3 base;
+  if(uPalette<0.5) base=vec3(1.0,0.3,0.5);
+  else if(uPalette<1.5) base=vec3(0.3,0.7,1.0);
+  else base=vec3(0.7,1.0,0.5);
+  vec3 col=vec3(0.01,0.01,0.03)+base*acc*1.5;
+  col+=base*exp(-length(uv-m)*4.0)*0.3;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 43 · CORAL GARDEN                                             -->
+<!-- ============================================================= -->
+<script id="fs-42" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.1*uSpeed;
+  // grow from cursor outward with fractal branching
+  vec2 p=uv-m;
+  float acc=0.0;
+  for(int i=0;i<6;i++){
+    float fi=float(i);
+    p=abs(p)-0.12;
+    p*=rot(0.5+fi*0.1+sin(t+fi)*0.05);
+    float branch=exp(-abs(p.y)*25.0)*smoothstep(0.4,0.0,abs(p.x));
+    acc+=branch/(1.0+fi*0.4);
+  }
+  // polyps on click
+  float polyps=0.0;
+  if(uClick>0.0){
+    for(int i=0;i<5;i++){float fi=float(i); vec2 pp=m+vec2(cos(fi*1.3),sin(fi*1.7))*(0.2+fi*0.08); polyps+=exp(-length(uv-pp)*25.0);}
+    polyps*=uClick;
+  }
+  vec3 coral,polypC,bg;
+  if(uPalette<0.5){coral=vec3(1.0,0.5,0.5); polypC=vec3(1.0,0.8,0.4); bg=vec3(0.02,0.05,0.08);}
+  else if(uPalette<1.5){coral=vec3(0.7,0.3,0.8); polypC=vec3(1.0,0.5,0.8); bg=vec3(0.04,0.02,0.08);}
+  else {coral=vec3(0.5,0.8,0.9); polypC=vec3(0.9,0.95,1.0); bg=vec3(0.03,0.04,0.06);}
+  vec3 col=bg+coral*acc*0.8+polypC*polyps*1.5;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 44 · SIGMA DRIFT                                              -->
+<!-- ============================================================= -->
+<script id="fs-43" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.3*uSpeed;
+  float acc=0.0;
+  // cloud of glyph-like seeds; focus near cursor
+  for(int i=0;i<24;i++){
+    float fi=float(i);
+    float seed=hash1(fi*1.7);
+    vec2 drift=vec2(sin(t*0.3+fi*1.3)*0.6, cos(t*0.2+fi*0.9)*0.5);
+    vec2 home=drift + (hash2(vec2(fi,0.0))-0.5)*1.5;
+    // focus toward cursor
+    float focus=exp(-length(home-m)*1.2);
+    vec2 pos=mix(home, m+drift*0.2, focus*0.7);
+    // glyph: tiny cross/plus
+    vec2 q=uv-pos;
+    float bar1=exp(-abs(q.x)*40.0)*smoothstep(0.04,0.0,abs(q.y));
+    float bar2=exp(-abs(q.y)*40.0)*smoothstep(0.04,0.0,abs(q.x));
+    float dot_=exp(-length(q)*40.0);
+    acc+=(bar1+bar2+dot_*2.0)*(0.3+0.7*focus);
+  }
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.7,0.85,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.85,0.6);
+  else base=vec3(1.0,0.5,0.8);
+  vec3 col=vec3(0.02,0.02,0.04)+base*acc*0.6;
+  col+=base*uClick*exp(-length(uv-m)*4.0)*0.4;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 45 · FROST BLOOM                                              -->
+<!-- ============================================================= -->
+<script id="fs-44" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.1*uSpeed;
+  vec2 p=uv-m;
+  float r=length(p);
+  float a=atan(p.y,p.x);
+  a=mod(a,6.2831/6.0); a=abs(a-3.14159/6.0);
+  vec2 q=vec2(cos(a),sin(a))*r;
+  float acc=0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    float rr=0.08+fi*0.07;
+    float needle=exp(-abs(q.x)*80.0)*smoothstep(rr+0.04,rr,q.y)*smoothstep(rr,rr+0.02,q.y+0.06);
+    acc+=needle;
+    // side branches
+    vec2 q2=q; q2.y -= rr*0.6;
+    q2*=rot(0.5);
+    float side=exp(-abs(q2.x)*80.0)*smoothstep(0.05,0.0,abs(q2.y))*smoothstep(0.06,0.02,abs(q2.x-0.02));
+    acc+=side*0.4;
+  }
+  // second nucleation site on click
+  if(uClick>0.0){
+    vec2 cp=(vec2(uClickPos.x*uRes.x,uClickPos.y*uRes.y)-0.5*uRes)/uRes.y;
+    float rr2=length(uv-cp);
+    acc+=exp(-rr2*10.0)*uClick;
+  }
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.85,0.95,1.0);
+  else if(uPalette<1.5) base=vec3(0.8,0.9,1.0);
+  else base=vec3(0.7,0.6,1.0);
+  vec3 bg=vec3(0.03,0.04,0.07);
+  vec3 col=bg+base*acc*1.2+base*exp(-r*5.0)*0.15;
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 46 · WATER SURFACE                                            -->
+<!-- ============================================================= -->
+<script id="fs-45" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*uSpeed;
+  // ripples from cursor trail + click
+  float w=0.0;
+  for(int i=0;i<3;i++){float fi=float(i); w+=sin(length(uv-m)*20.0 - t*3.0 - fi*1.2)*(1.0-fi*0.3);}
+  if(uClick>0.0){
+    vec2 cp=(vec2(uClickPos.x*uRes.x,uClickPos.y*uRes.y)-0.5*uRes)/uRes.y;
+    w+=sin(length(uv-cp)*25.0 - t*5.0)*uClick*2.0;
+  }
+  w/=4.0;
+  // caustic
+  vec2 dd=vec2(w*0.02);
+  float caustic=0.0;
+  for(int k=0;k<4;k++){float fk=float(k); caustic+=pow(abs(sin(uv.x*6.0+w*3.0+t*(0.5+fk*0.2))*sin(uv.y*6.0-w*3.0+t*(0.3+fk*0.2))),3.0);}
+  caustic/=4.0;
+  vec3 deep,shallow,high;
+  if(uPalette<0.5){deep=vec3(0.03,0.1,0.2); shallow=vec3(0.2,0.5,0.8); high=vec3(0.9,1.0,1.0);}
+  else if(uPalette<1.5){deep=vec3(0.02,0.03,0.08); shallow=vec3(0.1,0.15,0.3); high=vec3(0.7,0.8,1.0);}
+  else {deep=vec3(0.05,0.02,0.01); shallow=vec3(0.3,0.2,0.1); high=vec3(1.0,0.8,0.5);}
+  vec3 col=mix(deep,shallow,0.5+0.5*w);
+  col+=high*caustic*0.8;
+  // ripple highlights
+  col+=high*0.2*smoothstep(0.7,1.0,abs(w));
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 47 · TRON GRID                                                -->
+<!-- ============================================================= -->
+<script id="fs-46" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes - 0.5);
+  uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes - 0.5);
+  float t=uTime*uSpeed;
+  float horizon=m.y*0.5;
+  vec3 col;
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.2,0.8,1.0);
+  else if(uPalette<1.5) base=vec3(1.0,0.7,0.3);
+  else base=vec3(0.7,1.0,0.3);
+  if(uv.y<horizon){
+    // floor grid with perspective
+    float py=horizon-uv.y;
+    float z=1.0/max(py,0.001);
+    float gx=uv.x*z*2.0 + m.x*2.0;
+    float gz=z + t*1.5;
+    float lineX=smoothstep(0.04,0.0, abs(fract(gx)-0.5));
+    float lineZ=smoothstep(0.04,0.0, abs(fract(gz)-0.5));
+    float g=max(lineX,lineZ);
+    // disc pulse on click
+    float disc=uClick*exp(-abs(z-uClick*8.0)*0.8);
+    col=base*g*(1.0-smoothstep(0.0,2.0,py))+base*disc*g*2.0;
+    col+=base*0.05;
+  } else {
+    // sky fade
+    float sky=smoothstep(horizon,horizon+0.5,uv.y);
+    col=mix(base*0.15,vec3(0.01,0.02,0.05),sky);
+    // horizon glow
+    col+=base*exp(-(uv.y-horizon)*20.0)*0.6;
+    // distant suns at cursor x
+    col+=base*exp(-length(vec2(uv.x-m.x, uv.y-horizon-0.1))*15.0)*0.5;
+  }
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- ============================================================= -->
+<!-- 48 · DUNE SEAS                                                -->
+<!-- ============================================================= -->
+<script id="fs-47" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.1*uSpeed;
+  vec2 p=uv;
+  // wind disturbance from cursor + click gust
+  p += (uv-m)*exp(-length(uv-m)*2.0)*0.15*(1.0+uClick*4.0);
+  float h=fbm(p*2.5+vec2(t*1.5,0.0));
+  h+=0.3*fbm(p*6.0+vec2(0.0,t));
+  // dune ridges (directional)
+  float ridge=0.5+0.5*sin(p.x*3.0 + h*4.0 + t*0.5);
+  ridge=pow(ridge,3.0);
+  // derivatives -> light from upper-right
+  float e=0.004;
+  float hx=fbm((p+vec2(e,0))*2.5+vec2(t*1.5,0.0)) - fbm((p-vec2(e,0))*2.5+vec2(t*1.5,0.0));
+  float hy=fbm((p+vec2(0,e))*2.5+vec2(t*1.5,0.0)) - fbm((p-vec2(0,e))*2.5+vec2(t*1.5,0.0));
+  vec3 n=normalize(vec3(-hx,-hy,0.03));
+  float lit=max(0.0,dot(n,normalize(vec3(0.7,0.5,0.5))));
+  vec3 lo,hi;
+  if(uPalette<0.5){lo=vec3(0.5,0.3,0.15); hi=vec3(1.0,0.85,0.5);}
+  else if(uPalette<1.5){lo=vec3(0.1,0.1,0.2); hi=vec3(0.6,0.6,0.8);}
+  else {lo=vec3(0.3,0.15,0.2); hi=vec3(1.0,0.7,0.75);}
+  vec3 col=mix(lo,hi, lit*0.7 + ridge*0.4);
+  // wind streaks
+  col+=hi*0.08*smoothstep(0.6,1.0, abs(sin(p.x*12.0+h*2.0+t)));
+  col*=uIntensity; gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 49 TRI TRON -->
+<script id="fs-48" type="x-shader/x-fragment">
+float triLine(vec2 p){vec2 q=p;q.x+=q.y*0.5774;vec2 f=fract(q);return smoothstep(0.04,0.0,min(min(f.x,f.y),1.0-f.x-f.y));}
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;float horizon=m.y*0.5;vec3 base;if(uPalette<0.5)base=vec3(0.2,0.8,1.0);else if(uPalette<1.5)base=vec3(1.0,0.7,0.3);else base=vec3(0.7,1.0,0.3);vec3 col;if(uv.y<horizon){float py=horizon-uv.y;float z=1.0/max(py,0.001);vec2 g=vec2(uv.x*z*3.0+m.x*2.0,z+t*1.5);float line=triLine(g);float disc=uClick*exp(-abs(z-uClick*8.0)*0.8);col=base*line*(1.0-smoothstep(0.0,2.0,py))+base*disc*line*2.0;col+=base*0.04;}else{float sky=smoothstep(horizon,horizon+0.5,uv.y);col=mix(base*0.15,vec3(0.01,0.02,0.05),sky);col+=base*exp(-(uv.y-horizon)*20.0)*0.6;col+=base*exp(-length(vec2(uv.x-m.x,uv.y-horizon-0.1))*15.0)*0.5;}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 50 ASCII MATRIX -->
+<script id="fs-49" type="x-shader/x-fragment">
+float glyph(vec2 p,float seed){vec2 g=floor(p*5.0);return step(0.5,hash(vec2(g.x+seed*13.0,g.y)));}
+void main(){vec2 frag=gl_FragCoord.xy;float t=uTime*uSpeed;float cw=11.0,ch=16.0;vec2 cid=floor(frag/vec2(cw,ch));vec2 cfr=fract(frag/vec2(cw,ch));float colSeed=hash1(cid.x*0.173);float speed=40.0+colSeed*120.0;speed*=1.0+exp(-abs(frag.x-uMouseSmooth.x)/120.0)*2.5+uClick*3.0;float y=frag.y+t*speed;float row=floor(y/ch);float bright=hash(vec2(cid.x,row));float tail=fract(y/ch);float g=glyph(cfr*vec2(0.6,1.0),row+cid.x*7.0+floor(t*5.0));vec3 base;if(uPalette<0.5)base=vec3(0.4,1.0,0.6);else if(uPalette<1.5)base=vec3(1.0,0.75,0.35);else base=vec3(0.6,0.9,1.0);float head=smoothstep(0.75,1.0,bright)*smoothstep(0.0,0.3,tail);vec3 col=base*g*(max(0.0,bright-0.4)*0.5+head*1.6);col*=0.85+0.15*sin(frag.y*2.0);col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 51 ASCII TERRAIN -->
+<script id="fs-50" type="x-shader/x-fragment">
+float charAt(vec2 cfr,int idx){
+  // simple 5x5 bitmask glyphs packed by intensity index 0..5
+  vec2 g=floor(cfr*5.0);
+  float s=0.0;
+  if(idx==0) s=step(2.0,g.x)*step(g.x,2.0)*step(2.0,g.y)*step(g.y,2.0); // dot
+  else if(idx==1) s=step(1.0,g.x)*step(g.x,3.0)*step(2.0,g.y)*step(g.y,2.0); // -
+  else if(idx==2) s=step(1.0,g.x)*step(g.x,3.0)*step(1.0,g.y)*step(g.y,3.0)*(1.0-step(2.5,g.y)*step(1.5,g.y)*(1.0-step(0.5,abs(g.x-2.0)))); // ~
+  else if(idx==3) s=step(1.0,g.x)*step(g.x,3.0)*step(0.0,g.y)*step(g.y,4.0); // #
+  else s=step(0.0,g.x)*step(g.x,4.0)*step(0.0,g.y)*step(g.y,4.0); // full block
+  return s;
+}
+void main(){vec2 frag=gl_FragCoord.xy;float t=uTime*0.1*uSpeed;float cw=14.0;vec2 cid=floor(frag/cw);vec2 cfr=fract(frag/cw);vec2 uv=(cid*cw/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;vec2 p=vec2(uv.x*2.0+t, uv.y*2.0);float h=fbm(p)+0.5*fbm(p*2.0);h+=0.4*exp(-length(uv-m)*2.5)*(1.0+uClick*1.5);int idx=int(clamp(floor(h*5.0),0.0,4.0));float g=charAt(cfr,idx);vec3 base;if(uPalette<0.5)base=vec3(0.9);else if(uPalette<1.5)base=vec3(1.0,0.75,0.35);else base=vec3(0.5,0.9,1.0);vec3 col=base*g*(0.3+0.7*h);col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 52 ASCII ORBITS -->
+<script id="fs-51" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=12.0;vec2 cid=floor(frag/cw);vec2 cfr=fract(frag/cw)-0.5;vec2 uv=(cid*cw-0.5*uRes)/uRes.y;vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;float t=uTime*uSpeed;float acc=0.0;float which=0.0;for(int i=0;i<20;i++){float fi=float(i);float seed=hash1(fi);vec2 orbit=m+vec2(cos(t*(0.5+seed)+fi*0.6),sin(t*(0.4+seed)+fi*0.5))*(0.15+seed*0.7);float d=length(uv-orbit);if(d<0.04){acc=1.0;which=hash1(fi+floor(t*3.0));}}float glyph=0.0;if(acc>0.5){float k=length(cfr);if(which<0.33)glyph=step(k,0.15);else if(which<0.66)glyph=step(abs(cfr.x)+abs(cfr.y),0.3);else glyph=step(max(abs(cfr.x),abs(cfr.y)),0.3)-step(max(abs(cfr.x),abs(cfr.y)),0.18);}vec3 base;if(uPalette<0.5)base=vec3(0.4,1.0,0.6);else if(uPalette<1.5)base=vec3(1.0,0.6,0.8);else base=vec3(0.7,0.9,1.0);vec3 col=base*glyph;col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 53 ASCII CONSOLE -->
+<script id="fs-52" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=10.0,ch=18.0;vec2 cid=floor(frag/vec2(cw,ch));vec2 cfr=fract(frag/vec2(cw,ch));float t=uTime*uSpeed;float rows=floor(uRes.y/ch);float lineAge=rows - cid.y - fract(t*3.0);float ch1=hash(vec2(cid.x,floor(cid.y+t*0.3)));float isChar=step(0.35,ch1);float line=floor(cid.y+t*0.3);float xmax=10.0+hash1(line)*30.0;float valid=step(cid.x,xmax);float glyph=step(0.5,hash(vec2(cid.x*3.1+cfr.x*5.0+line,cfr.y*5.0)));// blinking cursor at line end
+float cursorBlink=step(0.5,sin(t*6.0)*0.5+0.5);float cursor=step(abs(cid.x-xmax),0.5)*cursorBlink;vec3 base;if(uPalette<0.5)base=vec3(0.4,1.0,0.5);else if(uPalette<1.5)base=vec3(1.0,0.75,0.3);else base=vec3(0.9);// click flash: insert bright line
+float click=uClick*step(abs(cid.y-floor(uClickPos.y*rows)),0.5);vec3 col=base*isChar*glyph*valid*(0.5+0.5*smoothstep(0.0,rows*0.5,lineAge+rows*0.5));col+=base*cursor*0.9+base*click*glyph*1.2;col*=0.85+0.15*sin(frag.y*1.5);col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 54 ASCII TUNNEL -->
+<script id="fs-53" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=12.0;vec2 cid=floor(frag/cw);vec2 cfr=fract(frag/cw)-0.5;vec2 uv=(cid*cw-0.5*uRes)/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;uv-=m*0.6;float r=length(uv);float a=atan(uv.y,uv.x);float z=1.0/(r+0.01)+t*2.0*(1.0+uClick*4.0);vec2 g=vec2(a/3.14159*4.0,z);vec2 gi=floor(g);vec2 gf=fract(g)-0.5;float ring=step(abs(gf.y),0.45)*step(0.35,abs(gf.x)); // ring char
+float glyph=step(0.5,hash(vec2(cfr.x*5.0+gi.y,cfr.y*5.0)));float depth=exp(-r*0.8);vec3 base;if(uPalette<0.5)base=vec3(0.3,0.8,1.0);else if(uPalette<1.5)base=vec3(1.0,0.5,0.3);else base=vec3(0.5,1.0,0.6);vec3 col=base*ring*glyph*depth*1.2;col+=base*exp(-r*3.0)*0.3;col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 55 ASCII WAVE -->
+<script id="fs-54" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=10.0,ch=16.0;vec2 cid=floor(frag/vec2(cw,ch));vec2 cfr=fract(frag/vec2(cw,ch));vec2 uv=(cid*vec2(cw,ch)-0.5*uRes)/uRes.y;vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;float t=uTime*0.5*uSpeed;float wave=sin(uv.x*2.5+t)*0.25+sin(uv.x*5.0-t*1.3)*0.1;wave+=exp(-abs(uv.x-m.x)*2.0)*m.y*0.3+uClick*0.1;float d=uv.y-wave;float on=step(abs(d),0.08);// choose char by slope
+float slope=cos(uv.x*2.5+t)*2.5*0.25+cos(uv.x*5.0-t*1.3)*5.0*0.1;float which=slope;float glyph;vec2 q=cfr-0.5;if(which>0.5)glyph=step(abs(q.x+q.y),0.25); // /
+else if(which<-0.5)glyph=step(abs(q.x-q.y),0.25); // \
+else glyph=step(abs(q.y),0.1); // -
+vec3 base;if(uPalette<0.5)base=vec3(0.4,1.0,0.6);else if(uPalette<1.5)base=vec3(1.0,0.5,0.4);else base=vec3(0.9);vec3 col=base*on*glyph;col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 56 ASCII STARFIELD -->
+<script id="fs-55" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=12.0;vec2 cid=floor(frag/cw);vec2 cfr=fract(frag/cw)-0.5;vec2 uv=(cid*cw-0.5*uRes)/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;vec2 dir=uv-m*0.6;float a=atan(dir.y,dir.x);float r=length(dir);float lr=log(r+0.001);float speed=0.7+0.8*uClick;float acc=0.0;float which=0.0;for(int i=0;i<3;i++){float fi=float(i);float row=floor(a*20.0+fi*5.0);float seed=hash1(row+fi*91.0);float slot=fract(lr*3.0-t*speed*(0.5+seed)+seed*10.0);float star=exp(-pow((fract(a*20.0+fi*5.0)-0.5)*8.0,2.0));float len=smoothstep(0.0,0.2,slot)*smoothstep(1.0,0.7,slot);if(star*len>acc){acc=star*len;which=seed;}}float glyph;float k=length(cfr);if(which<0.33)glyph=step(k,0.1); // .
+else if(which<0.66)glyph=step(abs(cfr.x)+abs(cfr.y),0.2); // +
+else glyph=step(k,0.25)-step(k,0.12); // o
+vec3 base;if(uPalette<0.5)base=vec3(0.8,0.9,1.0);else if(uPalette<1.5)base=vec3(1.0,0.85,0.5);else base=vec3(0.9,0.6,1.0);vec3 col=base*glyph*acc*1.3;col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 57 ASCII RAIN -->
+<script id="fs-56" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=10.0,ch=18.0;vec2 cid=floor(frag/vec2(cw,ch));vec2 cfr=fract(frag/vec2(cw,ch))-0.5;float t=uTime*uSpeed;float mx=uMouseSmooth.x/uRes.x;float wind=(mx-0.5)*1.5+uClick*0.5;// drift
+float xShift=cid.y*wind*0.3+t*3.0*wind;float col_=floor(cid.x+xShift*0.1);float phase=fract(t*1.5+hash1(col_)*0.7);float rowOff=cid.y-phase*30.0;float on=step(hash(vec2(col_,floor(rowOff))),0.25);// slash char
+float glyph=step(abs(cfr.x-cfr.y),0.12);vec3 base;if(uPalette<0.5)base=vec3(0.4,1.0,0.6);else if(uPalette<1.5)base=vec3(0.5,0.8,1.0);else base=vec3(0.9);vec3 col=base*on*glyph*0.9;col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 58 ASCII FIRE -->
+<script id="fs-57" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=10.0,ch=16.0;vec2 cid=floor(frag/vec2(cw,ch));vec2 cfr=fract(frag/vec2(cw,ch));vec2 uv=(cid*vec2(cw,ch)-0.5*uRes)/uRes.y;vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;float t=uTime*0.7*uSpeed;vec2 p=vec2(uv.x*2.0,uv.y*2.0+t*2.0);float h=fbm(p)+0.5*fbm(p*2.0);float base_=1.0-(uv.y+0.7); // hotter at bottom
+base_+=exp(-abs(uv.x-m.x)*2.0)*0.4*(1.0+uClick);float temp=base_*h*1.3;int idx=int(clamp(floor(temp*5.0),0.0,4.0));// char set: . , ^ * #
+float glyph=0.0;vec2 q=cfr;if(idx==1)glyph=step(length(q-0.5),0.08);else if(idx==2)glyph=step(abs(q.x-0.5)+abs(q.y-0.3),0.15);else if(idx==3)glyph=step(length(q-0.5),0.2)*step(0.3,length(q-0.5))+step(abs(q.x-0.5),0.08)+step(abs(q.y-0.5),0.08);else if(idx==4)glyph=step(0.15,length(q-0.5))*step(length(q-0.5),0.35);vec3 lo,mid,hi;if(uPalette<0.5){lo=vec3(0.5,0.1,0.0);mid=vec3(1.0,0.5,0.1);hi=vec3(1.0,0.9,0.5);}else if(uPalette<1.5){lo=vec3(0.1,0.2,0.4);mid=vec3(0.4,0.6,1.0);hi=vec3(0.9,1.0,1.0);}else {lo=vec3(0.1,0.4,0.1);mid=vec3(0.3,0.9,0.3);hi=vec3(0.9,1.0,0.6);}vec3 col=mix(lo,mid,smoothstep(0.3,0.6,temp));col=mix(col,hi,smoothstep(0.7,1.0,temp));col*=glyph;col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 59 ASCII MANDALA -->
+<script id="fs-58" type="x-shader/x-fragment">
+void main(){vec2 frag=gl_FragCoord.xy;float cw=12.0;vec2 cid=floor(frag/cw);vec2 cfr=fract(frag/cw)-0.5;vec2 uv=(cid*cw-0.5*uRes)/uRes.y;vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;float t=uTime*0.3*uSpeed;vec2 p=uv-m;float r=length(p);float a=atan(p.y,p.x)+t;float seg=12.0;a=mod(a,6.2831/seg);a=abs(a-3.14159/seg);float band=0.5+0.5*sin(r*15.0-t*2.0);float radial=0.5+0.5*sin(a*seg*2.0);float v=band*radial+uClick*0.3*exp(-r*2.0);int idx=int(clamp(floor(v*4.0),0.0,3.0));float glyph=0.0;vec2 q=cfr;if(idx==1)glyph=step(length(q),0.1);else if(idx==2)glyph=step(abs(q.x)+abs(q.y),0.25);else if(idx==3)glyph=step(abs(q.x),0.08)+step(abs(q.y),0.08);vec3 base;if(uPalette<0.5)base=vec3(0.9);else if(uPalette<1.5)base=vec3(1.0,0.5,0.7);else base=vec3(1.0,0.8,0.4);vec3 col=base*glyph*v*1.4;col*=1.0-smoothstep(0.9,1.2,r);col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 60 FANTASY REALM -->
+<script id="fs-59" type="x-shader/x-fragment">
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*0.05*uSpeed;vec3 skyA,skyB,mistC,islandC;if(uPalette<0.5){skyA=vec3(0.2,0.15,0.35);skyB=vec3(0.6,0.35,0.45);mistC=vec3(0.5,0.4,0.55);islandC=vec3(0.15,0.12,0.22);}else if(uPalette<1.5){skyA=vec3(0.05,0.15,0.25);skyB=vec3(0.3,0.5,0.6);mistC=vec3(0.4,0.7,0.65);islandC=vec3(0.1,0.15,0.2);}else{skyA=vec3(0.15,0.05,0.1);skyB=vec3(0.8,0.4,0.2);mistC=vec3(0.6,0.3,0.2);islandC=vec3(0.1,0.05,0.05);}float hy=uv.y+0.1;vec3 sky=mix(skyB,skyA,smoothstep(-0.3,0.6,hy));// twin moons
+float m1=length(uv-vec2(-0.3,0.3));float m2=length(uv-vec2(0.35,0.42));float moons=exp(-m1*30.0)*0.9+exp(-m2*40.0)*0.7;sky+=vec3(1.0,0.9,0.8)*moons;// stars
+sky+=vec3(pow(hash(floor(uv*800.0)),80.0))*step(0.0,uv.y);// floating isles
+for(int i=0;i<4;i++){float fi=float(i);vec2 ip=vec2(-0.5+fi*0.35+sin(t+fi)*0.08,0.1+sin(t*0.7+fi*1.3)*0.15);float d=length((uv-ip)/vec2(0.22,0.08));if(d<1.0){sky=mix(sky,islandC,smoothstep(1.0,0.6,d));// grass top
+if(abs(uv.y-ip.y-0.05)<0.015) sky=mix(sky,islandC*2.0+vec3(0.1,0.2,0.05),0.7);}}// mist in valley
+float mist=fbm(uv*3.0+t*5.0)*smoothstep(-0.1,-0.35,uv.y);mist*=1.0-exp(-length(uv-m)*3.0)*0.8; // cursor parts
+sky=mix(sky,mistC,mist*0.7);// ground silhouette
+float ground=smoothstep(-0.45+fbm(vec2(uv.x*3.0,t))*0.05,-0.5,uv.y);sky=mix(sky,islandC*0.5,ground);// fireflies
+float ff=0.0;for(int i=0;i<12;i++){float fi=float(i);vec2 fp=vec2(sin(t*3.0+fi*1.7)*0.6,-0.2+sin(t*2.0+fi)*0.2);ff+=exp(-length(uv-fp)*100.0);}sky+=vec3(1.0,0.9,0.5)*ff*(0.5+0.5*sin(t*10.0));sky*=uIntensity;gl_FragColor=vec4(sky,1.0);}
+</script>
+
+<!-- 61 CYBER SKYLINE -->
+<script id="fs-60" type="x-shader/x-fragment">
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;float horizon=m.y*0.4;vec3 base,sky;if(uPalette<0.5){base=vec3(0.2,0.8,1.0);sky=vec3(0.5,0.1,0.4);}else if(uPalette<1.5){base=vec3(1.0,0.3,0.7);sky=vec3(0.1,0.2,0.5);}else{base=vec3(0.6,1.0,0.3);sky=vec3(0.3,0.1,0.3);}vec3 col;if(uv.y<horizon){// floor grid flowing toward viewer
+float py=horizon-uv.y;float z=1.0/max(py,0.001);float gx=uv.x*z*2.0+m.x*2.0;float gz=z+t*3.0;float line=max(smoothstep(0.04,0.0,abs(fract(gx)-0.5)),smoothstep(0.04,0.0,abs(fract(gz)-0.5)));// traffic streaks flowing
+float streak=smoothstep(0.3,0.0,abs(fract(gz*0.3+hash1(floor(gx))*5.0)-0.5))*step(0.7,hash1(floor(gx)));col=base*line*(1.0-smoothstep(0.0,2.0,py))+base*streak*0.8;col+=base*0.04;}else{// sky with gradient and stars
+float sT=smoothstep(horizon,horizon+0.7,uv.y);col=mix(sky*0.6,sky*0.2,sT);col+=vec3(pow(hash(floor(uv*700.0)),100.0))*0.6;// buildings silhouette
+float skylineY=horizon;for(int i=0;i<16;i++){float fi=float(i);float bx=-1.3+fi*0.18+sin(t*0.1+fi)*0.01;float bw=0.05+hash1(fi)*0.04;float bh=0.15+hash1(fi*1.7)*0.35;if(abs(uv.x-bx)<bw){float topY=horizon+bh;skylineY=max(skylineY,topY);if(uv.y<topY){// windows
+vec2 w=vec2((uv.x-bx+bw)/bw*6.0,(uv.y-horizon)/bh*20.0);vec2 wi=floor(w);float winOn=step(0.35,hash(wi+fi+floor(t*0.5+fi)));col=vec3(0.02,0.02,0.05);col+=base*winOn*step(abs(fract(w.x)-0.5),0.35)*step(abs(fract(w.y)-0.5),0.35)*0.7;}}}// neon sign streaks
+float sign_=sin(uv.x*8.0+t*3.0)*sin(uv.y*12.0-t*2.0);col+=base*0.15*smoothstep(0.6,1.0,abs(sign_))*smoothstep(horizon+0.05,horizon+0.5,uv.y);// horizon glow
+col+=base*exp(-(uv.y-horizon)*12.0)*0.7;}// click pulse along floor
+if(uClick>0.0 && uv.y<horizon){float py=horizon-uv.y;float z=1.0/max(py,0.001);col+=base*exp(-abs(z-uClick*8.0)*0.6)*uClick;}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 62 HEX TRON -->
+<script id="fs-61" type="x-shader/x-fragment">
+float hexLine(vec2 p){p=abs(p);return min(max(p.x*0.866+p.y*0.5,p.y)-0.5,0.0);}
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;float horizon=m.y*0.5;vec3 base;if(uPalette<0.5)base=vec3(0.2,0.8,1.0);else if(uPalette<1.5)base=vec3(1.0,0.7,0.3);else base=vec3(0.7,1.0,0.3);vec3 col;if(uv.y<horizon){float py=horizon-uv.y;float z=1.0/max(py,0.001);vec2 p=vec2(uv.x*z*2.0+m.x*2.0,z+t*1.5);// hex grid
+vec2 s=vec2(1.0,1.732);vec2 a=mod(p,s)-s*0.5;vec2 b=mod(p+s*0.5,s)-s*0.5;vec2 h=dot(a,a)<dot(b,b)?a:b;float d=max(abs(h.y),(h.x*0.866+abs(h.y)*0.5));float line=smoothstep(0.52,0.48,d);float disc=uClick*exp(-abs(z-uClick*8.0)*0.8);col=base*line*(1.0-smoothstep(0.0,2.0,py))+base*disc*line*2.0;col+=base*0.04;}else{float sky=smoothstep(horizon,horizon+0.5,uv.y);col=mix(base*0.15,vec3(0.01,0.02,0.05),sky);col+=base*exp(-(uv.y-horizon)*20.0)*0.6;}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 63 TRON VALLEY -->
+<script id="fs-62" type="x-shader/x-fragment">
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;float horizon=m.y*0.4;vec3 base;if(uPalette<0.5)base=vec3(0.3,0.7,1.0);else if(uPalette<1.5)base=vec3(1.0,0.6,0.4);else base=vec3(0.7,1.0,0.5);vec3 col;if(uv.y<horizon){float py=horizon-uv.y;float z=1.0/max(py,0.001);// river gap in the middle
+float gap=0.3+sin(z*0.5+t)*0.05;if(abs(uv.x*z)<gap){col=base*0.08;// river reflections
+float rip=sin((uv.x*z)*10.0+t*2.0)*0.5+0.5;col+=base*rip*smoothstep(2.0,0.0,py)*0.3;}else{float sign_=sign(uv.x);float gx=(abs(uv.x*z)-gap)*2.0+sign_*m.x*2.0;float gz=z+t*1.5;float line=max(smoothstep(0.04,0.0,abs(fract(gx)-0.5)),smoothstep(0.04,0.0,abs(fract(gz)-0.5)));col=base*line*(1.0-smoothstep(0.0,2.0,py));}}else{float sky=smoothstep(horizon,horizon+0.5,uv.y);col=mix(base*0.15,vec3(0.02,0.01,0.05),sky);col+=base*exp(-(uv.y-horizon)*15.0)*0.5;col+=vec3(pow(hash(floor(uv*700.0)),120.0));}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 64 TRON CANYON -->
+<script id="fs-63" type="x-shader/x-fragment">
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;vec3 base;if(uPalette<0.5)base=vec3(0.2,0.8,1.0);else if(uPalette<1.5)base=vec3(1.0,0.4,0.8);else base=vec3(0.7,1.0,0.3);// canyon: wall on each side, floor in middle narrow
+float wall=0.3+m.y*0.2;float floor_=wall;vec3 col;if(abs(uv.x)>wall){// wall
+float sign_=sign(uv.x);float wx=(abs(uv.x)-wall)*4.0; // depth into wall from edge
+float z=1.0/max(wx+0.05,0.01);float gy=uv.y*z*2.0+m.x*2.0;float gz=z+t*2.0;float line=max(smoothstep(0.04,0.0,abs(fract(gy)-0.5)),smoothstep(0.04,0.0,abs(fract(gz)-0.5)));col=base*line*(1.0-smoothstep(0.0,2.5,wx));col+=base*0.05;}else{// floor with depth by y
+float py=-uv.y+0.5;float z=1.0/max(py,0.001);float gx=uv.x*z*3.0+m.x*2.0;float gz=z+t*2.5;float line=max(smoothstep(0.04,0.0,abs(fract(gx)-0.5)),smoothstep(0.04,0.0,abs(fract(gz)-0.5)));col=base*line*(1.0-smoothstep(0.0,2.0,py));col+=base*0.03;}// top sky strip
+if(uv.y>0.45){col=vec3(0.02,0.01,0.05);col+=base*exp(-(uv.y-0.45)*10.0)*0.4;}// click ripple on floor
+if(uClick>0.0 && abs(uv.x)<wall){col+=base*uClick*exp(-abs(1.0/(-uv.y+0.5)-uClick*8.0)*0.5);}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 65 TRON DOME -->
+<script id="fs-64" type="x-shader/x-fragment">
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;vec3 base;if(uPalette<0.5)base=vec3(0.4,0.7,1.0);else if(uPalette<1.5)base=vec3(1.0,0.4,0.6);else base=vec3(0.5,1.0,0.6);vec3 col;// dome: hemisphere above horizon
+float horizon=-0.2;if(uv.y>horizon){vec2 p=vec2(uv.x,uv.y-horizon);float r=length(p)/1.1;if(r<1.0){// project onto sphere
+float a=atan(p.y,p.x)+m.x*0.5;float aa=1.0-r*r;float aCell=a*6.0+t;float rCell=r*8.0+t*0.5;float lineA=smoothstep(0.04,0.0,abs(fract(aCell)-0.5));float lineR=smoothstep(0.04,0.0,abs(fract(rCell)-0.5));float line=max(lineA,lineR);col=base*line*aa;col+=base*uClick*line*exp(-abs(r-uClick)*3.0);}else{col=vec3(0.01,0.02,0.05);}}else{// ground
+col=vec3(0.02,0.03,0.06);col+=base*exp(-(horizon-uv.y)*8.0)*0.4;}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 66 TRON STREAMS -->
+<script id="fs-65" type="x-shader/x-fragment">
+void main(){vec2 uv=(gl_FragCoord.xy/uRes-0.5);uv.x*=uRes.x/uRes.y;vec2 m=(uMouseSmooth/uRes-0.5);float t=uTime*uSpeed;float horizon=m.y*0.4;vec3 base;if(uPalette<0.5)base=vec3(0.2,0.8,1.0);else if(uPalette<1.5)base=vec3(1.0,0.7,0.3);else base=vec3(0.7,1.0,0.3);vec3 col;if(uv.y<horizon){float py=horizon-uv.y;float z=1.0/max(py,0.001);float gx=uv.x*z*2.0+m.x*2.0;float gz=z+t*1.5;float line=max(smoothstep(0.04,0.0,abs(fract(gx)-0.5)),smoothstep(0.04,0.0,abs(fract(gz)-0.5)));col=base*line*(1.0-smoothstep(0.0,2.0,py));col+=base*0.03;}else{float sky=smoothstep(horizon,horizon+0.8,uv.y);col=mix(base*0.2,vec3(0.01,0.02,0.05),sky);// horizontal light streams flowing from vanishing point (at m.x, horizon)
+vec2 vp=vec2(m.x,horizon);for(int i=0;i<7;i++){float fi=float(i);float row=horizon+0.03+fi*0.08;float laneY=row-horizon;vec2 toVP=normalize(vec2(m.x,horizon)-vec2(uv.x,row));float phase=fract(t*(1.0+fi*0.2)-uv.x*0.6+hash1(fi)*3.0);float streak=exp(-abs(uv.y-row)*60.0)*smoothstep(0.0,0.3,phase)*smoothstep(1.0,0.6,phase);col+=base*streak*(1.0-fi*0.1);}col+=base*exp(-(uv.y-horizon)*18.0)*0.5;}col*=uIntensity;gl_FragColor=vec4(col,1.0);}
+</script>
+
+<!-- 67 ASCII OCEAN ELITE (multi-band swell + FBM + foam + glyph raster) -->
+<script id="fs-66" type="x-shader/x-fragment">
+float gch(vec2 q,int id){
+  if(id==0) return step(length(q),0.14);
+  if(id==1) return step(abs(q.x+q.y),0.22)*step(0.05,abs(q.x+q.y));
+  if(id==2) return step(abs(q.x-q.y),0.22)*step(0.05,abs(q.x-q.y));
+  if(id==3) return step(abs(q.x),0.08)+step(abs(q.y),0.08)-step(abs(q.x),0.04)*step(abs(q.y),0.04);
+  if(id==4) return step(length(q),0.22)-step(length(q),0.12);
+  return step(0.35,abs(q.x)+abs(q.y));
+}
+void main(){
+  vec2 frag=gl_FragCoord.xy;
+  vec2 uv=(frag-0.5*uRes)/uRes.y;
+  vec2 mm=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*uSpeed;
+  float x=uv.x*3.8+t*0.55;
+  float w=sin(x)*0.18+sin(x*1.73+1.1)*0.09+sin(x*3.1-t*1.2)*0.045;
+  w+=fbm(vec2(uv.x*1.6+mm.x,uv.y*1.2+t*0.4))*0.11;
+  float wake=exp(-length(uv-mm)*2.8)*(0.22+uClick*0.35);
+  w+=wake*sin(length(uv-mm)*22.0-t*5.0)*0.07;
+  float surf=uv.y-w;
+  float shore=smoothstep(0.14,-0.02,surf);
+  float foam=smoothstep(0.035,0.0,abs(surf))*pow(0.5+0.5*sin(uv.x*55.0+t*5.0),3.0);
+  float spec=pow(max(0.0,0.5+0.5*sin((uv.x-mm.x)*40.0+t*3.0)),8.0)*shore*exp(-abs(surf)*25.0);
+  float br=shore*(0.35+foam*0.95+spec*1.4)+(1.0-shore)*0.06;
+  float cw=8.0,ch=13.0;
+  vec2 cid=floor(frag/vec2(cw,ch));
+  vec2 cfr=fract(frag/vec2(cw,ch))-0.5;
+  int idx=int(clamp(floor(br*6.0),0.0,5.0));
+  float g=gch(cfr,idx);
+  vec3 cLo,cHi;
+  if(uPalette<0.5){cLo=vec3(0.02,0.08,0.12);cHi=vec3(0.35,1.0,0.75);}
+  else if(uPalette<1.5){cLo=vec3(0.12,0.04,0.06);cHi=vec3(1.0,0.45,0.35);}
+  else{cLo=vec3(0.02,0.06,0.14);cHi=vec3(0.55,0.85,1.0);}
+  vec3 col=mix(cLo,cHi,br)*g*1.15;
+  col+=cHi*foam*shore*0.35;
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 68 SYNTHWAVE RETRO -->
+<script id="fs-67" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes-0.5);
+  float t=uTime*uSpeed;
+  vec3 sunC,gridC,skyA,skyB;
+  if(uPalette<0.5){sunC=vec3(1.0,0.2,0.6);gridC=vec3(0.2,0.9,1.0);skyA=vec3(0.08,0.02,0.15);skyB=vec3(0.45,0.05,0.35);}
+  else if(uPalette<1.5){sunC=vec3(1.0,0.85,0.35);gridC=vec3(0.3,1.0,0.9);skyA=vec3(0.02,0.05,0.12);skyB=vec3(0.1,0.25,0.5);}
+  else{sunC=vec3(1.0,0.4,0.15);gridC=vec3(1.0,0.5,0.2);skyA=vec3(0.05,0.02,0.08);skyB=vec3(0.5,0.15,0.2);}
+  float y=uv.y+0.1;
+  vec3 sky=mix(skyB,skyA,smoothstep(-0.2,0.55,y));
+  float sunB=smoothstep(0.12,0.02,abs(uv.x)*0.35+abs(y-0.35)-0.08);
+  sky+=sunC*sunB*1.4;
+  float mt=0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    float px=-0.9+fi*0.45+sin(t*0.2+fi)*0.05;
+    float w=0.08+hash1(fi*2.1)*0.06;
+    float h=0.12+hash1(fi*3.7)*0.22;
+    if(abs(uv.x-px)<w && y<h-0.15) mt=max(mt,smoothstep(h-0.15,0.0,y)*0.9);
+  }
+  sky=mix(sky,vec3(0.02,0.02,0.06),mt);
+  float horizon=-0.12+m.y*0.15;
+  vec3 col=sky;
+  if(uv.y<horizon){
+    float py=horizon-uv.y;
+    float z=1.0/max(py,0.001);
+    float gx=uv.x*z*2.2+m.x*2.0;
+    float gz=z+t*2.8;
+    float line=max(smoothstep(0.04,0.0,abs(fract(gx)-0.5)),smoothstep(0.04,0.0,abs(fract(gz)-0.5)));
+    float sh=fbm(vec2(uv.x*3.0,t))*0.08;
+    col=mix(sky,gridC*line*(1.0-smoothstep(0.0,2.0,py)),0.85);
+    col+=gridC*uClick*exp(-abs(z-uClick*7.0)*0.5)*0.35;
+    col+=vec3(sh*0.3);
+  }
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 69 NEBULA CLOUDS -->
+<script id="fs-68" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  vec2 m=(uMouseSmooth-0.5*uRes)/uRes.y;
+  float t=uTime*0.08*uSpeed;
+  vec3 a,b,c,d;
+  if(uPalette<0.5){a=vec3(0.15,0.1,0.2);b=vec3(0.4,0.35,0.5);c=vec3(1.0,0.9,0.8);d=vec3(0.1,0.2,0.35);}
+  else if(uPalette<1.5){a=vec3(0.1,0.05,0.15);b=vec3(0.5,0.2,0.6);c=vec3(0.8,0.9,1.0);d=vec3(0.15,0.1,0.25);}
+  else{a=vec3(0.05,0.12,0.1);b=vec3(0.3,0.6,0.45);c=vec3(0.9,1.0,0.85);d=vec3(0.1,0.25,0.2);}
+  vec2 wind=(uv-m)*0.35;
+  float dens=0.0;
+  for(int i=0;i<4;i++){
+    float fi=float(i);
+    vec2 p=uv*0.7+vec2(t*0.3+fi*2.1, t*0.2-fi*1.7)+wind*(1.0+fi*0.2);
+    dens+=fbm(p+fbm(p*1.8))*exp(-fi*0.35);
+  }
+  dens*=1.0+0.25*sin(t*2.0+length(uv)*3.0);
+  dens+=uClick*0.35*exp(-length(uv-m)*4.0);
+  vec3 col=pal(clamp(dens*0.55,0.0,1.0),a,b,c,d);
+  col+=vec3(pow(hash(floor(uv*420.0)),90.0))*0.25;
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 70 PLASMA LACE -->
+<script id="fs-69" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes-0.5);
+  float t=uTime*uSpeed;
+  float a=sin(uv.x*6.0+t)+sin(uv.y*5.0-t*0.7)+sin((uv.x+uv.y)*4.0+t*0.5);
+  vec2 rp=rot(0.4)*uv;
+  float b=sin(rp.x*8.0+rp.y*7.0-t*1.1);
+  float v=0.5+0.5*sin(a*2.0+b*2.0+uClick*6.28318);
+  vec3 c1,c2,c3;
+  if(uPalette<0.5){c1=vec3(0.1,0.9,0.4);c2=vec3(1.0,0.2,0.8);c3=vec3(0.2,0.6,1.0);}
+  else if(uPalette<1.5){c1=vec3(1.0,0.5,0.3);c2=vec3(0.5,0.2,1.0);c3=vec3(1.0,0.9,0.4);}
+  else{c1=vec3(0.4,0.8,1.0);c2=vec3(0.9,0.9,1.0);c3=vec3(0.2,0.3,0.5);}
+  vec3 col=mix(c3,c1,smoothstep(0.2,0.8,v))*mix(c2,vec3(1.0),exp(-length(uv-m)*2.0)*0.4);
+  col*=0.7+0.3*fbm(uv*3.0+t*0.2);
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 71 SILK RIBBONS -->
+<script id="fs-70" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes-0.5);
+  float t=uTime*0.35*uSpeed;
+  float acc=0.0;
+  for(int k=0;k<6;k++){
+    float fk=float(k);
+    float off=fk*0.35;
+    vec2 p=uv+vec2(sin(t+off)*0.15,cos(t*0.8+off)*0.1);
+    p.x+=(m.x-p.x)*0.25*exp(-length(uv-m));
+    float s=sin(p.x*5.0+t+fk)*0.12;
+    float d=abs(p.y-s);
+    acc+=exp(-d*d*400.0)*(0.5+0.5*sin(fk+p.x*8.0+t));
+  }
+  vec3 base;
+  if(uPalette<0.5) base=vec3(0.95,0.85,0.55);
+  else if(uPalette<1.5) base=vec3(0.4,0.95,0.75);
+  else base=vec3(0.85,0.55,1.0);
+  vec3 col=base*acc*(1.0+uClick*0.5);
+  col+=vec3(0.02,0.02,0.04)*(1.0-acc);
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 72 RIPPLE WELL -->
+<script id="fs-71" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes-0.5);
+  float t=uTime*uSpeed;
+  float r=length(uv-m);
+  float w=0.0;
+  for(int i=0;i<8;i++){
+    float fi=float(i);
+    float ri=r*12.0-t*3.5-fi*1.2;
+    w+=sin(ri)*exp(-r*1.8-fi*0.15);
+  }
+  w*=exp(-r*0.6);
+  float cau=pow(0.5+0.5*sin(uv.x*30.0+uv.y*24.0+t*2.0),12.0)*smoothstep(0.15,0.0,r);
+  vec3 deep,mid,hi;
+  if(uPalette<0.5){deep=vec3(0.0,0.05,0.12);mid=vec3(0.1,0.5,0.6);hi=vec3(0.6,1.0,1.0);}
+  else if(uPalette<1.5){deep=vec3(0.1,0.02,0.08);mid=vec3(0.5,0.2,0.5);hi=vec3(1.0,0.8,0.95);}
+  else{deep=vec3(0.05,0.05,0.02);mid=vec3(0.6,0.5,0.2);hi=vec3(1.0,0.95,0.7);}
+  vec3 col=mix(deep,mid,0.5+0.5*w);
+  col+=hi*(cau+w*w*0.5)*(0.8+uClick);
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 73 SPECTRUM SCOPE -->
+<script id="fs-72" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes-0.5);
+  float t=uTime*uSpeed;
+  float bar=(uv.x+1.2)*18.0;
+  float bi=floor(bar);
+  float bf=fract(bar)-0.5;
+  float h=0.0;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    h+=sin(t*(1.2+fi*0.3)+bi*0.7+fi*1.9+hash1(bi+fi*13.0)*6.28318)*0.08;
+  }
+  h=0.25+abs(h)*1.8+exp(-abs(uv.x-m.x)*3.0)*0.35*(1.0+uClick);
+  float on=step(uv.y,h-0.35)*step(-0.35,uv.y);
+  float edge=smoothstep(h-0.36,h-0.33,uv.y)*on;
+  vec3 cLo,cHi;
+  if(uPalette<0.5){cLo=vec3(0.05,0.1,0.08);cHi=vec3(0.2,1.0,0.5);}
+  else if(uPalette<1.5){cLo=vec3(0.08,0.08,0.08);cHi=vec3(1.0,0.85,0.35);}
+  else{cLo=vec3(0.05,0.05,0.1);cHi=vec3(0.5,0.8,1.0);}
+  vec3 col=mix(cLo,cHi,edge);
+  col+=cHi*pow(edge,3.0)*0.5;
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 74 PRISM CAUSTICS -->
+<script id="fs-73" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  float t=uTime*uSpeed;
+  float a=atan(uv.y,uv.x)+t*0.4;
+  float r=length(uv);
+  float fan=0.5+0.5*sin(a*7.0+t*2.0);
+  float pr=sin(r*18.0-t*3.0+a*3.0)*0.5+0.5;
+  vec3 col=vec3(0.02,0.02,0.04);
+  if(uPalette<0.5) col+=vec3(1.0,0.3,0.5)*fan*pr*exp(-r*1.2);
+  else if(uPalette<1.5) col+=vec3(0.3,0.9,1.0)*fan*pr*exp(-r*1.1);
+  else col+=vec3(1.0,0.6,0.2)*fan*pr*exp(-r*1.0);
+  col+=vec3(0.9,0.95,1.0)*pow(0.5+0.5*sin(a*14.0+r*8.0-t*4.0),6.0)*0.4*(1.0+uClick);
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 75 CRT GHOST -->
+<script id="fs-74" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=gl_FragCoord.xy/uRes;
+  vec2 m=uMouseSmooth/uRes;
+  float t=uTime*uSpeed;
+  float roll=sin(uv.y*400.0+t*8.0)*0.002;
+  vec2 uvo=uv+vec2(roll,0.0);
+  float scan=0.85+0.15*sin(uv.y*1200.0);
+  float sig=fbm(vec2(uvo.x*8.0+t,uvo.y*6.0))*0.5+0.5;
+  vec2 ghost=uvo-vec2(0.02,0.0)+vec2(m.x*0.05,m.y*0.03);
+  float g=fbm(vec2(ghost.x*10.0,ghost.y*8.0+t))*0.4;
+  vec3 col;
+  if(uPalette<0.5) col=vec3(0.2,1.0,0.45)*sig*scan;
+  else if(uPalette<1.5) col=vec3(1.0,0.75,0.35)*sig*scan;
+  else col=vec3(1.0,0.25,0.25)*sig*scan;
+  col+=vec3(0.4,0.5,0.6)*g*0.35;
+  col*=1.0+uClick*0.4;
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<!-- 76 INK FLOW -->
+<script id="fs-75" type="x-shader/x-fragment">
+void main(){
+  vec2 uv=(gl_FragCoord.xy/uRes-0.5); uv.x*=uRes.x/uRes.y;
+  vec2 m=(uMouseSmooth/uRes-0.5);
+  float t=uTime*0.12*uSpeed;
+  vec2 p=uv*rot(0.2);
+  p+=fbm(p*1.5+t)*0.15;
+  p+=m*0.2*exp(-length(uv-m)*1.5);
+  float f=fbm(p+t)+0.5*fbm(p*2.3-t*0.7);
+  float v=smoothstep(0.35,0.65,f);
+  vec3 ink,paper,glow;
+  if(uPalette<0.5){ink=vec3(0.02,0.02,0.08);paper=vec3(0.15,0.12,0.35);glow=vec3(0.4,0.2,0.8);}
+  else if(uPalette<1.5){ink=vec3(0.15,0.05,0.02);paper=vec3(0.4,0.28,0.15);glow=vec3(1.0,0.5,0.2);}
+  else{ink=vec3(0.02,0.08,0.06);paper=vec3(0.1,0.2,0.18);glow=vec3(0.3,0.9,0.7);}
+  vec3 col=mix(paper,ink,v);
+  col+=glow*pow(1.0-abs(v-0.5)*2.0,4.0)*0.35;
+  col+=glow*uClick*exp(-length(uv-m)*3.0)*0.5;
+  col*=uIntensity;
+  gl_FragColor=vec4(col,1.0);
+}
+</script>
+
+<script src="engine.js"></script>
+</body>
+</html>

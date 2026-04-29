@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>What is NERVE? | Documentation</title>
+<link rel="stylesheet" href="docs.css"/>
+<link rel="stylesheet" href="docs-lattice-embed.css"/>
+</head>
+<body>
+<nav class="doc-nav" aria-label="Site">
+  <a href="../../../">Home</a><span class="sep">|</span>
+  <a href="../../">Cerebrum</a><span class="sep">|</span>
+  <a href="../../nerve/lab.html">NERVE lab</a><span class="sep">|</span>
+  <a href="index.html">Documentation</a>
+</nav>
+<main class="doc-wrap">
+  <h1>What is NERVE?</h1>
+  <p class="lede">NERVE (<strong>N</strong>eural <strong>E</strong>pistemic <strong>R</strong>eliability and <strong>V</strong>alidation <strong>E</strong>ngine) scores model outputs against the grounding you provide. Everything runs locally in the browser: no weights shipped, no server-side scoring step.</p>
+
+  <section class="doc-canonical-panel" id="nerve-canonical-panel" aria-labelledby="nerve-canonical-h" hidden>
+    <h2 id="nerve-canonical-h">Canonical specification snapshot</h2>
+    <p class="lede" id="nerve-canonical-summary"></p>
+    <p class="doc-spec-ref" id="nerve-canonical-ref"></p>
+    <ul id="nerve-canonical-qty"></ul>
+  </section>
+
+  <h2>Core quantities</h2>
+  <p>All of these are derived from the <strong>prompt</strong>, optional <strong>context</strong>, and <strong>model output</strong> (and, when available, token logprobs):</p>
+  <ul>
+    <li><strong>Φ_e(t)</strong> — How well the output is aligned with the supplied context (lexical / substantive overlap; higher when the answer and context overlap).</li>
+    <li><strong>CI(t)</strong> — Quality and presence of grounding. Empty context uses a low skeptical prior; richer context raises CI.</li>
+    <li><strong>Φ_e adjusted = Φ_e × CI</strong> — Primary admissibility signal, compared to <strong>ε</strong> (epsilon). If below ε, the governed mode is <strong>ABSTAIN</strong> (treated as no admissible answer in the tool).</li>
+    <li><strong>ESR(t)</strong> — Epistemic support ratio: how much of the output is tied to the grounding text.</li>
+    <li><strong>Confidence(t)</strong> — From token logprobs on APIs that return them; otherwise a <strong>linguistic confidence</strong> heuristic (weaker for cross-model comparison).</li>
+    <li><strong>EFCG(t) = Confidence(t) − ESR(t)</strong> — The epistemic fidelity calibration gap. Large positive values read as overconfidence relative to support.</li>
+  </ul>
+  <h2>Labels (CORRECT / HALLUCINATION / UNCERTAIN)</h2>
+  <p>These are <strong>your</strong> ground-truth flags for experiments (e.g. AUC-ROC). They <strong>do not</strong> change the measured signals.</p>
+  <h2>Modes (governance)</h2>
+  <ul>
+    <li><strong>ASSERT</strong> — Admissible (Φ_e adjusted ≥ ε) and EFCG within tolerance.</li>
+    <li><strong>QUALIFY</strong> — Admissible but EFCG elevated; output may be prefixed with a qualification.</li>
+    <li><strong>ABSTAIN</strong> — Not admissible: Φ_e adjusted &lt; ε.</li>
+  </ul>
+  <p><a href="using-the-lab.html">Next: Using the lab →</a></p>
+</main>
+<!-- Mirrored from nerve-canonical.json for file:// and when fetch(local JSON) fails. -->
+<script type="application/json" id="nerve-canonical-data">
+{
+  "summary": "NERVE (Neural Epistemic Reliability and Validation Engine) measures whether a model’s answer is epistemically in bounds relative to user-supplied grounding. Scoring is defined without model weights; Φe, CG, CI, and ESR are the public surface quantities for this line.",
+  "quantities": [
+    { "id": "phi_e", "label": "Φe", "note": "Adjusted epistemic potential / admissibility axis" },
+    { "id": "cg", "label": "CG", "note": "Calibration–governance coupling in the policy view" },
+    { "id": "ci", "label": "CI", "note": "Confidence index as reported in the instrument" },
+    { "id": "esr", "label": "ESR", "note": "External scoring report bundle signals" }
+  ],
+  "specRef": "REVERIE/02-CEREBRUM"
+}
+</script>
+<script>
+(function () {
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/"/g, "&quot;");
+  }
+  function apply(d) {
+    var panel = document.getElementById("nerve-canonical-panel");
+    var sumEl = document.getElementById("nerve-canonical-summary");
+    var refEl = document.getElementById("nerve-canonical-ref");
+    var qtyEl = document.getElementById("nerve-canonical-qty");
+    if (!panel || !sumEl || !refEl || !qtyEl) return;
+    sumEl.textContent = d.summary || "";
+    refEl.textContent = d.specRef ? "Spec reference: " + d.specRef : "";
+    qtyEl.innerHTML = (d.quantities || [])
+      .map(function (x) {
+        return (
+          "<li><strong>" +
+          esc(x.label || "") +
+          "</strong> — " +
+          esc(x.note || "") +
+          "</li>"
+        );
+      })
+      .join("");
+    panel.hidden = false;
+  }
+  function tryInline() {
+    var el = document.getElementById("nerve-canonical-data");
+    if (!el) return false;
+    var raw = el.textContent || "";
+    if (!raw.trim()) return false;
+    try {
+      apply(JSON.parse(raw));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  if (tryInline()) return;
+  fetch("nerve-canonical.json", { credentials: "same-origin" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("bad status");
+      return r.json();
+    })
+    .then(apply)
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>
