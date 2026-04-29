@@ -1,6 +1,6 @@
 # Reverie Systematics
 
-**Live site:** [reveriesystematics.com](https://reveriesystematics.com)
+**Live site:** [reveriesystematics.com](https://reveriesystematics.com) · [reveriesystematics.pages.dev](https://reveriesystematics.pages.dev)
 
 **REVERIE SYSTEMATICS [est. 2026]** was founded on the principle of transparency within the techsphere. Reverie’s current line is **CEREBRUM:NERVE** — the trust layer and the external evaluation engine (Φe, CG, CI, ESR) specified under `REVERIE/02-CEREBRUM`.
 
